@@ -1,0 +1,39 @@
+# Chemin du fichier : FT_TR.../docker/docker-compose.yml
+
+services:
+  # 1. Service Back-end (Node.js / API)
+  backend:
+    build:
+      context: .. # Correct : Remonte à la racine du projet
+      dockerfile: ./docker/backend/Dockerfile
+    container_name: transcendance-backend
+    ports:
+      - "3000:3000"
+    volumes:
+      # CORRECTION : Le code source est à ../srcs/back
+      - ../srcs/back:/usr/src/app 
+      
+      # CORRECTION : Le dossier de données est à ../srcs/back/data
+      - ../srcs/back/data:/usr/src/app/data 
+    environment:
+      - DATABASE_PATH=/usr/src/app/data/pong.sqlite
+
+  # 2. Service Front-end (Nginx)
+  frontend:
+    build:
+      context: .. # Correct : Remonte à la racine du projet
+      dockerfile: ./docker/frontend/Dockerfile
+    container_name: transcendance-frontend
+    ports:
+      - "8080:80"
+    volumes:
+      # CORRECTION : Le code source est à ../srcs/front
+      - ../srcs/front:/app 
+      # CORRECTION : La conf Nginx est dans le sous-dossier frontend
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      
+    depends_on:
+      - backend
+      
+networks:
+  default: {}
