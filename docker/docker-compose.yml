@@ -9,10 +9,8 @@ services:
       - "3000:3000"
     
     volumes:
-      # Mount only your source code
       - ../srcs/front/src:/app/src
       - ../srcs/front/public:/app/public
-      # Use named volume for node_modules to persist and avoid conflicts
       - front_node_modules:/app/node_modules
       - front_next:/app/.next
 
