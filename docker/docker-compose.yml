@@ -1,7 +1,4 @@
 services:
-  # ----------------------------------------------------
-  # 1. Base de Données (PostgreSQL)
-  # ----------------------------------------------------
   db:
     image: postgres:15-alpine
     container_name: db
@@ -11,68 +8,45 @@ services:
       POSTGRES_PASSWORD: password_dev
       POSTGRES_DB: coding_game_db
     ports:
-      # Port par défaut exposé
       - "5432:5432"
     volumes:
-      # Volume nommé pour la persistance des données
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      # Vérification de l'état de la BDD
       test: ["CMD-SHELL", "pg_isready -U user -d coding_game_db"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  # ----------------------------------------------------
-  # 2. Service Backend (NestJS/Fastify & Prisma)
-  # ----------------------------------------------------
   backend:
     build:
-      # CONTEXTE: Le code source (contient maintenant le Dockerfile à la racine)
       context: ..
-      # DOCKERFILE: Simplement nommé "Dockerfile" car il est à la racine du context
       dockerfile: ./docker/back/Dockerfile
     container_name: backend
     restart: always
     environment:
-      # URL de connexion pour Prisma. Utilise le nom de service 'db'.
       DATABASE_URL: postgresql://user:password_dev@db:5432/coding_game_db
     ports:
       - "3000:3000"
     volumes:
-      # Bind mount : Monte le code source pour le Hot Reload
       - ../srcs/backend:/app
-      # Volume anonyme pour empêcher le montage des node_modules de l'hôte
       - /app/node_modules 
     depends_on:
       db:
         condition: service_healthy
 
-  # ----------------------------------------------------
-  # 3. Service Frontend (Next.js/React)
-  # ----------------------------------------------------
   frontend:
     build:
-      # CONTEXTE: Le code source (contient maintenant le Dockerfile à la racine)
       context: ../
-      # DOCKERFILE: Simplement nommé "Dockerfile" car il est à la racine du context
       dockerfile: ./docker/front/Dockerfile
     container_name: frontend
     restart: always
     environment:
-      # Variable pour l'API accessible via le réseau Docker (nom du service 'backend')
       NEXT_PUBLIC_API_URL: http://backend:3000
     ports:
-      # Mappe le port 3000 du conteneur au port 3001 de l'hôte
       - "3001:3000"
     volumes:
-      # Bind mount : Monte le code source pour le Hot Reload
       - ../srcs/frontend:/app
-      # Volume anonyme pour les node_modules
       - /app/node_modules
 
-# ----------------------------------------------------
-# Volumes Nommés
-# ----------------------------------------------------
 volumes:
   postgres_data:
