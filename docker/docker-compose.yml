@@ -1,44 +1,33 @@
-# Chemin du fichier : FT_TR.../docker/docker-compose.yml
-
 services:
-  # 1. Service Back-end (Node.js / API)
-  backend:
+  front:
+    container_name: front
     build:
       context: ..
-      dockerfile: ./docker/backend/Dockerfile
-    container_name: transcendance-backend
+      dockerfile: docker/front/Dockerfile
+    
     ports:
       - "3000:3000"
+    
     volumes:
-      # 1. Synchronisation du code source :
-      - ../srcs/back:/usr/src/app 
-      
-      # 💥 CORRECTION EXPRESS/NODE_MODULES : Ce volume anonyme masque le 'node_modules' 
-      # de l'hôte et utilise celui qui a été installé dans l'image lors du build.
-      - /usr/src/app/node_modules 
-      
-      # 2. PERMANENCE DE LA BASE DE DONNÉES SQLite (Le chemin de l'hôte a été corrigé pour utiliser 'srcs/back')
-      # NOTE: Si votre dossier 'data' doit être à la racine, utilisez '..//data'
-      - ../srcs/back/data:/usr/src/app/data 
-      
-    environment:
-      - DATABASE_PATH=/usr/src/app/data/pong.sqlite
+      # Mount only your source code
+      - ../srcs/front/src:/app/src
+      - ../srcs/front/public:/app/public
+      # Use named volume for node_modules to persist and avoid conflicts
+      - front_node_modules:/app/node_modules
+      - front_next:/app/.next
 
-  # 2. Service Front-end (Nginx)
-  frontend:
-    build:
-      context: .. 
-      dockerfile: ./docker/frontend/Dockerfile
-    container_name: transcendance-frontend
-    ports:
-      - "8080:80"
-    volumes:
-      # Synchronisation du code source du front-end
-      - ../srcs/front:/app 
-      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      
-    depends_on:
-      - backend
-      
+    environment:
+      - NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED}
+      - WATCHPACK_POLLING=${WATCHPACK_POLLING}
+      - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
+
+    networks:
+      - transcendence
+
+volumes:
+  front_node_modules:
+  front_next:
+
 networks:
-  default: {}
+  transcendence:
+    driver: bridge
