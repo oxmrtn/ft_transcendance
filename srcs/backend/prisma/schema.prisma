@@ -1,0 +1,16 @@
+// Fichier de schéma Prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Utilise la variable du docker-compose
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Player {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  score     Int      @default(0)
+  createdAt DateTime @default(now())
+}
