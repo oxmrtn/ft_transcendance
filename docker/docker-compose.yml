@@ -1,4 +1,42 @@
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password_dev
+      POSTGRES_DB: coding_game_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d coding_game_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ..
+      dockerfile: ./docker/back/Dockerfile
+    container_name: backend
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://user:password_dev@db:5432/coding_game_db
+    ports:
+      - "3333:3333"
+    volumes:
+      - ../srcs/backend/src:/app/src
+      - ../srcs/backend/package.json:/app/package.json
+      - ../srcs/backend/tsconfig.json:/app/tsconfig.json
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - transcendence
+
   front:
     container_name: front
     build:
@@ -22,7 +60,10 @@ services:
     networks:
       - transcendence
 
+
+
 volumes:
+  postgres_data:
   front_node_modules:
   front_next:
 

@@ -1,0 +1,97 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+model User {
+  id                Int      @id @default(autoincrement())
+  username          String   @unique
+  email             String   @unique
+  createdAt         DateTime @default(now())
+  profilePictureUrl String?  @map("pp_url") @db.VarChar(255)
+  wallet            Int      @default(0)
+  title             String?
+  xp                Int      @default(0)
+
+  // Relations
+  friendshipsOne    Friendship[] @relation("Initiator")
+  friendshipsTwo    Friendship[] @relation("Recipient")
+  
+  gamesWon          Game[]       @relation("Winner")
+  gameParticipations GameParticipant[]
+}
+
+model Subject {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  
+  // Relation One-to-Many vers les exercices
+  exercises Exercise[]
+}
+
+model Exercise {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  unitTest    String   @db.Text
+  
+  // Clé étrangère vers Subject (normalisation)
+  subjectId   Int
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  
+  games       Game[]
+}
+
+model Friendship {
+  userId1   Int
+  userId2   Int
+  
+  status    String   @default("PENDING") // PENDING, ACCEPTED, BLOCKED
+  
+  user1     User     @relation("Initiator", fields: [userId1], references: [id])
+  user2     User     @relation("Recipient", fields: [userId2], references: [id])
+  
+  @@id([userId1, userId2])
+}
+
+model Game {
+  id              Int      @id @default(autoincrement())
+  
+  exerciseId      Int
+  exercise        Exercise @relation(fields: [exerciseId], references: [id])
+  
+  startedAt       DateTime @default(now())
+  finishedAt      DateTime? // Null tant que la partie n'est pas terminée
+  
+  // Le statut de la partie (IN_PROGRESS, COMPLETED, DRAW, ABANDONED)
+  status          String   @default("IN_PROGRESS")
+  
+  winnerId        Int?
+  winner          User?    @relation("Winner", fields: [winnerId], references: [id])
+  
+  participants    GameParticipant[]
+}
+
+
+model GameParticipant {
+  gameId          Int
+  userId          Int
+  
+  score           Int
+  
+  // Le temps pris pour compléter le challenge (en secondes ou ms)
+  timeTakenMs     Int
+  
+  // Le code final soumis par ce joueur (essentiel pour l'historique)
+  finalCode       String   @db.Text
+  
+  game            Game     @relation(fields: [gameId], references: [id])
+  user            User     @relation(fields: [userId], references: [id])
+  
+  @@id([gameId, userId])
+}
