@@ -35,19 +35,6 @@ services:
       db:
         condition: service_healthy
 
-  frontend:
-    build:
-      context: ../
-      dockerfile: ./docker/front/Dockerfile
-    container_name: frontend
-    restart: always
-    environment:
-      NEXT_PUBLIC_API_URL: http://backend:3000
-    ports:
-      - "3001:3000"
-    volumes:
-      - ../srcs/frontend:/app
-      - /app/node_modules
 
 volumes:
   postgres_data:
