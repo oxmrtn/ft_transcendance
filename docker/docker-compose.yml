@@ -28,9 +28,9 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./backend/src:/app/src
-      - ./backend/package.json:/app/package.json
-      - ./backend/tsconfig.json:/app/tsconfig.json
+      - ../srcs/backend/src:/app/src
+      - ../srcs/backend/package.json:/app/package.json
+      - ../srcs/backend/tsconfig.json:/app/tsconfig.json
     depends_on:
       db:
         condition: service_healthy
