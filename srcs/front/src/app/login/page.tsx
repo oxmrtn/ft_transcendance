@@ -1,6 +1,4 @@
-import Link from 'next/link';
-
-export default function Home() {
+export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <main className="text-center">
@@ -10,11 +8,6 @@ export default function Home() {
         <p className="text-xl text-gray-600">
           Welcome to the transcendance project
         </p>
-        <nav>
-          <Link href="/login">
-            Se connecter
-          </Link>
-        </nav>
       </main>
     </div>
   );
