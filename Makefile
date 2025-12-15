@@ -1,6 +1,6 @@
 DOCKER_COMPOSE = docker compose -f docker/docker-compose.yml
 
-.PHONY: all build up down ps logs restart clean re front-install
+.PHONY: all build up down ps logs restart clean re front-install front-restart
 
 all: up
 
@@ -24,6 +24,9 @@ clean:
 
 front-install:
 	$(DOCKER_COMPOSE) run --rm front npm install
+
+front-restart:
+	$(DOCKER_COMPOSE) restart front
 
 restart: down up
 

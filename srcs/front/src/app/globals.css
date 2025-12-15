@@ -1,6 +1,24 @@
 @import "tailwindcss";
 
-:root {}
+:root {
+    --primary: #d46e2e;
+    --modal-background: rgba(19, 25, 34, .67);
+}
+
+@theme {
+    --color-primary: var(--primary);
+    --color-modal-bg: var(--modal-background);
+}
+
+@layer components {
+    body {
+        @apply text-white;
+        background: radial-gradient(48.61% 71.71% at 61.82% 30.09%, rgba(0, 110, 173, 0.25) 0%, rgba(0, 0, 0, 0) 100%),
+            radial-gradient(50% 70.23% at 0% 100%, rgba(0, 110, 173, 0.25) 0%, rgba(0, 0, 0, 0) 100%),
+            radial-gradient(33.9% 50% at 100% 0%, rgba(0, 0, 0, 0.36) 0%, rgba(0, 0, 0, 0) 100%),
+            linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%), linear-gradient(180deg, #002660 0%, #000A1A 100%);
+    }
+}
 
 html, body {
     margin: 0;
