@@ -60,8 +60,6 @@ services:
     networks:
       - transcendence
 
-
-
 volumes:
   postgres_data:
   front_node_modules:

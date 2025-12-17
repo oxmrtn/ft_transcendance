@@ -22,6 +22,11 @@ logs:
 clean:
 	$(DOCKER_COMPOSE) down --remove-orphans --rmi all
 
+front-modules:
+	$(DOCKER_COMPOSE) cp front:/app/node_modules/react ./srcs/front/node_modules/
+	$(DOCKER_COMPOSE) cp front:/app/node_modules/react-dom ./srcs/front/node_modules/
+	$(DOCKER_COMPOSE) cp front:/app/node_modules/@types ./srcs/front/node_modules/
+
 front-install:
 	$(DOCKER_COMPOSE) run --rm front npm install
 
