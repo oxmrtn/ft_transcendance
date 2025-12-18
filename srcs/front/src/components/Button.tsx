@@ -3,8 +3,8 @@ import React from 'react';
 interface ButtonProps {
   fullWidth?: boolean;
   primary?: boolean;
-  onClick?: () => void;
   text: string;
+  onClick?: () => void;
 }
 
 export default function Button({fullWidth, primary, text, onClick}: ButtonProps) {
