@@ -42,21 +42,17 @@ services:
     build:
       context: ..
       dockerfile: docker/front/Dockerfile
-    
     ports:
       - "3000:3000"
-    
     volumes:
       - ../srcs/front/src:/app/src
       - ../srcs/front/public:/app/public
       - front_node_modules:/app/node_modules
       - front_next:/app/.next
-
     environment:
       - NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
-
     networks:
       - transcendence
 
