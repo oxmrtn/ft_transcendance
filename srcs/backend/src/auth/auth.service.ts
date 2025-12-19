@@ -32,7 +32,31 @@ export class AuthService
     async register(email : string, password : string, username : string) : Promise<{token: string}>
     {
         const hashedpwd = await this.hashPassword(password);
-        
-        return 
+        const user = await this.prisma.user.create({
+            data: {email, hashedPwd : hashedpwd, username},
+        });
+
+        const token = await this.generateToken(user.id);
+
+        return { token };
+    }
+
+    async login(email : string, password : string) : Promise<{token: string}>
+    {
+        const user = await this.prisma.user.findUnique({ where : { email }});
+        if (!user || !(await bcrypt.compare(password, user.hashedPwd)))
+            throw new UnauthorizedException('Invalid mail or password');
+        const token = await this.generateToken(user.id);
+        return { token };
+    }
+
+    async validate_token(token : string): Promise<any>
+    {
+        try {
+            return jwt.verify(token, this.jwt_secret);
+        } catch (error)
+        {
+            throw new UnauthorizedException('Invalid token');
+        }
     }
 }
