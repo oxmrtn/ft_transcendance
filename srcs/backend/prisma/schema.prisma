@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DB_URL")
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -12,6 +12,7 @@ model User {
   id                Int      @id @default(autoincrement())
   username          String   @unique
   email             String   @unique
+  hashedPwd         String   @unique
   createdAt         DateTime @default(now())
   profilePictureUrl String?  @map("pp_url") @db.VarChar(255)
   wallet            Int      @default(0)
