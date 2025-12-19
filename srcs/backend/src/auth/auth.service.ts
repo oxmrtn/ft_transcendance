@@ -28,4 +28,11 @@ export class AuthService
     {
         return jwt.sign({ userId }, this.jwt_secret, {expiresIn: '1h'});
     }
+
+    async register(email : string, password : string, username : string) : Promise<{token: string}>
+    {
+        const hashedpwd = await this.hashPassword(password);
+        
+        return 
+    }
 }
