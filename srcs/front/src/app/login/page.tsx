@@ -1,32 +1,89 @@
+'use client';
+
+import { useState, FormEvent } from 'react';
+import Link from 'next/link';
+
 import Divider from '../../components/Divider';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
-import Link from 'next/link';
 
 export default function Login() {
+  const [isLoading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    setLoading(true);
+    setError(null);
+    event.preventDefault();
+
+    try {
+      const response = await fetch("https://localhost:3333/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Adresse e-mail ou mot de passe incorrect");
+        }
+
+        const data = await response.json();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen min-w-screen flex items-center justify-center px-8">
+    <div className="min-h-screen min-w-screen flex items-center justify-center px-4">
       <div className="flex bg-modal-bg border border-white/10 rounded-xl overflow-hidden">
-        <div className="w-2xs flex items-center justify-center border border-white/10 rounded-xl noise-mesh-bg -m-px">
+        <div className="hidden sm:flex w-2xs items-center justify-center border border-white/10 rounded-xl noise-mesh-bg -m-px">
+          <img className="h-24 opacity-[.5] mix-blend-overlay" src="/logo.png" />
         </div>
-        <div className="w-md relative flex flex-col items-center gap-4 py-12 px-8">
+        <form onSubmit={handleLogin} className="w-md relative flex flex-col items-center gap-4 py-12 px-8">
           <div className="grid-gradient"></div>
+          <img className="sm:hidden h-12 opacity-[.5] mix-blend-overlay" src="/logo.png" />
           <h1 className="text-xl font-semibold">VersuS Code</h1>
           <Divider text="Se connecter" />
           <div className="w-full flex flex-col gap-2">
-            <Input fullWidth={true} placeholder="E-mail" name="email" type="email" />
-            <Input fullWidth={true} placeholder="Mot de passe" name="password" type="password" />
+            <Input
+              disabled={isLoading}
+              placeholder="E-mail"
+              name="email"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+            <Input
+              disabled={isLoading}
+              placeholder="Mot de passe"
+              name="password"
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
           </div>
-          <div className="w-full flex items-center flex-col gap-2">
-            <Button text="Se connecter" fullWidth={true} primary={true} />
-            <Link href="#" className="primary-link">Mot de passe oublié</Link>
+          <div className="w-full flex flex-col gap-2">
+            {error && (
+              <p className="text-sm text-red-400">{error}</p>
+            )}
+            <Button disabled={isLoading} fullWidth={true} type="submit" style="primary">
+              {isLoading ? "Connexion ..." : "Se connecter"}
+            </Button>
           </div>
           <Divider />
           <div className="flex gap-1">
             <p className="text-sub-text">Pas de compte ?</p>
             <Link href="#" className="primary-link">S'inscrire</Link>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
