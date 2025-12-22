@@ -5,7 +5,7 @@ interface ButtonProps {
   disabled?: boolean;
   type?: "button" | "submit";
   style?: "primary" | "secondary";
-  children: React.ReactNode
+  children: React.ReactNode;
   onClick?: () => void;
 }
 
