@@ -13,7 +13,9 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "geist": "^1.5.1",
-    "lucide-react": "^0.560.0"
+    "lucide-react": "^0.560.0",
+    "@formatjs/intl-localematcher": "^0.7.2",
+    "negotiator": "^1.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
