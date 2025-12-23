@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "title": "VersuS Code",
+    "description": "FR desc"
+  },
+  "login": {
+    "dividerText": "Login",
+    "emailPlaceholder": "E-mail",
+    "passwordPlaceholder": "Password",
+    "loginButton": "Login",
+    "noAccountText": "No account ?",
+    "registerButton": "Register",
+    "wrongCredentialsError": "E-mail or password incorrect"
+  }
+}
