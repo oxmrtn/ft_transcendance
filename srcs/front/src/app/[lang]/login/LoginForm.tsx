@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Divider from '../../../components/Divider';
 import Button from '../../../components/Button';
 import Input from '../../../components/Input';
+import Spinner from '../../../components/Spinner';
 
 export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
   if (!dict)
@@ -46,7 +46,7 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
   return (
     <form onSubmit={handleLogin} className="w-md relative flex flex-col items-center gap-4 py-12 px-8">
       <div className="grid-gradient"></div>
-      <img className="sm:hidden h-12 opacity-[.5] mix-blend-overlay" src="/logo.png" />
+      <img className="sm:hidden h-12 opacity-[.1]" src="/logo.png" />
       <h1 className="text-xl font-semibold">VersuS Code</h1>
       <Divider text={dict.login.dividerText} />
       <div className="w-full flex flex-col gap-2">
@@ -72,7 +72,8 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
           <p className="text-sm text-red-400">{error}</p>
         )}
         <Button disabled={isLoading} fullWidth={true} type="submit" style="primary">
-          {isLoading ? "Connexion ..." : dict.login.loginButton}
+          {isLoading ? "Connexion" : dict.login.loginButton}
+          {isLoading && <Spinner />}
         </Button>
       </div>
       <Divider />
