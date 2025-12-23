@@ -11,5 +11,8 @@
     "noAccountText": "Pas de compte ?",
     "registerButton": "S'inscrire",
     "wrongCredentialsError": "Adresse e-mail ou mot de passe incorrect"
+  },
+  "footer": {
+    "languageSelector": "Selectionnez une langue"
   }
 }

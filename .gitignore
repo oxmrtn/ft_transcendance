@@ -1,4 +1,4 @@
 .vscode
 docker/.env
-srcs/backend/dist
+srcs/backend/node_modules
 srcs/front/node_modules

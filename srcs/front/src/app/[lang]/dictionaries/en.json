@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "VersuS Code",
-    "description": "FR desc"
+    "description": "EN desc"
   },
   "login": {
     "dividerText": "Login",
@@ -11,5 +11,8 @@
     "noAccountText": "No account ?",
     "registerButton": "Register",
     "wrongCredentialsError": "E-mail or password incorrect"
+  },
+  "footer": {
+    "languageSelector": "Select a language"
   }
 }

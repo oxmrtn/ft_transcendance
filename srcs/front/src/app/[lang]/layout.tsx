@@ -3,8 +3,8 @@ import '../globals.css';
 import type { PageProps, Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { Locale } from './dictionaries';
-import { GeistSans } from 'geist/font/sans';
 import { hasLocale, getDictionary } from './dictionaries';
+import { GeistSans } from 'geist/font/sans';
 import Footer from '../../components/Footer';
 
 export async function getMetadata({ params }: PageProps): Promise<Metadata> {
@@ -19,18 +19,23 @@ export async function getMetadata({ params }: PageProps): Promise<Metadata> {
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-  params: { lang },
+  params,
 }: {
   children: React.ReactNode
-  params: { lang: Locale }
+  params: Promise<{ lang: Locale }>
 }) {
+  const { lang } = await params;
+  if (!hasLocale(lang))
+    notFound();
+  const dict = await getDictionary(lang);
+
   return (
     <html lang={lang}>
       <body className={GeistSans.className}>
         <main>{children}</main>
-        <Footer />
+        <Footer dictionary={dict} />
       </body>
     </html>
   );

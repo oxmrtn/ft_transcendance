@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { hasLocale, getDictionary } from './dictionaries';
  
-export default async function Page({ params }: PageProps<'/[lang]'>) {
+export default async function Page({ params }: PageProps) {
   const { lang } = await params;
   if (!hasLocale(lang))
     notFound();
