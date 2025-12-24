@@ -1,10 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 
-@Injectable
+@Injectable()
 export class AuthService 
 {
     private readonly jwt_secret: string;
@@ -12,7 +12,7 @@ export class AuthService
         private prisma: PrismaService,
         private configService: ConfigService,
     ){
-        this.jwt_secret = this.configService().get<string>('JWT_SECRET')
+        this.jwt_secret = this.configService.get<string>('JWT_SECRET')
         if (!this.jwt_secret) {
             throw new Error('JWT_SECRET is not defined in the environment variables.');
     }
@@ -32,15 +32,18 @@ export class AuthService
     async register(email : string, password : string, username : string) : Promise<{token: string}>
     {
         const hashedpwd = await this.hashPassword(password);
+        try {
         const user = await this.prisma.user.create({
             data: {email, hashedPwd : hashedpwd, username},
         });
-
         const token = await this.generateToken(user.id);
-
         return { token };
+    } catch (error)
+        {
+            // TO DO --- COMMENT GERER PROPREMENT ? 
+            throw new ConflictException("User already exist in database !");
+        }
     }
-
     async login(email : string, password : string) : Promise<{token: string}>
     {
         const user = await this.prisma.user.findUnique({ where : { email }});
