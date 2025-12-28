@@ -10,9 +10,22 @@
     "loginButton": "Se connecter",
     "noAccountText": "Pas de compte ?",
     "registerButton": "S'inscrire",
-    "wrongCredentialsError": "Adresse e-mail ou mot de passe incorrect"
+    "wrongCredentialsError": "L'e-mail ou le mot de passe saisi est incorrect"
+  },
+  "register": {
+    "dividerText": "S'inscrire",
+    "avatarUploadTitle": "Ajouter une image de profil",
+    "avatarUploadText": "L'image doit être au format JPEG ou PNG et ne doit pas dépasser 10 Mo.",
+    "usernamePlaceholder": "Nom d'utilisateur",
+    "emailPlaceholder": "E-mail",
+    "passwordPlaceholder": "Mot de passe",
+    "registerButton": "S'inscrire",
+    "avatarSizeError": "Le fichier est trop volumineux",
+    "unexpectedError": "Une erreur inattendue s'est produite"
   },
   "footer": {
-    "languageSelector": "Selectionnez une langue"
+    "languageSelector": "Selectionnez une langue",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfService": "Conditions d'utilisation"
   }
 }

@@ -10,9 +10,22 @@
     "loginButton": "Login",
     "noAccountText": "No account ?",
     "registerButton": "Register",
-    "wrongCredentialsError": "E-mail or password incorrect"
+    "wrongCredentialsError": "Invalid credentials"
+  },
+  "register": {
+    "dividerText": "Register",
+    "avatarUploadTitle": "Add a profile picture",
+    "avatarUploadText": "The image must be in JPEG or PNG format and must not exceed 10 MB.",
+    "usernamePlaceholder": "Username",
+    "emailPlaceholder": "E-mail",
+    "passwordPlaceholder": "Password",
+    "registerButton": "Register",
+    "avatarSizeError": "File is too large",
+    "unexpectedError": "An unexpected error occurred"
   },
   "footer": {
-    "languageSelector": "Select a language"
+    "languageSelector": "Select a language",
+    "privacyPolicy": "Privacy policy",
+    "termsOfService": "Terms of service"
   }
 }
