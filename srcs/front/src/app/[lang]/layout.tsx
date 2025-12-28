@@ -16,6 +16,10 @@ export async function getMetadata({ params }: PageProps): Promise<Metadata> {
   return {
     title: dict.metadata.title,
     description: dict.metadata.description,
+    viewport: {
+      width: 'device-width',
+      initialScale: 1
+    }
   }
 }
 

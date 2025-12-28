@@ -4,7 +4,7 @@ import { useState, FormEvent } from 'react';
 import Link from 'next/link';
 import Divider from '../../../components/Divider';
 import Button from '../../../components/Button';
-import Input from '../../../components/Input';
+import { TextInput } from '../../../components/Input';
 import Spinner from '../../../components/Spinner';
 
 export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
@@ -30,12 +30,12 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
           body: JSON.stringify({ email, password }),
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || dict.login.wrongCredentialsError);
+          throw new Error(dict.login.wrongCredentialsError);
         }
 
-        const data = await response.json();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -46,22 +46,24 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
   return (
     <form onSubmit={handleLogin} className="w-md relative flex flex-col items-center gap-4 py-12 px-8">
       <div className="grid-gradient"></div>
-      <img className="sm:hidden h-12 opacity-[.1]" src="/logo.png" />
+      <img className="h-12 opacity-[.1] md:hidden" src="/logo.png" />
       <h1 className="text-xl font-semibold">VersuS Code</h1>
       <Divider text={dict.login.dividerText} />
       <div className="w-full flex flex-col gap-2">
-        <Input
+        <TextInput
           disabled={isLoading}
+          required={true}
           placeholder={dict.login.emailPlaceholder}
-          name="email"
+          id="email-input"
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
-        <Input
+        <TextInput
           disabled={isLoading}
+          required={true}
           placeholder={dict.login.passwordPlaceholder}
-          name="password"
+          id="password-input"
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
@@ -79,7 +81,7 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
       <Divider />
       <div className="flex gap-1">
         <p className="text-sub-text">{dict.login.noAccountText}</p>
-        <Link href="#" className="primary-link">{dict.login.registerButton}</Link>
+        <Link href="register" className="primary-link">{dict.login.registerButton}</Link>
       </div>
     </form>
   );

@@ -22,15 +22,16 @@ export default function LanguageSelector({ dictionary: dict }: { dictionary: any
     const pathname = usePathname();
     const router = useRouter();
 
-    const onSelectChange = (newLang: string) => {
+    const handleLanguageChange = (newLang: string) => {
         const newPath = pathname.replace(`/${lang}`, `/${newLang}`);
         router.push(newPath);
     };
 
     return (
-        <Select onValueChange={onSelectChange} defaultValue={lang as string}>
-        <SelectTrigger className="bg-modal-bg border border-white/10 w-[164px]">
-            <SelectValue placeholder={dict.footer.languageSelector} />
+        <Select onValueChange={handleLanguageChange} defaultValue={lang as string}>
+        <SelectTrigger className="bg-modal-bg border border-white/10 w-[164px] transition-colors duration-200 cursor-pointer
+        hover:bg-white/5">
+            <SelectValue placeholder="" />
         </SelectTrigger>
         <SelectContent className="bg-modal-bg backdrop-blur-md border border-white/10">
             <SelectGroup>
