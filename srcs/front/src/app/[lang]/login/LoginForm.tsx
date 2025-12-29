@@ -22,7 +22,7 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
     event.preventDefault();
 
     try {
-      const response = await fetch("https://localhost:3333/auth/login", {
+      const response = await fetch("http://localhost:3333/auth/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
