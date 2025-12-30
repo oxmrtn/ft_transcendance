@@ -4,18 +4,20 @@ services:
     container_name: db
     restart: always
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password_dev
-      POSTGRES_DB: coding_game_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PWD}
+      POSTGRES_DB: ${DB}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d coding_game_db"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - transcendence
 
   backend:
     build:
@@ -24,13 +26,11 @@ services:
     container_name: backend
     restart: always
     environment:
-      DATABASE_URL: postgresql://user:password_dev@db:5432/coding_game_db
+      DATABASE_URL: ${DB_URL}
     ports:
       - "3333:3333"
     volumes:
-      - ../srcs/backend/src:/app/src
-      - ../srcs/backend/package.json:/app/package.json
-      - ../srcs/backend/tsconfig.json:/app/tsconfig.json
+      - ../srcs/backend:/app
     depends_on:
       db:
         condition: service_healthy
@@ -42,31 +42,21 @@ services:
     build:
       context: ..
       dockerfile: docker/front/Dockerfile
-    
     ports:
       - "3000:3000"
-    
     volumes:
-      - ../srcs/front/src:/app/src
-      - ../srcs/front/public:/app/public
-      - front_node_modules:/app/node_modules
+      - ../srcs/front:/app
       - front_next:/app/.next
-
     environment:
       - NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
-
     networks:
       - transcendence
 
-
-
 volumes:
   postgres_data:
-  front_node_modules:
   front_next:
-
 networks:
   transcendence:
     driver: bridge
