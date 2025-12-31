@@ -1,5 +1,11 @@
 srcs/backend/dist
-srcs/front/node_modules
 srcs/backend/node_modules
+
 srcs/front/.next
+srcs/front/node_modules
+srcs/front/next-env.d.ts
+srcs/front/package-lock.json
+srcs/front/tsconfig.json
+
+.vscode
 .DS_Store
