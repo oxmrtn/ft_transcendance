@@ -2,7 +2,7 @@
 
 :root {
     --primary: #d46e2e;
-    --modal-background: rgba(19, 28, 39, .4);
+    --modal-background: rgba(0, 0, 0, .3);
     --sub-text: rgba(255, 255, 255, .7);
     --muted-text: rgba(255, 255, 255, .3);
 }
@@ -14,18 +14,25 @@
     --color-modal-bg: var(--modal-background);
 
     --grid-gradient-tile-size: 30px;
-    --grid-gradient-grid-opacity: 0.2;
+    --grid-gradient-grid-opacity: 0.3;
+
+    --font-bebas: var(--font-bebas);
+    --mono: var(--font-geist-mono);
 }
 
 @layer components {
+    h1 {
+        @apply font-bebas text-4xl;
+    }
+
     html {
         @apply h-screen w-screen scroll-smooth overflow-hidden;
     }
 
     body {
-        @apply text-white flex flex-col h-screen w-screen;
+        @apply flex text-white flex-col h-screen w-screen;
         background:
-            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='.06'/%3E%3C/svg%3E"),
+            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='.15'/%3E%3C/svg%3E"),
             radial-gradient(42.19% 75% at 64.58% 0%, rgba(0, 140, 255, 0.2) 0%, rgba(0, 170, 255, 0) 100%),
             radial-gradient(36.46% 60.6% at 24.72% 62.22%, rgba(0, 140, 255, 0.2) 0%, rgba(0, 170, 255, 0) 100%),
             radial-gradient(46.46% 74.43% at 79.66% 100%, rgba(0, 140, 255, 0.25) 0%, rgba(0, 132, 255, 0) 100%),
@@ -33,20 +40,11 @@
     }
 
     main {
-        @apply flex-1 h-full w-full flex items-center justify-center p-4;
-    }
-
-    .gradient-bg {
-        background:
-            radial-gradient(62.46% 62.6% at 74.72% 42.22%, rgba(0, 162, 255, 0.12) 0%, rgba(0, 170, 255, 0) 100%),
-            radial-gradient(62.19% 31% at 25.58% -12%, rgba(255, 255, 255, 0.06) 0%, rgba(0, 170, 255, 0) 100%),
-            radial-gradient(43.46% 54.6% at -8.72% 78.22%, rgba(255, 255, 255, 0.06) 0%, rgba(0, 170, 255, 0) 100%),
-            radial-gradient(52.46% 17.43% at 100% 102%, rgba(255, 255, 255, 0.06) 0%, rgba(0, 170, 255, 0) 100%),
-            #000d20;
+        @apply flex h-full w-full items-center justify-center p-4;
     }
 
     .grid-gradient {
-        @apply absolute pointer-events-none top-0 right-0 h-full w-full opacity-[.15];
+        @apply absolute pointer-events-none top-0 right-0 h-full w-full opacity-[.2];
         background-image:
             repeating-linear-gradient(to right, rgba(255, 255, 255, var(--grid-gradient-grid-opacity)) 0, rgba(255, 255, 255, var(--grid-gradient-grid-opacity)) 1px, transparent 1px, transparent var(--grid-gradient-tile-size)),
             repeating-linear-gradient(to bottom, rgba(255, 255, 255, var(--grid-gradient-grid-opacity)) 0, rgba(255, 255, 255, var(--grid-gradient-grid-opacity)) 1px, transparent 1px, transparent var(--grid-gradient-tile-size)),
@@ -54,6 +52,11 @@
         background-position: 28px 0px;
         -webkit-mask-image: radial-gradient(ellipse 100% 55% at 100% 0%, black 0%, transparent 100%);
         mask-image: radial-gradient(ellipse 100% 55% at 100% 0%, black 0%, transparent 100%);
+    }
+
+    .login-card-gradient {
+        background:
+            linear-gradient(to right, #242c3a, #181d27);
     }
 
     .primary-link {

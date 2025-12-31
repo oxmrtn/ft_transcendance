@@ -84,8 +84,8 @@ export default function RegisterForm({ dictionary: dict }: { dictionary: any }) 
       <Link href="login" className="absolute left-8">
         <ArrowLeft />
       </Link>
-      <img className="h-12 opacity-[.1] md:hidden" src="/logo.png" />
-      <h1 className="text-xl font-semibold">VersuS Code</h1>
+      <img className="h-10 opacity-[.1] md:hidden" src="/logo.png" />
+      <h1>VersuS Code</h1>
       <Divider text={dict.register.dividerText} />
       <div className="flex items-center gap-4">
         <FileInput

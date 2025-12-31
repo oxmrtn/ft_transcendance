@@ -29,11 +29,11 @@ export default function LanguageSelector({ dictionary: dict }: { dictionary: any
 
     return (
         <Select onValueChange={handleLanguageChange} defaultValue={lang as string}>
-        <SelectTrigger className="bg-modal-bg border border-white/10 w-[164px] transition-colors duration-200 cursor-pointer
-        hover:bg-white/5">
+        <SelectTrigger className="bg-white/5 border border-white/10 w-[164px] transition-colors duration-200 cursor-pointer
+        hover:bg-white/10">
             <SelectValue placeholder="" />
         </SelectTrigger>
-        <SelectContent className="bg-modal-bg backdrop-blur-md border border-white/10">
+        <SelectContent className="bg-white/5 backdrop-blur-sm border border-white/10">
             <SelectGroup>
             <SelectLabel>{dict.footer.languageSelector}</SelectLabel>
             <SelectItem value="en">English</SelectItem>

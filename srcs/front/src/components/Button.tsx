@@ -20,7 +20,7 @@ export default function Button({
   if (!children)
     throw new Error("Missing children prop");
 
-  const baseStyles = "flex items-center justify-center gap-2 py-2 px-4 rounded-md text-white font-bold border border-px border-white/10 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-default)";
+  const baseStyles = "flex items-center justify-center gap-2 py-2 px-4 rounded-md text-white font-bold border border-px border-white/10 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-default uppercase font-mono";
   const widthStyles = fullWidth ? "w-full text-center" : "";
   const colorStyles = style === "primary"
     ? "bg-primary shadow-[0_0_20px] shadow-primary/70 hover:bg-primary/80 disabled:hover:bg-primary"
