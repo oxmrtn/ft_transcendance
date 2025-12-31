@@ -46,7 +46,6 @@ services:
       - "3000:3000"
     volumes:
       - ../srcs/front:/app
-      - front_next:/app/.next
     environment:
       - NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}
@@ -56,7 +55,7 @@ services:
 
 volumes:
   postgres_data:
-  front_next:
+
 networks:
   transcendence:
     driver: bridge
