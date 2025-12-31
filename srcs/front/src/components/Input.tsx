@@ -47,7 +47,7 @@ function TextInput({
         <input
           disabled={disabled}
           required={required}
-          type={isHidden && type === "password" ? "password" : "text"}
+          type={type === "password" ? (isHidden ? "password" : "text") : type}
           name={`${id}-name`}
           id={id}
           placeholder={placeholder}

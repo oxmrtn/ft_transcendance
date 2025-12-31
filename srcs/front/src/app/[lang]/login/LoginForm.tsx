@@ -21,16 +21,19 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
     setError(null);
     event.preventDefault();
 
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('password', password);
+
     try {
-      const response = await fetch("https://localhost:3333/auth/login", {
+      const response = await fetch("http://localhost:3333/auth/login", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
+          body: formData,
         });
 
         const data = await response.json();
+
+        console.log(data);
 
         if (!response.ok) {
           throw new Error(dict.login.wrongCredentialsError);
