@@ -60,12 +60,14 @@ export default function RegisterForm({ dictionary: dict }: { dictionary: any }) 
     }
 
     try {
-      const response = await fetch("https://localhost:3333/auth/register", {
+      const response = await fetch("http://localhost:3333/auth/register", {
           method: "POST",
           body: formData,
         });
 
         const data = await response.json();
+
+        console.log(data);
 
         if (!response.ok) {
           throw new Error(dict.register.unexpectedError);
