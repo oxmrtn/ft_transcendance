@@ -48,6 +48,7 @@ function TextInput({
           disabled={disabled}
           required={required}
           type={isHidden && type === "password" ? "password" : "text"}
+          name={`${id}-name`}
           id={id}
           placeholder={placeholder}
           value={value}
@@ -103,6 +104,7 @@ function FileInput({
         disabled={disabled}
         type="file"
         id={id}
+        name={`${id}-name`}
         value={value}
         onChange={onChange}
         accept="image/png, image/jpeg"

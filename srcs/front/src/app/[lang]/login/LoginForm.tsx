@@ -46,8 +46,8 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
   return (
     <form onSubmit={handleLogin} className="w-md relative flex flex-col items-center gap-4 py-12 px-8">
       <div className="grid-gradient"></div>
-      <img className="h-12 opacity-[.1] md:hidden" src="/logo.png" />
-      <h1 className="text-xl font-semibold">VersuS Code</h1>
+      <img className="h-10 opacity-[.1] md:hidden" src="/logo.png" />
+      <h1 >VersuS Code</h1>
       <Divider text={dict.login.dividerText} />
       <div className="w-full flex flex-col gap-2">
         <TextInput
