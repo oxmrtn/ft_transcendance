@@ -9,10 +9,12 @@ import Divider from '../../../components/Divider';
 import Button from '../../../components/Button';
 import { TextInput } from '../../../components/Input';
 import Spinner from '../../../components/Spinner';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
-export default function RegisterForm({ dictionary: dict }: { dictionary: any }) {
-  if (!dict)
-    throw new Error("Missing dictionnary");
+export default function RegisterForm() {
+  const { dictionary } = useLanguage();
+  if (!dictionary)
+    return null;
 
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,14 +42,14 @@ export default function RegisterForm({ dictionary: dict }: { dictionary: any }) 
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || dict.register.unexpectedError);
+          throw new Error(data.message || dictionary.register.unexpectedError);
         }
 
         if (data.token) {
           login(data.token);
           router.push('/');
         } else {
-          throw new Error(dict.register.unexpectedError);
+          throw new Error(dictionary.register.unexpectedError);
         }
 
     } catch (err: any) {
@@ -67,12 +69,12 @@ export default function RegisterForm({ dictionary: dict }: { dictionary: any }) 
         </Link>
         <h1>VersuS Code</h1>
       </div>
-      <Divider text={dict.register.dividerText} />
+      <Divider text={dictionary.register.dividerText} />
       <div className="w-full flex flex-col gap-2">
         <TextInput
           disabled={isLoading}
           required={true}
-          placeholder={dict.register.usernamePlaceholder}
+          placeholder={dictionary.register.usernamePlaceholder}
           id="username-input"
           type="text"
           value={username}
@@ -81,7 +83,7 @@ export default function RegisterForm({ dictionary: dict }: { dictionary: any }) 
         <TextInput
           disabled={isLoading}
           required={true}
-          placeholder={dict.register.emailPlaceholder}
+          placeholder={dictionary.register.emailPlaceholder}
           id="email-input"
           type="email"
           value={email}
@@ -90,7 +92,7 @@ export default function RegisterForm({ dictionary: dict }: { dictionary: any }) 
         <TextInput
           disabled={isLoading}
           required={true}
-          placeholder={dict.register.passwordPlaceholder}
+          placeholder={dictionary.register.passwordPlaceholder}
           id="password-input"
           type="password"
           value={password}
@@ -102,7 +104,7 @@ export default function RegisterForm({ dictionary: dict }: { dictionary: any }) 
           <p className="text-sm text-red-400">{error}</p>
         )}
         <Button disabled={isLoading} fullWidth={true} type="submit" style="primary">
-          {isLoading ? dict.register.loadingButton : dict.register.registerButton}
+          {isLoading ? dictionary.register.loadingButton : dictionary.register.registerButton}
           {isLoading && <Spinner />}
         </Button>
       </div>

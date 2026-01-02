@@ -1,18 +1,10 @@
-import type { PageProps } from 'next';
-import { hasLocale, getDictionary } from '../dictionaries';
-import { notFound } from 'next/navigation';
 import RegisterForm from './RegisterForm';
 import LoginWrapper from '../../../components/LoginWrapper';
 
-export default async function LoginPage({ params }: PageProps) {
-  const { lang } = await params;
-  if (!hasLocale(lang))
-    notFound();
-  const dict = await getDictionary(lang);
-  
+export default function RegisterPage() {
   return (
     <LoginWrapper >
-      <RegisterForm dictionary={dict} />
+      <RegisterForm />
     </LoginWrapper >
   );
 }

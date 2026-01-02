@@ -3,6 +3,9 @@
     "title": "VersuS Code",
     "description": "FR desc"
   },
+  "home": {
+    "welcome": "Bienvenue !"
+  },
   "login": {
     "dividerText": "Se connecter",
     "emailPlaceholder": "E-mail",
