@@ -8,8 +8,9 @@
     "emailPlaceholder": "E-mail",
     "passwordPlaceholder": "Mot de passe",
     "loginButton": "Se connecter",
+    "loadingButton": "Connexion ...",
     "noAccountText": "Pas de compte ?",
-    "registerButton": "S'inscrire",
+    "registerLink": "S'inscrire",
     "wrongCredentialsError": "L'e-mail ou le mot de passe saisi est incorrect"
   },
   "register": {
@@ -20,6 +21,7 @@
     "emailPlaceholder": "E-mail",
     "passwordPlaceholder": "Mot de passe",
     "registerButton": "S'inscrire",
+    "loadingButton": "Chargement ...",
     "avatarSizeError": "Le fichier est trop volumineux",
     "unexpectedError": "Une erreur inattendue s'est produite"
   },

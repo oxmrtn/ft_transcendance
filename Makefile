@@ -1,6 +1,6 @@
 DOCKER_COMPOSE = docker compose -f docker/docker-compose.yml
 
-.PHONY: all build up down ps logs clean re front-modules front-install front-restart
+.PHONY: all build up down ps logs clean re front-install front-restart
 
 all: up
 

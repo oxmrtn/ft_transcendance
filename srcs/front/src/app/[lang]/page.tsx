@@ -1,15 +1,14 @@
-import type { PageProps } from 'next';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { hasLocale, getDictionary } from './dictionaries';
- 
-export default async function Page({ params }: PageProps) {
-  const { lang } = await params;
-  if (!hasLocale(lang))
-    notFound();
-  const dict = await getDictionary(lang);
+"use client";
 
+import React from 'react';
+import AuthGuard from '../../components/AuthGuard';
+
+export default function Page() {
   return (
-    <Link href="/login" className="primary-link">{dict.login.loginButton}</Link>
+    <AuthGuard>
+      <div>
+        <h1>Welcome!</h1>
+      </div>
+    </AuthGuard>
   );
 }

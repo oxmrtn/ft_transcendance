@@ -8,8 +8,9 @@
     "emailPlaceholder": "E-mail",
     "passwordPlaceholder": "Password",
     "loginButton": "Login",
+    "loadingButton": "Loading ...",
     "noAccountText": "No account ?",
-    "registerButton": "Register",
+    "registerLink": "Register",
     "wrongCredentialsError": "Invalid credentials"
   },
   "register": {
@@ -20,6 +21,7 @@
     "emailPlaceholder": "E-mail",
     "passwordPlaceholder": "Password",
     "registerButton": "Register",
+    "loadingButton": "Loading ...",
     "avatarSizeError": "File is too large",
     "unexpectedError": "An unexpected error occurred"
   },
