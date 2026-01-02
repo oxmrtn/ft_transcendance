@@ -7,6 +7,7 @@ import { hasLocale, getDictionary } from './dictionaries';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import { Bebas_Neue } from 'next/font/google';
+import { AuthProvider } from '../../contexts/AuthContext';
 import Footer from '../../components/Footer';
 
 const bebas = Bebas_Neue({
@@ -46,8 +47,10 @@ export default async function RootLayout({
   return (
     <html lang={lang}>
       <body className={`${GeistSans.className} ${GeistMono.variable} ${bebas.variable}`}>
-        <main>{children}</main>
-        <Footer dictionary={dict} />
+        <AuthProvider>
+          <main>{children}</main>
+          <Footer dictionary={dict} />
+        </AuthProvider>
       </body>
     </html>
   );

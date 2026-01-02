@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Divider from '../../../components/Divider';
 import Button from '../../../components/Button';
@@ -16,26 +18,33 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { login } = useAuth();
+  const router = useRouter();
+
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     setLoading(true);
     setError(null);
     event.preventDefault();
 
-    const formData = new FormData();
-    formData.append('email', email);
-    formData.append('password', password);
-
     try {
       const response = await fetch("http://localhost:3333/auth/login", {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
         });
 
         const data = await response.json();
 
-        console.log(data);
-
         if (!response.ok) {
+          throw new Error(data.message || dict.login.wrongCredentialsError);
+        }
+
+        if (data.token) {
+          login(data.token);
+          router.push('/');
+        } else {
           throw new Error(dict.login.wrongCredentialsError);
         }
 
@@ -47,7 +56,7 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
   }
 
   return (
-    <form onSubmit={handleLogin} className="w-md relative flex flex-col items-center gap-4 py-12 px-8">
+    <form onSubmit={handleLogin} className="w-md flex flex-col justify-center relative items-center gap-4 px-8">
       <div className="grid-gradient"></div>
       <img className="h-10 opacity-[.1] md:hidden" src="/logo.png" />
       <h1 >VersuS Code</h1>
@@ -77,14 +86,14 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
           <p className="text-sm text-red-400">{error}</p>
         )}
         <Button disabled={isLoading} fullWidth={true} type="submit" style="primary">
-          {isLoading ? "Connexion" : dict.login.loginButton}
+          {isLoading ? dict.register.loadingButton : dict.login.loginButton}
           {isLoading && <Spinner />}
         </Button>
       </div>
       <Divider />
       <div className="flex gap-1">
         <p className="text-sub-text">{dict.login.noAccountText}</p>
-        <Link href="register" className="primary-link">{dict.login.registerButton}</Link>
+        <Link href="register" className="primary-link">{dict.login.registerLink}</Link>
       </div>
     </form>
   );

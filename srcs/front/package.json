@@ -18,7 +18,8 @@
     "negotiator": "^1.0.0",
     "tailwind-merge": "^3.4.0",
     "clsx": "^2.1.1",
-    "@radix-ui/react-select": "^2.2.6"
+    "@radix-ui/react-select": "^2.2.6",
+    "jwt-decode": "^4.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

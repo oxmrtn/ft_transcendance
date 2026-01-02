@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, FormEvent } from 'react';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Divider from '../../../components/Divider';
 import Button from '../../../components/Button';
-import { TextInput, FileInput } from '../../../components/Input';
+import { TextInput } from '../../../components/Input';
 import Spinner from '../../../components/Spinner';
 
 export default function RegisterForm({ dictionary: dict }: { dictionary: any }) {
@@ -14,62 +16,37 @@ export default function RegisterForm({ dictionary: dict }: { dictionary: any }) 
 
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [fileError, setFileError] = useState<string | null>(null);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [avatar, setAvatar] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (avatarPreview) {
-        URL.revokeObjectURL(avatarPreview);
-      }
-    };
-  }, [avatarPreview]);
-
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFileError(null);
-    const file = e.target.files?.[0];
-
-    if (file) {
-      const MAX_SIZE_MB = 10;
-      const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
-
-      if (file.size > MAX_SIZE_BYTES)
-        setFileError(`${dict.register.avatarSizeError} (max ${MAX_SIZE_MB} Mo).`);
-      else {
-        setAvatar(file);
-        setAvatarPreview(URL.createObjectURL(file));
-      }
-    }
-  };
+  
+  const { login } = useAuth();
+  const router = useRouter();
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     setLoading(true);
     setError(null);
     event.preventDefault();
 
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('email', email);
-    formData.append('password', password);
-    if (avatar) {
-      formData.append('avatar', avatar);
-    }
-
     try {
       const response = await fetch("http://localhost:3333/auth/register", {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, email, password }),
         });
 
         const data = await response.json();
 
-        console.log(data);
-
         if (!response.ok) {
+          throw new Error(data.message || dict.register.unexpectedError);
+        }
+
+        if (data.token) {
+          login(data.token);
+          router.push('/');
+        } else {
           throw new Error(dict.register.unexpectedError);
         }
 
@@ -81,29 +58,16 @@ export default function RegisterForm({ dictionary: dict }: { dictionary: any }) 
   }
 
   return (
-    <form onSubmit={handleRegister} className="w-md relative flex flex-col items-center gap-4 py-12 px-8">
+    <form onSubmit={handleRegister} className="w-md flex flex-col justify-center relative items-center gap-4 px-8">
       <div className="grid-gradient"></div>
-      <Link href="login" className="absolute left-8">
-        <ArrowLeft />
-      </Link>
       <img className="h-10 opacity-[.1] md:hidden" src="/logo.png" />
-      <h1>VersuS Code</h1>
-      <Divider text={dict.register.dividerText} />
-      <div className="flex items-center gap-4">
-        <FileInput
-          disabled={isLoading}
-          id="avatar-input"
-          onChange={handleAvatarChange}
-          previewUrl={avatarPreview}
-        />
-        <div className="flex flex-1 flex-col gap-1 justify-center">
-          <p className="text-sub-text">{dict.register.avatarUploadTitle}</p>
-          <p className="text-xs text-muted-text">{dict.register.avatarUploadText}</p>
-          {fileError && (
-            <p className="text-sm text-red-400">{fileError}</p>
-          )}
-        </div>
+      <div className="w-full relative flex items-center justify-center">
+        <Link href="login" className="absolute left-0">
+          <ArrowLeft />
+        </Link>
+        <h1>VersuS Code</h1>
       </div>
+      <Divider text={dict.register.dividerText} />
       <div className="w-full flex flex-col gap-2">
         <TextInput
           disabled={isLoading}
@@ -138,7 +102,7 @@ export default function RegisterForm({ dictionary: dict }: { dictionary: any }) 
           <p className="text-sm text-red-400">{error}</p>
         )}
         <Button disabled={isLoading} fullWidth={true} type="submit" style="primary">
-          {isLoading ? "Connexion" : dict.register.registerButton}
+          {isLoading ? dict.register.loadingButton : dict.register.registerButton}
           {isLoading && <Spinner />}
         </Button>
       </div>
