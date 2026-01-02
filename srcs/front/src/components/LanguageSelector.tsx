@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useLanguage } from "../contexts/LanguageContext";
 
 import {
   Select,
@@ -13,29 +13,20 @@ import {
   SelectValue,
 } from "./Select"
 
-export default function LanguageSelector({ dictionary: dict }: { dictionary: any }) {
-    if (!dict)
-        throw new Error("Missing dictionnary");
-
-    const params = useParams();
-    const lang = params.lang;
-    const pathname = usePathname();
-    const router = useRouter();
-
-    const handleLanguageChange = (newLang: string) => {
-        const newPath = pathname.replace(`/${lang}`, `/${newLang}`);
-        router.push(newPath);
-    };
+export default function LanguageSelector() {
+    const { lang, dictionary, changeLanguage } = useLanguage();
+    if (!dictionary)
+        return null;
 
     return (
-        <Select onValueChange={handleLanguageChange} defaultValue={lang as string}>
+        <Select onValueChange={changeLanguage} defaultValue={lang}>
         <SelectTrigger className="bg-white/5 border border-white/10 w-[164px] transition-colors duration-200 cursor-pointer
         hover:bg-white/10">
             <SelectValue placeholder="" />
         </SelectTrigger>
         <SelectContent className="bg-white/5 backdrop-blur-sm border border-white/10">
             <SelectGroup>
-            <SelectLabel>{dict.footer.languageSelector}</SelectLabel>
+            <SelectLabel>{dictionary.footer.languageSelector}</SelectLabel>
             <SelectItem value="en">English</SelectItem>
             <SelectItem value="fr">Français</SelectItem>
             </SelectGroup>

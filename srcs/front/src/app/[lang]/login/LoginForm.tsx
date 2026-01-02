@@ -8,10 +8,12 @@ import Divider from '../../../components/Divider';
 import Button from '../../../components/Button';
 import { TextInput } from '../../../components/Input';
 import Spinner from '../../../components/Spinner';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
-export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
-  if (!dict)
-    throw new Error("Missing dictionnary");
+export default function LoginForm() {
+  const { dictionary } = useLanguage();
+  if (!dictionary)
+    return null;
 
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,14 +40,14 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || dict.login.wrongCredentialsError);
+          throw new Error(data.message || dictionary.login.wrongCredentialsError);
         }
 
         if (data.token) {
           login(data.token);
           router.push('/');
         } else {
-          throw new Error(dict.login.wrongCredentialsError);
+          throw new Error(dictionary.login.wrongCredentialsError);
         }
 
     } catch (err: any) {
@@ -60,12 +62,12 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
       <div className="grid-gradient"></div>
       <img className="h-10 opacity-[.1] md:hidden" src="/logo.png" />
       <h1 >VersuS Code</h1>
-      <Divider text={dict.login.dividerText} />
+      <Divider text={dictionary.login.dividerText} />
       <div className="w-full flex flex-col gap-2">
         <TextInput
           disabled={isLoading}
           required={true}
-          placeholder={dict.login.emailPlaceholder}
+          placeholder={dictionary.login.emailPlaceholder}
           id="email-input"
           type="email"
           value={email}
@@ -74,7 +76,7 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
         <TextInput
           disabled={isLoading}
           required={true}
-          placeholder={dict.login.passwordPlaceholder}
+          placeholder={dictionary.login.passwordPlaceholder}
           id="password-input"
           type="password"
           value={password}
@@ -86,14 +88,14 @@ export default function LoginForm({ dictionary: dict }: { dictionary: any }) {
           <p className="text-sm text-red-400">{error}</p>
         )}
         <Button disabled={isLoading} fullWidth={true} type="submit" style="primary">
-          {isLoading ? dict.register.loadingButton : dict.login.loginButton}
+          {isLoading ? dictionary.register.loadingButton : dictionary.login.loginButton}
           {isLoading && <Spinner />}
         </Button>
       </div>
       <Divider />
       <div className="flex gap-1">
-        <p className="text-sub-text">{dict.login.noAccountText}</p>
-        <Link href="register" className="primary-link">{dict.login.registerLink}</Link>
+        <p className="text-sub-text">{dictionary.login.noAccountText}</p>
+        <Link href="register" className="primary-link">{dictionary.login.registerLink}</Link>
       </div>
     </form>
   );

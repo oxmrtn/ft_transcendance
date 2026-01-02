@@ -1,6 +1,6 @@
 import '../globals.css';
 
-import type { PageProps, Metadata } from 'next';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { Locale } from './dictionaries';
 import { hasLocale, getDictionary } from './dictionaries';
@@ -8,6 +8,7 @@ import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import { Bebas_Neue } from 'next/font/google';
 import { AuthProvider } from '../../contexts/AuthContext';
+import { LanguageProvider } from '../../contexts/LanguageContext';
 import Footer from '../../components/Footer';
 
 const bebas = Bebas_Neue({
@@ -16,7 +17,11 @@ const bebas = Bebas_Neue({
   variable: '--font-bebas',
 });
 
-export async function getMetadata({ params }: PageProps): Promise<Metadata> {
+export async function getMetadata({
+  params,
+}: {
+  params: Promise<{ lang: Locale }>
+}): Promise<Metadata> {
   const { lang } = await params;
   if (!hasLocale(lang))
     notFound();
@@ -48,8 +53,10 @@ export default async function RootLayout({
     <html lang={lang}>
       <body className={`${GeistSans.className} ${GeistMono.variable} ${bebas.variable}`}>
         <AuthProvider>
-          <main>{children}</main>
-          <Footer dictionary={dict} />
+          <LanguageProvider initialLang={lang} initialDictionary={dict}>
+            <main>{children}</main>
+            <Footer />
+          </LanguageProvider>
         </AuthProvider>
       </body>
     </html>
