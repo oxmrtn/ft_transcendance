@@ -2,6 +2,7 @@
 
 :root {
     --primary: #d46e2e;
+    --destructive: #ff0000;
     --modal-background: rgba(0, 0, 0, .3);
     --sub-text: rgba(255, 255, 255, .7);
     --muted-text: rgba(255, 255, 255, .3);
@@ -9,6 +10,7 @@
 
 @theme {
     --color-primary: var(--primary);
+    --color-destructive: var(--destructive);
     --color-sub-text: var(--sub-text);
     --color-muted-text: var(--muted-text);
     --color-modal-bg: var(--modal-background);

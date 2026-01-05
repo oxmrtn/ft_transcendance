@@ -14,7 +14,7 @@
     "loadingButton": "Loading ...",
     "noAccountText": "No account ?",
     "registerLink": "Register",
-    "wrongCredentialsError": "Invalid credentials"
+    "unexpectedError": "An unexpected error occurred. Please try again."
   },
   "register": {
     "dividerText": "Register",
@@ -26,7 +26,7 @@
     "registerButton": "Register",
     "loadingButton": "Loading ...",
     "avatarSizeError": "File is too large",
-    "unexpectedError": "An unexpected error occurred"
+    "unexpectedError": "An unexpected error occurred. Please try again."
   },
   "footer": {
     "languageSelector": "Select a language",

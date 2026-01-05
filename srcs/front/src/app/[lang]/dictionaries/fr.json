@@ -14,7 +14,7 @@
     "loadingButton": "Connexion ...",
     "noAccountText": "Pas de compte ?",
     "registerLink": "S'inscrire",
-    "wrongCredentialsError": "L'e-mail ou le mot de passe saisi est incorrect"
+    "unexpectedError": "Une erreur inattendue est survenue. Veuillez ré-essayer."
   },
   "register": {
     "dividerText": "S'inscrire",
@@ -26,7 +26,7 @@
     "registerButton": "S'inscrire",
     "loadingButton": "Chargement ...",
     "avatarSizeError": "Le fichier est trop volumineux",
-    "unexpectedError": "Une erreur inattendue s'est produite"
+    "unexpectedError": "Une erreur inattendue est survenue. Veuillez ré-essayer."
   },
   "footer": {
     "languageSelector": "Selectionnez une langue",

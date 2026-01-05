@@ -40,14 +40,14 @@ export default function LoginForm() {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || dictionary.login.wrongCredentialsError);
+          throw new Error(data.message || dictionary.login.unexpectedError);
         }
 
         if (data.token) {
           login(data.token);
           router.push('/');
         } else {
-          throw new Error(dictionary.login.wrongCredentialsError);
+          throw new Error(dictionary.login.unexpectedError);
         }
 
     } catch (err: any) {
@@ -87,7 +87,7 @@ export default function LoginForm() {
         {error && (
           <p className="text-sm text-red-400">{error}</p>
         )}
-        <Button disabled={isLoading} fullWidth={true} type="submit" style="primary">
+        <Button disabled={isLoading} fullWidth={true} type="submit" variant="primary">
           {isLoading ? dictionary.register.loadingButton : dictionary.login.loginButton}
           {isLoading && <Spinner />}
         </Button>
