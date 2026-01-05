@@ -13,7 +13,7 @@ export class SocialController {
 
 	@Get('friends')
 	getFriends(@Req() req) {
-		return this.socialService.getFriends(1);
+		return this.socialService.getFriends(req.user.id);
 	}
 
 	@Post('request/:id')
@@ -27,7 +27,7 @@ export class SocialController {
 	}
 
 	@Patch('request/:id/reject')
-	reject(@Req() req, @Param('id', ParseIntPipe) friendId: number) {
+	 	reject(@Req() req, @Param('id', ParseIntPipe) friendId: number) {
 		return this.socialService.handleRequest(req.user.id, friendId, false);
 	}
 
