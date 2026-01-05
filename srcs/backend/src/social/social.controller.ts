@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Query, Req, Param, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Query, Req, Param, Patch, ParseIntPipe } from '@nestjs/common';
 import { SocialService } from './social.service';
 
 /* modifier req.user.id manuellement pout tester */
@@ -17,23 +17,23 @@ export class SocialController {
 	}
 
 	@Post('request/:id')
-	sendRequest(@Req() req, @Param('id') receiverId: string) {
-		return this.socialService.sendFriendRequest(req.user.id, +receiverId);
+	sendRequest(@Req() req, @Param('id', ParseIntPipe) receiverId: number) {
+		return this.socialService.sendFriendRequest(req.user.id, receiverId);
 	}
 
 	@Patch('request/:id/accept')
-	accept(@Req() req, @Param('id') friendId: string) {
-		return this.socialService.handleRequest(req.user.id, +friendId, true);
+	accept(@Req() req, @Param('id', ParseIntPipe) friendId: number) {
+		return this.socialService.handleRequest(req.user.id, friendId, true);
 	}
 
 	@Patch('request/:id/reject')
-	reject(@Req() req, @Param('id') friendId: string) {
-		return this.socialService.handleRequest(req.user.id, +friendId, false);
+	reject(@Req() req, @Param('id', ParseIntPipe) friendId: number) {
+		return this.socialService.handleRequest(req.user.id, friendId, false);
 	}
 
 	@Delete('friends/:id')
-	remove(@Req() req, @Param('id') friendId: string) {
-		return this.socialService.removeFriend(req.user.id, +friendId);
+	remove(@Req() req, @Param('id', ParseIntPipe) friendId: number) {
+		return this.socialService.removeFriend(req.user.id, friendId);
 	}
 }
 
