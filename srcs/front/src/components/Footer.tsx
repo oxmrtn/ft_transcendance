@@ -10,7 +10,7 @@ export default function Footer() {
     return null;
 
   return (
-    <div className="flex flex-col items-center gap-4 bg-modal-bg backdrop-blur-sm w-full border-t border-white/10 shadow-[0_0_30px] shadow-black/70 px-8 py-6
+    <div className="flex flex-col items-center gap-4 bg-modal-bg backdrop-blur-sm w-full border-t border-white/10 shadow-[0_0_30px] shadow-black/70 px-8 py-4
     md:flex-row md:justify-between md:gap-2">
       <LanguageSelector />
       <div className="gap-2 flex flex-col

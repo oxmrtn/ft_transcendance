@@ -103,7 +103,7 @@ export default function RegisterForm() {
         {error && (
           <p className="text-sm text-red-400">{error}</p>
         )}
-        <Button disabled={isLoading} fullWidth={true} type="submit" style="primary">
+        <Button disabled={isLoading} fullWidth={true} type="submit" variant="primary">
           {isLoading ? dictionary.register.loadingButton : dictionary.register.registerButton}
           {isLoading && <Spinner />}
         </Button>
