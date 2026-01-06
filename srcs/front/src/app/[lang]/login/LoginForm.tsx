@@ -11,6 +11,8 @@ import Spinner from '../../../components/Spinner';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function LoginForm() {
+  const router = useRouter();
+  const { login } = useAuth();
   const { dictionary } = useLanguage();
   if (!dictionary)
     return null;
@@ -19,9 +21,6 @@ export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const { login } = useAuth();
-  const router = useRouter();
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     setLoading(true);

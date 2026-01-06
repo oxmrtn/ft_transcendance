@@ -38,8 +38,10 @@ export default function Modal({ children }: { children: React.ReactNode }) {
     return null;
 
   return createPortal(
-    (<div>
-      {children}
+    (<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black/5 backdrop-blur-sm">
+      <div ref={modalRef}>
+        {children}
+      </div>
     </div>),
     document.body
   );

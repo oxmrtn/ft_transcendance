@@ -12,6 +12,8 @@ import Spinner from '../../../components/Spinner';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function RegisterForm() {
+  const router = useRouter();
+  const { login } = useAuth();
   const { dictionary } = useLanguage();
   if (!dictionary)
     return null;
@@ -21,9 +23,6 @@ export default function RegisterForm() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
-  const { login } = useAuth();
-  const router = useRouter();
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     setLoading(true);

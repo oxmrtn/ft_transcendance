@@ -12,8 +12,8 @@ export default function AuthGuard({
   supposelyAuth?: Boolean,
   children: React.ReactNode
 }) {
-  const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+  const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
     if (!isLoading) {
