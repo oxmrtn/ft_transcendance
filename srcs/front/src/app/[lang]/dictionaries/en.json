@@ -28,6 +28,13 @@
     "avatarSizeError": "File is too large",
     "unexpectedError": "An unexpected error occurred. Please try again."
   },
+    "header": {
+    "friendsTab": "friends",
+    "playTab": "play",
+    "historyTab": "history",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
   "footer": {
     "languageSelector": "Select a language",
     "privacyPolicy": "Privacy policy",

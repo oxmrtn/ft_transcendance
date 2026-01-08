@@ -28,6 +28,13 @@
     "avatarSizeError": "Le fichier est trop volumineux",
     "unexpectedError": "Une erreur inattendue est survenue. Veuillez ré-essayer."
   },
+  "header": {
+    "friendsTab": "amis",
+    "playTab": "jouer",
+    "historyTab": "historique",
+    "settings": "Paramètres",
+    "logout": "Se déconnecter"
+  },
   "footer": {
     "languageSelector": "Selectionnez une langue",
     "privacyPolicy": "Politique de confidentialité",
