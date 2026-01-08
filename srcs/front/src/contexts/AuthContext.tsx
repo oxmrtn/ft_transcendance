@@ -37,7 +37,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
     } catch (error) {
-      console.error("Failed to process token on initial load:", error);
       localStorage.removeItem('jwt');
     } finally {
       setIsLoading(false);

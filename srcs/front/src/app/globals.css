@@ -11,6 +11,7 @@
 
 @theme {
     --color-primary: var(--primary);
+    --color-primary-30: var(--primary-30);
     --color-destructive: var(--destructive);
     --color-sub-text: var(--sub-text);
     --color-muted-text: var(--muted-text);
@@ -43,7 +44,7 @@
     }
 
     main {
-        @apply flex h-full w-full items-center justify-center p-4;
+        @apply flex flex-1 w-full items-center justify-center p-4;
     }
 
     .grid-gradient {
@@ -60,11 +61,6 @@
     .login-card-gradient {
         background:
             linear-gradient(to right, #242c3a, #181d27);
-    }
-
-    .current-nav-gradient {
-        background:
-            linear-gradient(to top, var(--primary-30), transparent);
     }
 
     .primary-link {
