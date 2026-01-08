@@ -15,13 +15,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./dropdown-menu"
-import { truncateSync } from 'node:fs';
 
 export default function Header() {
   const { logout, username, isAuthenticated } = useAuth();
   const { dictionary } = useLanguage();
   const { openModal } = useModal();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showShadow, setShowShadow] = useState(true);
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      setShowShadow(false);
+    } else {
+      const timer = setTimeout(() => {
+        setShowShadow(true);
+      }, 320);
+      return () => clearTimeout(timer);
+    }
+  }, [isMenuOpen]);
 
   if (!isAuthenticated || !dictionary)
     return null;
@@ -30,7 +41,7 @@ export default function Header() {
     <div className={cn(
       "z-30 h-[64px] flex justify-between items-center gap-4 bg-modal-bg backdrop-blur-xl w-full px-8",
       "md:border-b md:border-white/10 md:shadow-[0_0_30px] md:shadow-black/70",
-      !isMenuOpen ? "shadow-[0_0_30px] shadow-black/70" : ""
+      showShadow && "shadow-[0_0_30px] shadow-black/70"
     )}>
       <Link href="/" className="md:z-auto z-50">
         <img className="h-6" src="/logo.png" />
