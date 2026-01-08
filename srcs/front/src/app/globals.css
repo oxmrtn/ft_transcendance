@@ -2,6 +2,7 @@
 
 :root {
     --primary: #d46e2e;
+    --primary-30: rgba(212, 110, 46, .3);
     --destructive: #ff0000;
     --modal-background: rgba(0, 0, 0, .3);
     --sub-text: rgba(255, 255, 255, .7);
@@ -59,6 +60,11 @@
     .login-card-gradient {
         background:
             linear-gradient(to right, #242c3a, #181d27);
+    }
+
+    .current-nav-gradient {
+        background:
+            linear-gradient(to top, var(--primary-30), transparent);
     }
 
     .primary-link {
