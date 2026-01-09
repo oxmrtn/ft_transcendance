@@ -24,19 +24,19 @@ export class SocialController
 	@Get('friends')
 	getFriends(@Req() req)
 	{
-		return this.socialService.getFriends(10);
+		return this.socialService.getFriends(req.user.id);
 	}
 
 	@Post('request/:id')
 	sendRequest(@Req() req, @Param() param: IdParamDto)
 	{
-		return this.socialService.sendFriendRequest(10, param.id);
+		return this.socialService.sendFriendRequest(req.user.id, param.id);
 	}
 
 	@Patch('request/:id/accept')
 	accept(@Req() req, @Param() param: IdParamDto)
 	{
-		return this.socialService.handleRequest(2, param.id, true);
+		return this.socialService.handleRequest(req.user.id, param.id, true);
 	}
 
 	@Patch('request/:id/reject')
@@ -48,7 +48,7 @@ export class SocialController
 	@Delete('friends/:id')
 	remove(@Req() req, @Param() param: IdParamDto)
 	{
-		return this.socialService.removeFriend(10, param.id);
+		return this.socialService.removeFriend(req.user.id, param.id);
 	}
 }
 
