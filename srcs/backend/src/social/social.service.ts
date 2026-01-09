@@ -1,41 +1,40 @@
-import { Injectable, BadRequestException, NotFoundException, ForbiddenException, ConflictException } from '@nestjs/common';
+import { Injectable,
+		BadRequestException, NotFoundException,
+		ForbiddenException, ConflictException
+	} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
 
 @Injectable()
-export class SocialService {
+export class SocialService
+{
 	constructor(private prisma: PrismaService) {}
 
-	async checkUser(userId: number) {
-
+	async checkUser(userId: number)
+	{
 		const res = await this.prisma.user.findUnique({
 			where: { id: userId },
 			select: { id: true },
 		});
 
-		if (!res) {
+		if (!res)
 			throw new NotFoundException(`User ${userId} not found`);
-		}
 	}
 
 
-	async searchUsers(query: string) {
-
-		if (!query || query.trim().length < 2) {
+	async searchUsers(query: string)
+	{
+		if (!query || query.length < 2)
 			return [];
-		}
-
 		return this.prisma.user.findMany({
-			where: {
-				username: { contains: query, mode: 'insensitive'},
-			},
-			select: {id: true, username: true, profilePictureUrl: true},
+			where: { username: { contains: query, mode: 'insensitive' }, },
+			select: { id: true, username: true, profilePictureUrl: true },
 		});
 	}
 
 
-	async getFriends(userId: number) {
-		
+	async getFriends(userId: number)
+	{
 		await this.checkUser(userId);
 
 		const friendships = await this.prisma.friendship.findMany({
@@ -43,7 +42,7 @@ export class SocialService {
 				OR: [{userId1: userId }, { userId2: userId}],
 				status: 'ACCEPT',
 			},
-			 select: {
+			select: {
 				userId1: true,
 				user1: {
 					select: {
@@ -67,8 +66,8 @@ export class SocialService {
 		return friendships.map((f) => (f.userId1 === userId ? f.user2 : f.user1));
 	}
 
-	async sendFriendRequest(senderId: number, receiverId: number) {
-
+	async sendFriendRequest(senderId: number, receiverId: number)
+	{
 		await this.checkUser(senderId);
 		await this.checkUser(receiverId);
 
@@ -82,39 +81,37 @@ export class SocialService {
 			},
 		});
 
-		if (friendship && friendship.status === 'ACCEPT') {
+		if (friendship && friendship.status === 'ACCEPT')
 			throw new ConflictException('Already friend with this user');
-		}
-		else if (friendship && friendship.status === 'PENDING') {
+		else if (friendship && friendship.status === 'PENDING')
 			throw new ConflictException ('Friendship request already exist with this user');
-		}
 
 		return this.prisma.friendship.create({
 			data: {
 				userId1: id1,
 				userId2: id2,
+				sender: senderId,
 				status: 'PENDING'
 			},
 		});
 	}
 
-	async handleRequest(userId: number, friendId: number, accept: boolean) {
+	async handleRequest(userId: number, friendId: number, accept: boolean)
+	{
 		const [id1, id2] = [userId, friendId].sort((a, b) => a - b);
 		
 		const friendship = await this.prisma.friendship.findUnique({
-			where: {
-				userId1_userId2: {userId1: id1, userId2: id2,},			},
+			where: { userId1_userId2: {userId1: id1, userId2: id2 }, },
 		});
-		console.log(friendship);
-		if (!friendship || friendship.status !== 'PENDING') {
+		
+		if (!friendship || friendship.status !== 'PENDING')
 			throw new BadRequestException('No pending friendship found between users');
-		}
 
-		if (friendship.userId2 !== userId) {
+		if (friendship.sender === userId)
 			throw new ForbiddenException('Sender cannot accept the friend request');
-		}//a tester
 
-		if (!accept) {
+		if (!accept)
+		{
 			return this.prisma.friendship.delete({
 				where: {userId1_userId2: {userId1: id1, userId2: id2}},
 			});
@@ -125,22 +122,19 @@ export class SocialService {
 		});
 	}
 
-	async removeFriend(userId: number, friendId: number) {
+	async removeFriend(userId: number, friendId: number)
+	{
 		const [id1, id2] = [userId, friendId].sort((a, b) => a - b);
 		
 		const friendship = await this.prisma.friendship.findUnique({
 			where: {
-				userId1_userId2: {userId1: id1, userId2: id2,},
-			},
+				userId1_userId2: {userId1: id1, userId2: id2 }, },
 		});
 
-		if (!friendship) {
+		if (!friendship)
 			throw new NotFoundException('Friendship not found');
-		}
-
-		if (friendship.status !== 'ACCEPT') {
+		if (friendship.status !== 'ACCEPT')
 			throw new BadRequestException(`Friendship is not accepted (current status: ${friendship.status})`,);
-		}
 
 		return this.prisma.friendship.delete({
 			where: { userId1_userId2: {userId1: id1, userId2: id2}},
