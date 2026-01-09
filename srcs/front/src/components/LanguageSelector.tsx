@@ -24,7 +24,7 @@ export default function LanguageSelector() {
         hover:bg-white/10">
             <SelectValue placeholder="" />
         </SelectTrigger>
-        <SelectContent className="bg-white/5 backdrop-blur-sm border border-white/10">
+        <SelectContent className="bg-white/5 backdrop-blur-xl border border-white/10">
             <SelectGroup>
             <SelectLabel>{dictionary.footer.languageSelector}</SelectLabel>
             <SelectItem value="en">English</SelectItem>

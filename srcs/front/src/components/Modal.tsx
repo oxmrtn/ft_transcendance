@@ -24,13 +24,11 @@ export default function Modal({ children }: { children: React.ReactNode }) {
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
       document.addEventListener('mousedown', handleClickOutside);
-      document.body.style.overflow = 'hidden';
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
       document.removeEventListener('mousedown', handleClickOutside);
-      document.body.style.overflow = 'unset';
     }
   }, [isOpen]);
 
@@ -38,7 +36,7 @@ export default function Modal({ children }: { children: React.ReactNode }) {
     return null;
 
   return createPortal(
-    (<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black/5 backdrop-blur-sm">
+    (<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black/5 backdrop-blur-xl">
       <div ref={modalRef}>
         {children}
       </div>

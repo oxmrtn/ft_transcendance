@@ -46,6 +46,7 @@ services:
       - "3000:3000"
     volumes:
       - ../srcs/front:/app
+      - nextjs:/app/.next
     env_file:
       - ./.env
     networks:
@@ -53,6 +54,7 @@ services:
 
 volumes:
   postgres_data:
+  nextjs:
 
 networks:
   transcendence:

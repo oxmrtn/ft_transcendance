@@ -2,6 +2,7 @@
 
 import React from 'react';
 import AuthGuard from '../../../components/AuthGuard';
+import ContentWrapper from '../../../components/ContentWrapper';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function Page() {
@@ -11,9 +12,9 @@ export default function Page() {
 
   return (
     <AuthGuard>
-      <div>
-        <h1>history</h1>
-      </div>
+      <ContentWrapper title="history">
+        <div></div>
+      </ContentWrapper>
     </AuthGuard>
   );
 }
