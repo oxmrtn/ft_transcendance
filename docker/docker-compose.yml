@@ -1,0 +1,62 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PWD}
+      POSTGRES_DB: ${DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - transcendence
+
+  backend:
+    build:
+      context: ..
+      dockerfile: ./docker/back/Dockerfile
+    container_name: backend
+    restart: always
+    environment:
+      DATABASE_URL: ${DB_URL}
+    ports:
+      - "3333:3333"
+    volumes:
+      - ../srcs/backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - transcendence
+
+  front:
+    container_name: front
+    build:
+      context: ..
+      dockerfile: docker/front/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../srcs/front:/app
+      - front_next:/app/.next
+    environment:
+      - NEXT_TELEMETRY_DISABLED=${NEXT_TELEMETRY_DISABLED}
+      - WATCHPACK_POLLING=${WATCHPACK_POLLING}
+      - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
+    networks:
+      - transcendence
+
+volumes:
+  postgres_data:
+  front_next:
+networks:
+  transcendence:
+    driver: bridge
