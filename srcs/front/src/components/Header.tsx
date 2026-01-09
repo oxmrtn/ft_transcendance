@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '../contexts/AuthContext';
 import { useModal } from '../contexts/ModalContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -22,6 +23,26 @@ export default function Header() {
   const { openModal } = useModal();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showShadow, setShowShadow] = useState(true);
+  const pathname = usePathname();
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (headerRef.current &&!headerRef.current.contains(event.target as Node))
+        setIsMenuOpen(false);
+    };
+
+    if (isMenuOpen)
+      document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -42,7 +63,7 @@ export default function Header() {
       "z-30 h-[64px] flex justify-between items-center gap-4 bg-modal-bg backdrop-blur-xl w-full px-8",
       "md:border-b md:border-white/10 md:shadow-[0_0_30px] md:shadow-black/70",
       showShadow && "shadow-[0_0_30px] shadow-black/70"
-    )}>
+    )} ref={headerRef}>
       <Link href="/" className="md:z-auto z-50">
         <img className="h-6" src="/logo.png" />
       </Link>
@@ -59,13 +80,12 @@ export default function Header() {
         ]} />
       </div>
 
-
       <div className="flex items-center gap-4 md:z-auto z-50">
         <DropdownMenu>
           <DropdownMenuTrigger className="text-sm font-mono rounded-full py-1.5 px-4 bg-white/5 border border-white/10 transition-colors duration-200 cursor-pointer hover:bg-white/10">
             {username}
           </DropdownMenuTrigger>
-          <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()} className="mr-2 bg-white/5 backdrop-blur-sm border border-white/10">
+          <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()} className="mr-2 bg-white/5 backdrop-blur-xl border border-white/10">
             <DropdownMenuItem className="hover:bg-white/10" onClick={() => openModal(<SettingsModal />)}>
               < Settings className="mr-2 h-4 w-4" />
               <span>{dictionary.header.settings}</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import ContentWrapper from '../../../components/ContentWrapper';
 import AuthGuard from '../../../components/AuthGuard';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
@@ -11,9 +12,9 @@ export default function Page() {
 
   return (
     <AuthGuard>
-      <div>
-        <h1>friends</h1>
-      </div>
+        <ContentWrapper title="friends">
+          <div></div>
+        </ContentWrapper>
     </AuthGuard>
   );
 }

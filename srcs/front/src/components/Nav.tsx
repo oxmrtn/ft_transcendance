@@ -31,13 +31,13 @@ export default function Nav({ tabs }: NavProps) {
 
   return (
     <div className={cn(
-      "w-full flex flex-col items-center justify-center bg-modal-bg backdrop-blur-sm",
+      "w-full flex flex-col items-center justify-center bg-modal-bg backdrop-blur-xl",
       "md:h-full md:w-fit md:max-w-none md:translate-x-0 md:flex-row md:bg-transparent md:backdrop-blur-none"
     )}>
       {tabs.map((tab, i) => (
         <Link
           key={i}
-          href={tab.href} 
+          href={tab.href}
           className={cn(
           `w-full flex items-center justify-center py-4 px-6 cursor-pointer transition-colors duration-200 uppercase font-semibold
           border-l-2
