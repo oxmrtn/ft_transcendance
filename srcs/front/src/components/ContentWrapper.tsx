@@ -20,7 +20,7 @@ export default function ContentWrapper({
     throw new Error("Missing children prop");
 
   return (
-    <div className="h-full w-7xl flex flex-col gap-2">
+    <div className="h-full w-6xl flex flex-col gap-2">
       <div className="py-4 relative flex items-center justify-center w-full bg-white/10 backdrop-blur-xl border border-white/10 rounded-t-xl overflow-hidden shadow-[0_0_30px] shadow-black/70">
         <div className="grid-gradient"></div>
         <h1>
