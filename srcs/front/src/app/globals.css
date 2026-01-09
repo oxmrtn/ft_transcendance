@@ -4,7 +4,7 @@
     --primary: #d46e2e;
     --primary-30: rgba(212, 110, 46, .3);
     --destructive: #ff0000;
-    --modal-background: rgba(0, 0, 0, .3);
+    --modal-background: rgba(0, 0, 0, .5);
     --sub-text: rgba(255, 255, 255, .7);
     --muted-text: rgba(255, 255, 255, .3);
 }
