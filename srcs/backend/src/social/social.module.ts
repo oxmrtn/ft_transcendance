@@ -7,6 +7,5 @@ import { PrismaModule } from '../../prisma/prisma.module';
   imports: [PrismaModule],
   providers: [SocialService],
   controllers: [SocialController],
-  //exports: [SocialService] // si d'autres module en ont besoin
 })
 export class SocialModule {}

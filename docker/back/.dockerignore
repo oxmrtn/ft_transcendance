@@ -1,6 +1,0 @@
-.git
-.gitignore
-.vscode
-Makefile
-srcs/front
-srcs/backend/node_modules

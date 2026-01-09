@@ -1,5 +1,0 @@
-srcs/backend/dist
-srcs/front/node_modules
-srcs/backend/node_modules
-srcs/front/.next
-.DS_Store
