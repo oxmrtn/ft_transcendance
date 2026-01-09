@@ -50,6 +50,12 @@ export class SocialController
 	{
 		return this.socialService.removeFriend(req.user.id, param.id);
 	}
+
+	@Get('request')
+	getRequest(@Req() req)
+	{
+		return this.socialService.getPendingRequest(req.user.id);
+	}
 }
 
 
