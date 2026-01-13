@@ -46,7 +46,7 @@ export class AuthService
     }
     async login(email : string, password : string) : Promise<{token: string}>
     {
-        const user = await this.prisma.user.findUnique({ where : { email }});
+    const user = await this.prisma.user.findUnique({ where : { email }});
         if (!user || !(await bcrypt.compare(password, user.hashedPwd)))
             throw new UnauthorizedException('Invalid mail or password');
         const token = await this.generateToken(user.id);
