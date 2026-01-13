@@ -3,13 +3,41 @@
     "title": "VersuS Code",
     "description": "FR desc"
   },
+  "home": {
+    "welcome": "Bienvenue !"
+  },
   "login": {
     "dividerText": "Se connecter",
     "emailPlaceholder": "E-mail",
     "passwordPlaceholder": "Mot de passe",
     "loginButton": "Se connecter",
+    "loadingButton": "Connexion ...",
     "noAccountText": "Pas de compte ?",
+    "registerLink": "S'inscrire",
+    "unexpectedError": "Une erreur inattendue est survenue. Veuillez ré-essayer."
+  },
+  "register": {
+    "dividerText": "S'inscrire",
+    "avatarUploadTitle": "Ajouter une image de profil",
+    "avatarUploadText": "L'image doit être au format JPEG ou PNG et ne doit pas dépasser 10 Mo.",
+    "usernamePlaceholder": "Nom d'utilisateur",
+    "emailPlaceholder": "E-mail",
+    "passwordPlaceholder": "Mot de passe",
     "registerButton": "S'inscrire",
-    "wrongCredentialsError": "Adresse e-mail ou mot de passe incorrect"
+    "loadingButton": "Chargement ...",
+    "avatarSizeError": "Le fichier est trop volumineux",
+    "unexpectedError": "Une erreur inattendue est survenue. Veuillez ré-essayer."
+  },
+  "header": {
+    "friendsTab": "amis",
+    "playTab": "jouer",
+    "historyTab": "historique",
+    "settings": "Paramètres",
+    "logout": "Se déconnecter"
+  },
+  "footer": {
+    "languageSelector": "Selectionnez une langue",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfService": "Conditions d'utilisation"
   }
 }

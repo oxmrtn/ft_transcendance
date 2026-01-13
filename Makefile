@@ -1,6 +1,6 @@
 DOCKER_COMPOSE = docker compose -f docker/docker-compose.yml
 
-.PHONY: all build up down ps logs clean re front-modules front-install front-restart
+.PHONY: all build up down ps logs clean re front-install front-restart
 
 all: up
 
@@ -22,13 +22,7 @@ logs:
 clean:
 	$(DOCKER_COMPOSE) down -v --remove-orphans --rmi all
 
-front-modules:
-	$(DOCKER_COMPOSE) cp front:/app/node_modules/react ./srcs/front/node_modules/
-	$(DOCKER_COMPOSE) cp front:/app/node_modules/react-dom ./srcs/front/node_modules/
-	$(DOCKER_COMPOSE) cp front:/app/node_modules/@types ./srcs/front/node_modules/
-
 front-install:
-	cat srcs/front/package.json | $(DOCKER_COMPOSE) exec -T front sh -c 'cat > /app/package.json'
 	$(DOCKER_COMPOSE) exec front npm install
 
 front-restart:
