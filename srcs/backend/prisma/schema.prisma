@@ -51,7 +51,8 @@ model Exercise {
 model Friendship {
   userId1   Int
   userId2   Int
-  
+  sender    Int
+
   status    String   @default("PENDING") // PENDING, ACCEPTED, BLOCKED
   
   user1     User     @relation("Initiator", fields: [userId1], references: [id])
