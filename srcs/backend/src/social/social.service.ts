@@ -33,14 +33,14 @@ export class SocialService
 	}
 
 
-	async getFriends(userId: number)
+	async getFriends(userId: number, status: string)
 	{
 		await this.checkUser(userId);
 
 		const friendships = await this.prisma.friendship.findMany({
 			where: {
 				OR: [{userId1: userId }, { userId2: userId}],
-				status: 'ACCEPT',
+				status: status,
 			},
 			select: {
 				userId1: true,
@@ -140,38 +140,3 @@ export class SocialService
 			where: { userId1_userId2: {userId1: id1, userId2: id2}},
 		});
 	}
-
-	async getPendingRequest(userId: number)
-	{
-		await this.checkUser(userId);
-
-		const friendships = await this.prisma.friendship.findMany({
-			where: {
-				OR: [{userId1: userId }, { userId2: userId}],
-				status: 'PENDING',
-			},
-			select: {
-				userId1: true,
-				user1: {
-					select: {
-						username: true,
-						profilePictureUrl: true,
-						title: true,
-						xp: true,
-					},
-				},
-				user2: {
-					select: {
-						username: true,
-						profilePictureUrl: true,
-						title: true,
-						xp: true,
-					},
-				},
-			 },
-		});
-
-		return friendships.map((f) => (f.userId1 === userId ? f.user2 : f.user1));
-	}
-}
-
