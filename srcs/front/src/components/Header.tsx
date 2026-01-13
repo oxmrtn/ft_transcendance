@@ -69,7 +69,7 @@ export default function Header() {
       </Link>
 
       <div className={cn(
-        "z-20 absolute top-[64px] overflow-hidden left-0 w-full transition-[max-height] duration-400 border-b border-white/10 shadow-[0_20px_20px] shadow-black/30",
+        "z-20 absolute top-[64px] overflow-hidden left-0 w-full transition-[max-height] duration-400 ease-in-out border-b border-white/10 shadow-[0_20px_20px] shadow-black/30",
         "md:relative md:top-0 md:w-fit md:h-full md:max-h-full md:transition-none md:border-0 md:shadow-none",
         isMenuOpen ? "max-h-96" : "max-h-0",
       )}>
