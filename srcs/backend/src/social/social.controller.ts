@@ -24,7 +24,7 @@ export class SocialController
 	@Get('friends')
 	getFriends(@Req() req)
 	{
-		return this.socialService.getFriends(req.user.id);
+		return this.socialService.getFriends(req.user.id, 'ACCEPT');
 	}
 
 	@Post('request/:id')
@@ -54,7 +54,7 @@ export class SocialController
 	@Get('request')
 	getRequest(@Req() req)
 	{
-		return this.socialService.getPendingRequest(req.user.id);
+		return this.socialService.getFriends(req.user.id, 'PENDING');
 	}
 }
 
