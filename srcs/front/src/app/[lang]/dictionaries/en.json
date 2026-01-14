@@ -1,15 +1,43 @@
 {
   "metadata": {
     "title": "VersuS Code",
-    "description": "FR desc"
+    "description": "EN desc"
+  },
+  "home": {
+    "welcome": "Welcome!"
   },
   "login": {
     "dividerText": "Login",
     "emailPlaceholder": "E-mail",
     "passwordPlaceholder": "Password",
     "loginButton": "Login",
+    "loadingButton": "Loading ...",
     "noAccountText": "No account ?",
+    "registerLink": "Register",
+    "unexpectedError": "An unexpected error occurred. Please try again."
+  },
+  "register": {
+    "dividerText": "Register",
+    "avatarUploadTitle": "Add a profile picture",
+    "avatarUploadText": "The image must be in JPEG or PNG format and must not exceed 10 MB.",
+    "usernamePlaceholder": "Username",
+    "emailPlaceholder": "E-mail",
+    "passwordPlaceholder": "Password",
     "registerButton": "Register",
-    "wrongCredentialsError": "E-mail or password incorrect"
+    "loadingButton": "Loading ...",
+    "avatarSizeError": "File is too large",
+    "unexpectedError": "An unexpected error occurred. Please try again."
+  },
+    "header": {
+    "friendsTab": "friends",
+    "playTab": "play",
+    "historyTab": "history",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "footer": {
+    "languageSelector": "Select a language",
+    "privacyPolicy": "Privacy policy",
+    "termsOfService": "Terms of service"
   }
 }
