@@ -1,9 +1,9 @@
 "use client";
 
 import React from 'react';
-import AuthGuard from '../../components/AuthGuard';
-import ContentWrapper from '../../components/ContentWrapper';
-import { useLanguage } from '../../contexts/LanguageContext';
+import AuthGuard from '../../../components/AuthGuard';
+import ContentWrapper from '../../../components/ContentWrapper';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function Page() {
   const { dictionary } = useLanguage();
@@ -12,7 +12,7 @@ export default function Page() {
 
   return (
     <AuthGuard>
-      <ContentWrapper title="play">
+      <ContentWrapper title="history">
         <div></div>
       </ContentWrapper>
     </AuthGuard>
