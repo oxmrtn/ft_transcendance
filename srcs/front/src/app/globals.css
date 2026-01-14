@@ -70,6 +70,6 @@
         @apply flex items-center justify-center py-4 px-6 cursor-pointer transition-colors duration-200 uppercase font-semibold
             border-b-2 h-full w-fit
             border-transparent text-muted-text hover:border-white/70 hover:text-sub-text
-            data-[state=active]:border-primary data-[state=active]:bg-linear-to-t data-[state=active]:from-primary-30 data-[state=active]:to-transparent;
+            data-[state=active]:border-primary data-[state=active]:text-white data-[state=active]:bg-linear-to-t data-[state=active]:from-primary-30 data-[state=active]:to-transparent;
     }
 }
