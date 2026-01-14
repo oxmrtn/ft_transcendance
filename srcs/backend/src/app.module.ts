@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { PrismaService } from './prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { SocialModule } from './social/social.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { SocialModule } from './social/social.module';
     }),
     AuthModule,
     SocialModule,
+    ChatModule
   ],
   controllers: [AppController],
   providers: [
