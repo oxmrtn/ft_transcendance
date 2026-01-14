@@ -140,3 +140,4 @@ export class SocialService
 			where: { userId1_userId2: {userId1: id1, userId2: id2}},
 		});
 	}
+}
