@@ -7,10 +7,9 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function Page() {
-  const { isAuthenticated } = useAuth();
   const { dictionary } = useLanguage();
 
-  if (!isAuthenticated || !dictionary)
+  if (!dictionary)
     return null;
 
   return (

@@ -9,7 +9,7 @@ export default function AuthGuard({
   supposelyAuth,
   children
 }: {
-  supposelyAuth?: Boolean,
+  supposelyAuth?: boolean,
   children: React.ReactNode
 }) {
   const router = useRouter();
