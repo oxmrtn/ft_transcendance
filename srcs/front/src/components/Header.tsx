@@ -59,7 +59,7 @@ export default function Header() {
     return null;
 
   return (
-    <div className={cn(
+    <header className={cn(
       "z-30 h-[64px] flex justify-between items-center gap-4 bg-modal-bg backdrop-blur-xl w-full px-8",
       "md:border-b md:border-white/10 md:shadow-[0_0_30px] md:shadow-black/70",
       showShadow && "shadow-[0_0_30px] shadow-black/70"
@@ -104,6 +104,6 @@ export default function Header() {
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
-    </div>
+    </header>
   );
 }
