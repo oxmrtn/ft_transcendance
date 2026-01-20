@@ -12,7 +12,7 @@ function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
 
 function FriendsSkeleton({ isFriends } : { isFriends?: boolean }) {
   return (
-    <div className="px-4 w-full h-full flex flex-col justify-evenly items-center">
+    <div className="p-4 gap-4 h-full w-full flex flex-col justify-evenly">
       {Array.from({ length: 7 }).map((_, index) => (
         <div key={index} className="w-full flex items-center justify-between">
           <div className="flex items-center space-x-4">

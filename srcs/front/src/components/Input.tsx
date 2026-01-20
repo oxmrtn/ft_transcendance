@@ -65,7 +65,7 @@ function TextInput({
           "py-2 px-4 rounded-md text-white bg-white/5 border border-white/10 transition-colors duration-200 placeholder:text-muted-text",
           "hover:bg-white/10",
           "focus:outline-none focus:ring focus:ring-primary/50",
-          "disabled:opacity-50 disabled:cursor-default"
+          "disabled:opacity-20 disabled:cursor-default"
         )}/>
         {type === "password" && (
           <button
