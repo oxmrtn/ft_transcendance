@@ -26,7 +26,7 @@ export default function AuthGuard({
 
   if (isLoading || (supposelyAuth && isAuthenticated) || (!supposelyAuth && !isAuthenticated)) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="h-full flex items-center justify-center">
         <Spinner className="h-10 w-10" />
       </div>
     );
