@@ -36,7 +36,6 @@ export default function LoginForm() {
           body: JSON.stringify({ email, password }),
         });
       const data = await response.json();
-
       if (!response.ok) {
         throw new Error(data.message || dictionary.login.unexpectedError);
       }
