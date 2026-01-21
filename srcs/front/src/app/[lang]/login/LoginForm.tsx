@@ -37,7 +37,6 @@ export default function LoginForm() {
       });
 
       const data = await response.json();
-
       if (!response.ok) {
         throw new Error(data.message || dictionary.login.unexpectedError);
       }

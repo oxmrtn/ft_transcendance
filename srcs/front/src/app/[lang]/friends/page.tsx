@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
 import { Users } from 'lucide-react';
+import { cn } from '../../../lib/utils';
 import ContentWrapper from '../../../components/ContentWrapper';
 import AuthGuard from '../../../components/AuthGuard';
 import { useLanguage } from '../../../contexts/LanguageContext';
@@ -12,18 +13,24 @@ import { TextInput } from '../../../components/Input';
 import Button from '../../../components/Button';
 import { FriendsSkeleton } from '../../../components/skeleton';
 import Pagination from '../../../components/pagination';
-
-interface Friend {
-  username: string;
-  online: boolean;
-}
+import UserProfile, { type User } from '../../../components/UserProfile';
 
 export default function Page() {
+  const { token } = useAuth();
   const { dictionary } = useLanguage();
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [friends, setFriends] = useState<Friend[]>([]);
-  const [pending, setPending] = useState<Friend[]>([]);
+  const [friends, setFriends] = useState<User[]>([
+    { "username": "user1", "online": false },
+    { "username": "user2", "online": true },
+    { "username": "user3", "online": false },
+    { "username": "user4", "online": false },
+    { "username": "user5", "online": true },
+    { "username": "user6", "online": false },
+    { "username": "user7", "online": false },
+    { "username": "user8", "online": false },
+  ]);
+  const [pending, setPending] = useState<User[]>([]);
   
   const [friendsPage, setFriendsPage] = useState(1);
   const [pendingPage, setPendingPage] = useState(1);
@@ -50,6 +57,9 @@ export default function Page() {
     try {
       const response = await fetch("http://localhost:3333/social/friends", {
         method: "GET",
+        headers: {
+          "token": token
+        }
       });
 
       const data = await response.json();
@@ -73,6 +83,9 @@ export default function Page() {
     try {
       const response = await fetch("http://localhost:3333/social/request", {
         method: "GET",
+        headers: {
+          "token": token
+        }
       });
 
       const data = await response.json();
@@ -88,9 +101,9 @@ export default function Page() {
     }
   }
 
-  useEffect(() => {
-    fetchFriends();
-  }, []);
+  // useEffect(() => {
+  //   fetchFriends();
+  // }, []);
 
   return (
     <AuthGuard>
@@ -116,9 +129,9 @@ export default function Page() {
                   <p className="text-sub-text">No friends added yet.</p>
                 </div>
               ) : (
-                <div className="p-4 space-y-3">
-                  {displayedFriends.map((friend) => (
-                    <div></div>
+                <div className="py-4 px-2 h-full w-full flex flex-col">
+                  {displayedFriends.map((friend, index) => (
+                    <UserProfile user={friend} display="friendsList" key={index} />
                   ))}
                 </div>
               )}
@@ -151,15 +164,15 @@ export default function Page() {
                   <p className="text-sub-text">No pending requests.</p>
                 </div>
               ) : (
-                <div className="p-4 space-y-3">
-                  {displayedPending.map((pendingRequest) => (
-                    <div></div>
+                <div className="py-4 px-2 h-full w-full flex flex-col">
+                  {displayedPending.map((pendingRequest, index) => (
+                    <UserProfile user={pendingRequest} display="pendingList" key={index} />
                   ))}
                 </div>
               )}
             </div>
 
-            <div className="flex flex-col gap-3 p-4 border-t border-px border-white/10">
+            <div className="flex flex-col gap-3 py-5 px-4 border-t border-px border-white/10">
               <Pagination
                 currentPage={pendingPage}
                 totalPages={totalPendingPages}
