@@ -62,4 +62,9 @@ export class AuthService
             throw new UnauthorizedException('Invalid token');
         }
     }
+
+    async findOneByUsername(username: string): Promise<any>
+    {
+        return this.prisma.user.findUnique({ where : { username }});
+    }
 }
