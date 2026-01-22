@@ -12,6 +12,7 @@ import { LanguageProvider } from '../../contexts/LanguageContext';
 import { ModalProvider } from '../../contexts/ModalContext';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import Toaster from '../../components/Toaster';
 
 const bebas = Bebas_Neue({
   weight: '400',
@@ -60,6 +61,7 @@ export default async function RootLayout({
               <Header />
               <main>{children}</main>
               <Footer />
+              <Toaster />
             </ModalProvider>
           </LanguageProvider>
         </AuthProvider>

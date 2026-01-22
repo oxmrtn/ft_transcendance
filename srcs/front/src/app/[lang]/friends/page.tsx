@@ -129,7 +129,7 @@ export default function Page() {
                   <p className="text-sub-text">No friends added yet.</p>
                 </div>
               ) : (
-                <div className="py-4 px-2 h-full w-full flex flex-col">
+                <div className="h-full w-full flex flex-col justify-between py-2">
                   {displayedFriends.map((friend, index) => (
                     <UserProfile user={friend} display="friendsList" key={index} />
                   ))}

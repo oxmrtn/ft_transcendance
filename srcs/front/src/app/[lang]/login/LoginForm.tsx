@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Divider from '../../../components/Divider';
 import Button from '../../../components/Button';
 import { TextInput } from '../../../components/Input';
-import Spinner from '../../../components/Spinner';
+import { Loader2Icon } from "lucide-react"
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function LoginForm() {
@@ -85,8 +85,8 @@ export default function LoginForm() {
           <p className="text-sm text-red-400">{error}</p>
         )}
         <Button disabled={isLoading} fullWidth={true} type="submit" variant="primary">
+          {isLoading && <Loader2Icon className="size-4 animate-spin" />}
           {isLoading ? dictionary.register.loadingButton : dictionary.login.loginButton}
-          {isLoading && <Spinner />}
         </Button>
       </div>
       <Divider />
