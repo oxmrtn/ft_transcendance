@@ -54,10 +54,10 @@ export default function UserProfile({
             </div>
             {display != "playRoom" && (
                 <div className="flex gap-2">
-                    <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer">
+                    <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 ">
                         <X className="size-5 text-destructive" />
                     </button>
-                    <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer">
+                    <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer transition-colors duration-200">
                         <EllipsisVertical className="size-5 text-white" />
                     </button>
                 </div>
