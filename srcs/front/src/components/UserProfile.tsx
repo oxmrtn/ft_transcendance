@@ -1,4 +1,6 @@
 import { cn } from '../lib/utils';
+import { toast } from "sonner";
+import { X, EllipsisVertical } from 'lucide-react';
 
 export interface User {
     username: string;
@@ -21,8 +23,8 @@ export default function UserProfile({
 
     return (
         <div className={cn(
-            "flex items-center justify-between py-2 px-4 gap-4 rounded-md transition-colors duration-200 hover:bg-white/5",
-            display === "playRoom" ? "w-fit" : "w-full"
+            "flex items-center justify-between py-2 px-4 gap-4 transition-colors duration-200 hover:bg-white/5",
+            display === "playRoom" ? "w-fit rounded-md" : "w-full"
         )}>
             <div className="flex items-center space-x-4">
             <div className="h-12 w-12 rounded-full bg-white" />
@@ -52,8 +54,12 @@ export default function UserProfile({
             </div>
             {display != "playRoom" && (
                 <div className="flex gap-2">
-                    <div className="h-6 w-6 bg-white" />
-                    <div className="h-6 w-6 bg-white" />
+                    <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer">
+                        <X className="size-5 text-destructive" />
+                    </button>
+                    <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer">
+                        <EllipsisVertical className="size-5 text-white" />
+                    </button>
                 </div>
             )}
         </div>
