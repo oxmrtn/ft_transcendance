@@ -8,7 +8,7 @@ import {
 	OnGatewayConnection	
 	} from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
-import { UseGuards } from "@nestjs/common";
+import { UnauthorizedException, UseGuards } from "@nestjs/common";
 import { WsJwtGuard } from "src/auth/wsjwt/wsjwt.guard";
 import { JwtService } from "@nestjs/jwt";
 
@@ -22,8 +22,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	private extractToken(@ConnectedSocket() client: Socket): string | undefined
 	{
-		//const [type, token] = client.handshake.auth.token?.split(' ') ?? [];
-		const [type, token] = client.handshake.headers.authorization?.split(' ') ?? [];//version Postman ou je fais passer le tkn dans un header
+		const [type, token] = client.handshake.auth.token?.split(' ') ??
+			client.handshake.headers.authorization?.split(' ') ??
+				[];
+		//const [type, token] = client.handshake.headers.authorization?.split(' ') ?? [];//version Postman ou je fais passer le tkn dans un header
 		return type === 'Bearer' ? token : undefined;
 	}
 
@@ -47,6 +49,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		{
 			console.log('Authorization failed, disconnection...');
 			client.disconnect();
+			return;
 		}
 		client.broadcast.emit('user-joined', {
 			message: `${client.data.user.username} joined the chat!`,
