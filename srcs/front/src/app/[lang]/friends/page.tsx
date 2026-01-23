@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import React from 'react';
 import { Users } from 'lucide-react';
-import { cn } from '../../../lib/utils';
 import ContentWrapper from '../../../components/ContentWrapper';
 import AuthGuard from '../../../components/AuthGuard';
 import { useLanguage } from '../../../contexts/LanguageContext';
@@ -94,7 +92,7 @@ export default function Page() {
   }
 
   const sendFriendRequest = async (friendUsername: string) => {
-    const toastId = toast.loading(`Envoi de la demande d'ami à ${friendUsername}...`);
+    const toastId = toast.loading(`${dictionary.friends.sendingRequest} ${friendUsername}...`);
 
     try {
       const response = await fetch(`http://localhost:3333/social/request/${friendUsername}`, {
@@ -109,12 +107,12 @@ export default function Page() {
         throw new Error(data.message || dictionary.login.unexpectedError);
       }
       
-      toast.success(`Demande d'ami envoyée à ${friendUsername}`, {
+      toast.success(`${dictionary.friends.requestSent} ${friendUsername}`, {
         id: toastId,
       });
 
     } catch (err: any) {
-      toast.error(`Erreur : ${err.message}`, {
+      toast.error(`${dictionary.friends.error} : ${err.message}`, {
         id: toastId,
       });
     }
@@ -123,7 +121,7 @@ export default function Page() {
   const removeFriend = async (friendUsername: string) => {
     setLoading(true);
 
-    const toastId = toast.loading(`Suppression de ${friendUsername}...`);
+    const toastId = toast.loading(`${dictionary.friends.removingFriend} ${friendUsername}...`);
 
     try {
       const response = await fetch(`http://localhost:3333/social/friends/${friendUsername}`, {
@@ -140,12 +138,12 @@ export default function Page() {
 
       setFriends(prevFriends => prevFriends.filter(friend => friend.username !== friendUsername));
       
-      toast.success(`${friendUsername} a été retiré de vos amis`, {
+      toast.success(`${friendUsername} ${dictionary.friends.friendRemoved}`, {
         id: toastId,
       });
 
     } catch (err: any) {
-      toast.error(`Erreur : ${err.message}`, {
+      toast.error(`${dictionary.friends.error} : ${err.message}`, {
         id: toastId,
       });
     } finally {
@@ -156,7 +154,7 @@ export default function Page() {
   const handlePendingRequest = async (pendingUsername: string, isAccept: boolean) => {
     setLoading(true);
 
-    const toastId = toast.loading(`${isAccept ? "Acceptation" : "Rejet"} de ${pendingUsername}...`);
+    const toastId = toast.loading(`${isAccept ? dictionary.friends.accepting : dictionary.friends.rejecting} ${pendingUsername}...`);
 
     try {
       const response = await fetch(`http://localhost:3333/social/request/${pendingUsername}/${isAccept ? "accept" : "reject"}`, {
@@ -173,12 +171,12 @@ export default function Page() {
 
       setPending(prevPending => prevPending.filter(pending => pending.username !== pendingUsername));
       
-      toast.success(`${pendingUsername} a été ${isAccept ? "accepté" : "rejeté"}`, {
+      toast.success(`${pendingUsername} ${isAccept ? dictionary.friends.accepted : dictionary.friends.rejected}`, {
         id: toastId,
       });
 
     } catch (err: any) {
-      toast.error(`Erreur : ${err.message}`, {
+      toast.error(`${dictionary.friends.error} : ${err.message}`, {
         id: toastId,
       });
     } finally {
@@ -192,12 +190,16 @@ export default function Page() {
 
   return (
     <AuthGuard>
-      <ContentWrapper title="friends">
+      <ContentWrapper title={dictionary.friends.title}>
         <Tabs defaultValue="friends" className="h-full w-full flex">
 
           <TabsList className="flex items-center justify-center bg-black/20 border-b border-px border-white/10">
-            <TabsTrigger value="friends" className="tabs-trigger" onClick={() => { fetchFriends() }}>friends</TabsTrigger>
-            <TabsTrigger value="pending" className="tabs-trigger" onClick={() => { fetchPending() }}>pending</TabsTrigger>
+            <TabsTrigger value="friends" className="tabs-trigger" onClick={() => { fetchFriends() }}>
+              {dictionary.friends.friendsTab}
+            </TabsTrigger>
+            <TabsTrigger value="pending" className="tabs-trigger" onClick={() => { fetchPending() }}>
+              {dictionary.friends.pendingTab}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="friends" className="flex-1 flex flex-col">
@@ -211,7 +213,7 @@ export default function Page() {
               ) : friends.length === 0 ? (
                 <div className="h-full w-full flex items-center justify-center flex flex-col gap-2 w-fit w-fit">
                   <Users size="50" />
-                  <p className="text-sub-text">No friends added yet.</p>
+                  <p className="text-sub-text">{dictionary.friends.noFriends}</p>
                 </div>
               ) : (
                 <div className="h-full w-full flex flex-col justify-between py-2">
@@ -230,12 +232,14 @@ export default function Page() {
             <div className="flex justify-between gap-4 p-4 border-t border-px border-white/10">              
               <div className="flex gap-2">
                 <TextInput
-                  customWidth="w-[174px]"
-                  placeholder="Search for a player"
+                  customWidth="w-[191px]"
+                  placeholder={dictionary.friends.searchPlaceholder}
                   id="search-friend"
                   onChange={e => setSearchFriend(e.target.value)}
                 />
-                <Button variant="primary" onClick={() => { sendFriendRequest(searchFriend) }}>add</Button>
+                <Button variant="primary" onClick={() => { sendFriendRequest(searchFriend) }}>
+                  {dictionary.friends.addButton}
+                </Button>
               </div>
               <Pagination
                 currentPage={friendsPage}
@@ -256,7 +260,7 @@ export default function Page() {
               ) : pending.length === 0 ? (
                 <div className="h-full w-full flex items-center justify-center flex flex-col gap-2 w-fit w-fit">
                   <Users size="50" />
-                  <p className="text-sub-text">No pending requests.</p>
+                  <p className="text-sub-text">{dictionary.friends.noPending}</p>
                 </div>
               ) : (
                 <div className="h-full w-full flex flex-col justify-between py-2">

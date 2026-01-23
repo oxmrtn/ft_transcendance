@@ -1,6 +1,7 @@
 import { cn } from '../lib/utils';
 import { toast } from "sonner";
 import { X, EllipsisVertical, Check } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export interface User {
     username: string;
@@ -18,6 +19,9 @@ export default function UserProfile({
     onRemove: () => void;
     onAccept?: () => void;
 }) {
+    const { dictionary } = useLanguage();
+    if (!dictionary)
+        return null;
     if (!user)
         throw new Error("Missing user prop");
     if (!display)
@@ -51,7 +55,7 @@ export default function UserProfile({
                     <p className={cn(
                         "text-sm text-muted-text"
                     )}>
-                        {user.online ? "En ligne" : "Hors ligne"}
+                        {user.online ? dictionary.friends.online : dictionary.friends.offline}
                     </p>
                     </div>
                 )}
