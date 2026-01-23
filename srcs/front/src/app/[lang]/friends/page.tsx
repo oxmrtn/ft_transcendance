@@ -14,24 +14,16 @@ import Button from '../../../components/Button';
 import { FriendsSkeleton } from '../../../components/skeleton';
 import Pagination from '../../../components/pagination';
 import UserProfile, { type User } from '../../../components/UserProfile';
+import { toast } from 'sonner';
 
 export default function Page() {
   const { token } = useAuth();
   const { dictionary } = useLanguage();
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [friends, setFriends] = useState<User[]>([
-    { "username": "user1", "online": false },
-    { "username": "user2", "online": true },
-    { "username": "user3", "online": false },
-    { "username": "user4", "online": false },
-    { "username": "user5", "online": true },
-    { "username": "user6", "online": false },
-    { "username": "user7", "online": false },
-    { "username": "user8", "online": false },
-  ]);
+  const [friends, setFriends] = useState<User[]>([]);
   const [pending, setPending] = useState<User[]>([]);
-  
+  const [searchFriend, setSearchFriend] = useState("");
   const [friendsPage, setFriendsPage] = useState(1);
   const [pendingPage, setPendingPage] = useState(1);
   const itemsPerPage = 7;
@@ -101,9 +93,102 @@ export default function Page() {
     }
   }
 
-  // useEffect(() => {
-  //   fetchFriends();
-  // }, []);
+  const sendFriendRequest = async (friendUsername: string) => {
+    const toastId = toast.loading(`Envoi de la demande d'ami à ${friendUsername}...`);
+
+    try {
+      const response = await fetch(`http://localhost:3333/social/request/${friendUsername}`, {
+        method: "POST",
+        headers: {
+          "token": token
+        }
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || dictionary.login.unexpectedError);
+      }
+      
+      toast.success(`Demande d'ami envoyée à ${friendUsername}`, {
+        id: toastId,
+      });
+
+    } catch (err: any) {
+      toast.error(`Erreur : ${err.message}`, {
+        id: toastId,
+      });
+    }
+  }
+
+  const removeFriend = async (friendUsername: string) => {
+    setLoading(true);
+
+    const toastId = toast.loading(`Suppression de ${friendUsername}...`);
+
+    try {
+      const response = await fetch(`http://localhost:3333/social/friends/${friendUsername}`, {
+        method: "DELETE",
+        headers: {
+          "token": token
+        }
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || dictionary.login.unexpectedError);
+      }
+
+      setFriends(prevFriends => prevFriends.filter(friend => friend.username !== friendUsername));
+      
+      toast.success(`${friendUsername} a été retiré de vos amis`, {
+        id: toastId,
+      });
+
+    } catch (err: any) {
+      toast.error(`Erreur : ${err.message}`, {
+        id: toastId,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handlePendingRequest = async (pendingUsername: string, isAccept: boolean) => {
+    setLoading(true);
+
+    const toastId = toast.loading(`${isAccept ? "Acceptation" : "Rejet"} de ${pendingUsername}...`);
+
+    try {
+      const response = await fetch(`http://localhost:3333/social/request/${pendingUsername}/${isAccept ? "accept" : "reject"}`, {
+        method: "PATCH",
+        headers: {
+          "token": token
+        }
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || dictionary.login.unexpectedError);
+      }
+
+      setPending(prevPending => prevPending.filter(pending => pending.username !== pendingUsername));
+      
+      toast.success(`${pendingUsername} a été ${isAccept ? "accepté" : "rejeté"}`, {
+        id: toastId,
+      });
+
+    } catch (err: any) {
+      toast.error(`Erreur : ${err.message}`, {
+        id: toastId,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchFriends();
+  }, []);
 
   return (
     <AuthGuard>
@@ -131,7 +216,12 @@ export default function Page() {
               ) : (
                 <div className="h-full w-full flex flex-col justify-between py-2">
                   {displayedFriends.map((friend, index) => (
-                    <UserProfile user={friend} display="friendsList" key={index} />
+                    <UserProfile
+                      user={friend}
+                      display="friendsList"
+                      key={index}
+                      onRemove={() => { removeFriend(friend.username) }}
+                    />
                   ))}
                 </div>
               )}
@@ -139,8 +229,13 @@ export default function Page() {
 
             <div className="flex justify-between gap-4 p-4 border-t border-px border-white/10">              
               <div className="flex gap-2">
-                <TextInput customWidth="w-[174px]" placeholder="Search for a player" id="search-friend"/>
-                <Button variant="primary" onClick={() => {}}>add</Button>
+                <TextInput
+                  customWidth="w-[174px]"
+                  placeholder="Search for a player"
+                  id="search-friend"
+                  onChange={e => setSearchFriend(e.target.value)}
+                />
+                <Button variant="primary" onClick={() => { sendFriendRequest(searchFriend) }}>add</Button>
               </div>
               <Pagination
                 currentPage={friendsPage}
@@ -164,9 +259,15 @@ export default function Page() {
                   <p className="text-sub-text">No pending requests.</p>
                 </div>
               ) : (
-                <div className="py-4 px-2 h-full w-full flex flex-col">
+                <div className="h-full w-full flex flex-col justify-between py-2">
                   {displayedPending.map((pendingRequest, index) => (
-                    <UserProfile user={pendingRequest} display="pendingList" key={index} />
+                    <UserProfile
+                      user={pendingRequest}
+                      display="pendingList"
+                      key={index}
+                      onAccept={() => { handlePendingRequest(pendingRequest.username, true) }}
+                      onRemove={() => { handlePendingRequest(pendingRequest.username, false) }}
+                    />
                   ))}
                 </div>
               )}
