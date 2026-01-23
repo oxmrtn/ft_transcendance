@@ -4,14 +4,16 @@ import { SocialController } from './social.controller';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { TokenStrat } from 'src/auth/strategies/TokenStrat';
 import { AuthModule } from 'src/auth/auth.module';
+import { SocialGateway } from './social.gateway';
 
 @Module({
-  imports: [PrismaModule, AuthModule],
-  providers: [
-	SocialService, 
-	TokenStrat,
-],
-  controllers: [SocialController],
-  exports: [SocialService],
+	imports: [PrismaModule, AuthModule],
+	providers: [
+		SocialService,
+		TokenStrat,
+	SocialGateway
+	],
+	controllers: [SocialController],
+	exports: [SocialService],
 })
 export class SocialModule {}
