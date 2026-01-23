@@ -1,17 +1,18 @@
 "use client"
 
 import { Toaster as Sonner, type ToasterProps } from "sonner"
-import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
+import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, CircleX, Loader2Icon } from "lucide-react"
 
 export default function Toaster({ ...props }: ToasterProps) {
   return (
     <Sonner
+      position="bottom-left"
       theme="dark"
       icons={{
         success: <CircleCheckIcon className="size-4 text-green" />,
         info: <InfoIcon className="size-4" />,
         warning: <TriangleAlertIcon className="size-4" />,
-        error: <OctagonXIcon className="size-4 text-destructive" />,
+        error: <CircleX className="size-4 text-destructive" />,
         loading: <Loader2Icon className="size-4 animate-spin" />,
       }}
       toastOptions={{
