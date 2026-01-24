@@ -17,16 +17,16 @@ export class ChatGateway
 {
 	@WebSocketServer() server: Server;
 
-	@SubscribeMessage('chatMessage')
+	@SubscribeMessage('chat-message')
 	handleNewMaessage(@MessageBody() message: string, @ConnectedSocket() client: Socket)
 	{
-		this.server.emit('chatMessage', { message: message,
+		this.server.emit('chat-message', { message: message,
 			username: client.data.user.username, 
 			timestamp: new Date()
 		});
 	}
 
-	@SubscribeMessage('privateMessage')
+	@SubscribeMessage('private-message')
 	handlePrivateMessage(@MessageBody() message: privateMessageDto,
 		@MessageBody('target', ParseUserPipe) targetId : any,
 			@ConnectedSocket() client: Socket)
@@ -34,13 +34,13 @@ export class ChatGateway
 		const targetRoom = `user_${targetId}`;
 		const senderId = client.data.user.userId;
 
-		this.server.to(targetRoom).emit('privateMessage', {
+		this.server.to(targetRoom).emit('private-message', {
 			fromUsername: senderId,
 			message: message,
 			timestamp: new Date()
 		});
 
-		this.server.to(`user_${senderId}`).emit('privateMessage', {
+		this.server.to(`user_${senderId}`).emit('private-message', {
 			from: senderId,
 			to: senderId,
 			message: message,
