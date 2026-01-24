@@ -99,4 +99,36 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 					client.emit('user-status', user);
 		});
 	}
+
+	public newFriendship(userId1: number, userId2: number)
+	{
+		if (this.onlineUsers.has(userId1))
+		{
+			this.server.to(`user_${userId2}`).emit('user-status', {
+				id: userId1,
+				status: 'ONLINE'
+			});
+		}
+
+		if (this.onlineUsers.has(userId2))
+		{
+			this.server.to(`user_${userId1}`).emit('user-status', {
+			id: userId2,
+			status: 'ONLINE'
+			});
+		}
+	}
+
+	public friendshipRemoved(userId1: number, userId2: number)
+	{
+		this.server.to(`user_${userId2}`).emit('user-status', {
+			id: userId1,
+			status: 'OFFLINE'
+		});
+
+		this.server.to(`user_${userId1}`).emit('user-status', {
+			id: userId2,
+			status: 'OFFILNE'
+		});
+	}
 }
