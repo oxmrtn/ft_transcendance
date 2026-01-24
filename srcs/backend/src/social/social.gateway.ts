@@ -1,8 +1,6 @@
 import {
 	ConnectedSocket,
-	MessageBody,
 	OnGatewayDisconnect,
-	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
 	OnGatewayConnection	
@@ -11,8 +9,6 @@ import { Socket, Server } from "socket.io";
 import { UseGuards } from "@nestjs/common";
 import { WsJwtGuard } from "src/auth/wsjwt/wsjwt.guard";
 import { SocialService } from "./social.service";
-import { privateMessageDto } from "src/dto/private-msg.dto";
-import { ParseUserPipe } from "src/pipes/parseUser.pipe";
 
 @UseGuards(WsJwtGuard)
 @WebSocketGateway({cors: { origin: '*' } })
@@ -22,16 +18,26 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	constructor(private socialService: SocialService) {}
 
-	private onlineUsers = new Map<number, string>();//voir pour gerer un tableau de string par user
+	private onlineUsers = new Map<number, Set<string>>();
 
 	async handleConnection(@ConnectedSocket() client: Socket)
 	{
 		if (!client.data.user)
 			return;
 
-		await client.join(`user_${client.data.user.userId}`);
-		this.onlineUsers.set(client.data.user.userId, client.id);
-		this.handleOnlineUser(client);
+		const userId = client.data.user.userId;
+
+		if (!this.onlineUsers.has(userId))
+			this.onlineUsers.set(userId, new Set());
+
+		this.onlineUsers.get(userId).add(client.id);
+
+		if (this.onlineUsers.get(userId).size === 1)
+			await this.handleOnlineUser(userId);
+
+		await this.sendOnlineFriendStatus(client);
+
+		await client.join(`user_${userId}`);
 	}
 
 	handleDisconnect(client: Socket)
@@ -39,54 +45,58 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (!client.data.user)
 			return;
 
-		this.onlineUsers.delete(client.data.user.userId);
-		this.handleOfflineUser(client);
+		const userId = client.data.user.userId;
+
+		if (this.onlineUsers.has(userId))
+			this.onlineUsers.get(userId).delete(client.id);
+
+		if (this.onlineUsers.get(userId).size === 0)
+		{
+			this.onlineUsers.delete(userId);
+			this.handleOfflineUser(userId);
+		}
 	}
 
-	@SubscribeMessage('privateMessage')
-	handlePrivateMessage(@MessageBody() message: privateMessageDto,
-		@MessageBody('target', ParseUserPipe) targetId : any,
-			@ConnectedSocket() client: Socket)
+	private async handleOnlineUser(userId : number)
 	{
-		const targetRoom = `user_${targetId}`;
-
-		this.server.to(targetRoom).emit('privateMessage', {
-			fromUsername: client.data.user.userId,
-			message: message,
-			timestamp: new Date()
-		});
-
-		this.server.to(`user_${client.data.user.userId}`).emit('privateMessage', {
-			from: client.data.user.userId,
-			to: client.data.user.userId,
-			message: message,
-			timestamp: new Date()
-		});
-	}
-
-	private async handleOnlineUser(@ConnectedSocket() client: Socket)
-	{
-		const friends = await this.socialService.getFriends(client.data.user.userId, 'ACCEPT');
+		const friends = await this.socialService.getFriends(userId, 'ACCEPT');
 
 		friends.forEach(friend =>
 		{
 			this.server.to(`user_${friend.id}`).emit('user-status', {
-				id: client.data.user.userId,
+				id: userId,
 				status: 'ONLINE'
 			});
 		});
 	}
 
-	private async handleOfflineUser(@ConnectedSocket() client: Socket)
+	private async handleOfflineUser(userId : number)
 	{
-		const friends = await this.socialService.getFriends(client.data.user.userId, 'ACCEPT');
+		const friends = await this.socialService.getFriends(userId, 'ACCEPT');
 		
 		friends.forEach(friend =>
 		{
 			this.server.to(`user_${friend.id}`).emit('user-status', {
-				id: client.data.user.userId,
+				id: userId,
 				status: 'OFFLINE'
 			});
+		});
+	}
+
+	private async sendOnlineFriendStatus(@ConnectedSocket() client : Socket)
+	{
+		const userId = client.data.user.userId;
+
+		const friends = await this.socialService.getFriends(userId, 'ACCEPT');
+
+		const friendStatus = friends.map(friend => {
+			const isOnline = this.onlineUsers.has(friend.id);
+			return { id: friend.id, status : isOnline ? 'ONLINE' : 'OFFLINE'};
+		});
+
+		friendStatus.forEach(user => {
+			if (user.status === 'ONLINE')
+					client.emit('user-status', user);
 		});
 	}
 }
