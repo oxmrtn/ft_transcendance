@@ -7,12 +7,14 @@ import { SocialService } from './social.service';
 import { SearchQueryDto } from 'src/dto/search-query.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ParseUserPipe } from '../pipes/parseUser.pipe';
+import { SocialGateway } from './social.gateway';
 
 @Controller('social')
 @UseGuards(AuthGuard('jwt'))
 export class SocialController
 {
-	constructor(private readonly socialService: SocialService) {}
+	constructor(private readonly socialService: SocialService,
+				private readonly socialGateway: SocialGateway) {}
 
 	@Get('search')
 	search(@Query() query: SearchQueryDto)
@@ -33,9 +35,13 @@ export class SocialController
 	}
 
 	@Patch('request/:targetName/accept')
-	accept(@Req() req, @Param('targetName', ParseUserPipe) targetId: any)
+	async accept(@Req() req, @Param('targetName', ParseUserPipe) targetId: any)
 	{
-		return this.socialService.handleRequest(req.user.userId, targetId, true);
+		const res = await this.socialService.handleRequest(req.user.userId, targetId, true);
+
+		this.socialGateway.newFriendship(req.user.userId, targetId);
+
+		return res;
 	}
 
 	@Patch('request/:targetName/reject')
@@ -45,9 +51,13 @@ export class SocialController
 	}
 
 	@Delete('friends/:targetName')
-	remove(@Req() req, @Param('targetName', ParseUserPipe) targetId: any)
+	async remove(@Req() req, @Param('targetName', ParseUserPipe) targetId: any)
 	{
-		return this.socialService.removeFriend(req.user.userId, targetId);
+		const res = await this.socialService.removeFriend(req.user.userId, targetId);
+
+		this.socialGateway.friendshipRemoved(req.user.userId, targetId);
+
+		return res;
 	}
 
 	@Get('request')
