@@ -16,7 +16,7 @@ export class ProfileController {
   {
     const file = await request.file();
     if (file)
-      file.filename = 'user_'+request.user.userId+'_avatar.jpg';
-      return this.profileService.updatePicture(file);
+		file.filename = 'user_'+request.user.userId+'_avatar.jpg';
+		return this.profileService.updatePicture(file);
   }
 }
