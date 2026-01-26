@@ -50,13 +50,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const gameId = payload.gameId;
 
 		if (this.gamesMap.has(gameId))
-			return;
+			return;//execption?
 		
 		const playerNumber = payload.playerNumber;
 		const user = client.data.user;
 
 		this.gamesMap.set(gameId, new Game(gameId, playerNumber));
-		this.gamesMap.get(gameId).roomPlayers.add(user.userId);
+
+		const currentGame = this.gamesMap.get(gameId);
+		
+		currentGame.roomPlayers = new Set();
+		currentGame.roomPlayers.add(user.userId);
+		currentGame.gamePlayers = new Set();
 
 		client.join(`game_${gameId}`);
 
@@ -72,13 +77,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	{
 		const gameId = payload.gameId;
 		const user = client.data.user;
+		const currentGame = this.gamesMap.get(gameId);
 
-		if (this.gamesMap.get(gameId).roomPlayers.has(user.userId))
+		if (!currentGame || currentGame.roomPlayers.has(user.userId))
 				return;
 		
 		client.join(`game_${gameId}`);
 
-		this.gamesMap.get(gameId).roomPlayers.add(user.userId);//limite d'users present dans la room??
+		currentGame.roomPlayers.add(user.userId);//limite d'users present dans la room??
 
 		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'join-room',
@@ -92,6 +98,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const gameId = payload.gameId;
 		const user = client.data.user;
 		const currentGame = this.gamesMap.get(gameId);
+
+		if (!currentGame || !currentGame.roomPlayers.has(user.userId))
+			return;
 
 		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'leave-room',
@@ -110,7 +119,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const user = client.data.user;
 		const currentGame = this.gamesMap.get(gameId);
 
-		if (currentGame.gamePlayers.has(user.userId)
+		if (!currentGame || currentGame.gamePlayers.has(user.userId)
 			|| !currentGame.roomPlayers.has(user.userId))
 			return;
 
@@ -120,7 +129,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		});
 
 		currentGame.gamePlayers.add(user.userId);
-		console.log('gameId: ', this.gamesMap.get(payload.gameId));
 
 		if (currentGame.gamePlayers.size === currentGame.playerNumber)
 		{
@@ -136,6 +144,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const gameId = payload.gameId;
 		const user = client.data.user;
 		const currentGame = this.gamesMap.get(gameId);
+
+		if (!currentGame || !currentGame.gamePlayers.has(user.userId))
+			return;
 
 		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'game-leave',
@@ -156,12 +167,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	{
 		const gameId = payload.gameId;
 		const user = client.data.user;
+		const currentGame = this.gamesMap.get(gameId);
+
+		if (!currentGame || !currentGame.gamePlayers.has(user.userId))
+			return;
 
 		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'code-submit',
 			player: user.username
 		});
-		
 		//passer le code a l'api de tests
 	}
 }
