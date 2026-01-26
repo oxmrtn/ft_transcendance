@@ -18,7 +18,11 @@ async function bootstrap() {
   );
 
   	const fastifySousLeCapot = app.getHttpAdapter().getInstance();
-	fastifySousLeCapot.register(fastifyMultipart);
+	fastifySousLeCapot.register(fastifyMultipart, {
+		limits: {
+			fileSize: 5 * 1024 * 1024,
+		}
+	});
 
 	app.useGlobalPipes(new TrimPipe);
 
