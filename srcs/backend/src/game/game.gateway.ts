@@ -14,6 +14,19 @@ import { codeSubmitDto } from "src/dto/code-submit.dto";
 import { createRoomDto } from "src/dto/create-room.dto";
 import { gameIdDto } from "src/dto/game-id.dto";
 
+class Game {
+	public playerNumber : number;
+	public gameId : string;
+	public roomPlayers: Set<number>;
+	public gamePlayers: Set<number>;
+
+	constructor (gameId: string, playerNumber: number)
+	{
+		this.gameId = gameId;
+		this.playerNumber = playerNumber;
+	};
+};
+
 @UseGuards(WsJwtGuard)
 @WebSocketGateway({cors: { origin: '*' } })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
@@ -21,9 +34,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	@WebSocketServer() server: Server;
 
-	private playerNb : number;
-	private gamePlayers = new Set<number>;
-	private roomedPlayer = new Set<number>;
+	private gamesMap = new Map<string, Game>();
+
 
 	handleConnection(@ConnectedSocket() client: Socket) {}
 
@@ -35,11 +47,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	@SubscribeMessage('create-room')
 	createGameRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: createRoomDto)
 	{
-		this.playerNb = payload.playerNb;
-		console.log('init playerNb: ', this.playerNb)
-		//verification gameId est unique
+		if (this.gamesMap.has(payload.gameId))
+			return;
 		
-		this.roomedPlayer.add(client.data.user.userId);
+		this.gamesMap.set(payload.gameId, new Game(payload.gameId, payload.playerNumber));
+		this.gamesMap.get(payload.gameId).roomPlayers.add(client.data.user.userId);
 
 		client.join(`game_${payload.gameId}`);
 
@@ -50,21 +62,20 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		});
 	}
 
-	@SubscribeMessage('leave-game')
-	leaveGame(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
+	@SubscribeMessage('join-room')
+	handleJoinGame(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
 	{
+		if (this.gamesMap.get(payload.gameId).roomPlayers.has(client.data.user.userId))
+				return;
+		
+		client.join(`game_${payload.gameId}`);
+
+		this.gamesMap.get(payload.gameId).roomPlayers.add(client.data.user.userId);//limite d'users present dans la room??
+
 		client.to(`game_${payload.gameId}`).emit('game-info', {
-			event: 'game-leave',
+			event: 'join-room',
 			player: client.data.user.username
 		});
-
-		this.gamePlayers.delete(client.data.user.userId);
-		
-		if (this.gamePlayers.size === 1)
-			this.server.to(`game_${payload.gameId}`).emit('game-info', {
-				event: 'results',
-				winner: this.gamePlayers[0]
-			});
 	}
 
 	@SubscribeMessage('leave-room')
@@ -75,23 +86,49 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			player: client.data.user.username
 		});
 
-		this.roomedPlayer.delete(client.data.user.userId);
+		this.gamesMap.get(payload.gameId).roomPlayers.delete(client.data.user.userId);
+		if (!this.gamesMap.get(payload.gameId).roomPlayers.size)//on pourrait aussi faire un event de suppression de la room
+			this.gamesMap.delete(payload.gameId);
 	}
 
-	@SubscribeMessage('join-room')
-	handleJoinGame(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
+	@SubscribeMessage('join-game')
+	launchBattle(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
 	{
-		if (this.roomedPlayer.has(client.data.user.userId))
-				return;
-		
-		client.join(`game_${payload.gameId}`);
-
-		this.roomedPlayer.add(client.data.user.userId);//limite d'users present dans la room??
+		if (this.gamesMap.get(payload.gameId).gamePlayers.has(client.data.user.userId)
+			|| !this.gamesMap.get(payload.gameId).roomPlayers.has(client.data.user.userId))
+			return;
 
 		client.to(`game_${payload.gameId}`).emit('game-info', {
-			event: 'join-room',
+			event: 'join-game',
 			player: client.data.user.username
 		});
+
+		this.gamesMap.get(payload.gameId).gamePlayers.add(client.data.user.userId);
+		console.log('gameId: ', this.gamesMap.get(payload.gameId));
+
+		if (this.gamesMap.get(payload.gameId).gamePlayers.size === this.gamesMap.get(payload.gameId).playerNumber)
+		{
+			this.server.to(`game_${payload.gameId}`).emit('game-info', {
+				event: 'start' 	
+			});
+		}
+	}
+
+	@SubscribeMessage('leave-game')
+	leaveGame(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
+	{
+		client.to(`game_${payload.gameId}`).emit('game-info', {
+			event: 'game-leave',
+			player: client.data.user.username
+		});
+
+		this.gamesMap.get(payload.gameId).gamePlayers.delete(client.data.user.userId);
+		
+		if (this.gamesMap.get(payload.gameId).gamePlayers.size === 1)
+			this.server.to(`game_${payload.gameId}`).emit('game-info', {
+				event: 'results',
+				winner: this.gamesMap.get(payload.gameId).gamePlayers[0]
+			});
 	}
 
 	@SubscribeMessage('code-submit')
@@ -103,26 +140,5 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		});
 		
 		//passer le code a l'api de tests
-	}
-
-	@SubscribeMessage('join-game')
-	launchBattle(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
-	{
-		if (this.gamePlayers.has(client.data.user.userId) || !this.roomedPlayer.has(client.data.user.userId))
-			return;
-
-		client.to(`game_${payload.gameId}`).emit('game-info', {
-			event: 'join-game',
-			player: client.data.user.username
-		});
-
-		this.gamePlayers.add(client.data.user.userId);
-
-		if (this.gamePlayers.size === this.playerNb)
-		{
-			this.server.to(`game_${payload.gameId}`).emit('game-info', {
-				event: 'start' 	
-			});
-		}
 	}
 }

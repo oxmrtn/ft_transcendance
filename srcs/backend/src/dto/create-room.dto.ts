@@ -10,5 +10,5 @@ export class createRoomDto
 	@IsInt()
 	@Min(2)
 	@Max(4)
-	playerNb: number;
+	playerNumber: number;
 }
