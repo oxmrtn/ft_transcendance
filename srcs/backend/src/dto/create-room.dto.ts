@@ -6,7 +6,7 @@ export class createRoomDto
 	@IsNotEmpty()
 	@MaxLength(100)
 	gameId: string;
-
+//Min et Max ne fonctionnent pas
 	@IsInt()
 	@Min(2)
 	@Max(4)
