@@ -14,7 +14,7 @@ import { codeSubmitDto } from "src/dto/code-submit.dto";
 import { createRoomDto } from "src/dto/create-room.dto";
 import { gameIdDto } from "src/dto/game-id.dto";
 
-class Game {
+class GameSession {
 	public playerNumber : number;
 	public gameId : string;
 	public roomPlayers: Set<number>;
@@ -34,7 +34,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	@WebSocketServer() server: Server;
 
-	private gamesMap = new Map<string, Game>();
+	private gamesMap = new Map<string, GameSession>();
 
 
 	handleConnection(@ConnectedSocket() client: Socket) {}
@@ -50,12 +50,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const gameId = payload.gameId;
 
 		if (this.gamesMap.has(gameId))
-			return;//execption?
+			return client.emit('game-info', {
+		event: 'error',
+		message: 'This room already exist !'
+	});
 		
 		const playerNumber = payload.playerNumber;
 		const user = client.data.user;
 
-		this.gamesMap.set(gameId, new Game(gameId, playerNumber));
+		this.gamesMap.set(gameId, new GameSession(gameId, playerNumber));
 
 		const currentGame = this.gamesMap.get(gameId);
 		
@@ -79,12 +82,27 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const user = client.data.user;
 		const currentGame = this.gamesMap.get(gameId);
 
-		if (!currentGame || currentGame.roomPlayers.has(user.userId))
-				return;
+		if (!currentGame)
+		{
+			this.errorMessage( client, `Room ${gameId} doesn\'t exist!`);
+			return;
+		}
+
+		if (currentGame.roomPlayers.has(user.userId))
+		{
+			this.errorMessage(client, `${user.username} already join this room!`);
+			return;
+		}
 		
 		client.join(`game_${gameId}`);
 
-		currentGame.roomPlayers.add(user.userId);//limite d'users present dans la room??
+		if (currentGame.roomPlayers.size >= currentGame.playerNumber)
+		{
+			this.errorMessage(client, `This room is already full!`);
+			return;
+		}
+
+		currentGame.roomPlayers.add(user.userId);
 
 		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'join-room',
@@ -99,8 +117,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const user = client.data.user;
 		const currentGame = this.gamesMap.get(gameId);
 
-		if (!currentGame || !currentGame.roomPlayers.has(user.userId))
+		if (!currentGame)
+		{
+			this.errorMessage(client, `${gameId} room doesn\'t exist!`);
 			return;
+		}
+
+		if (!currentGame.roomPlayers.has(user.userId))
+		{
+			this.errorMessage(client, ` There is no user ${user.username} in this room!`);
+			return;
+		}			
 
 		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'leave-room',
@@ -108,7 +135,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		});
 
 		currentGame.roomPlayers.delete(user.userId);
-		if (!currentGame.roomPlayers.size)//on pourrait aussi faire un event de suppression de la room
+		if (!currentGame.roomPlayers.size)
 			this.gamesMap.delete(gameId);
 	}
 
@@ -119,9 +146,29 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const user = client.data.user;
 		const currentGame = this.gamesMap.get(gameId);
 
-		if (!currentGame || currentGame.gamePlayers.has(user.userId)
-			|| !currentGame.roomPlayers.has(user.userId))
+		if (!currentGame)
+		{
+			this.errorMessage(client, `Room ${gameId} doesn\'t exist!`);
 			return;
+		}
+
+		if (currentGame.gamePlayers.has(user.userId))
+		{
+			this.errorMessage(client, `${user.username} already joined this Battle!`);
+			return;
+		}
+
+		if (!currentGame.roomPlayers.has(user.userId))
+		{
+			this.errorMessage(client, `${user.userId} can't join this Battle!`);
+			return;
+		}
+
+		if (currentGame.gamePlayers.size >= currentGame.playerNumber)
+		{
+			this.errorMessage(client, `This Battle is already full!`);
+			return;
+		}
 
 		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'join-game',
@@ -145,8 +192,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const user = client.data.user;
 		const currentGame = this.gamesMap.get(gameId);
 
-		if (!currentGame || !currentGame.gamePlayers.has(user.userId))
+		if (!currentGame)
+		{
+			this.errorMessage(client, `Room ${gameId} doesn\'t exist!`)
 			return;
+		}
+		
+		if (!currentGame.gamePlayers.has(user.userId))
+		{
+			this.errorMessage(client, `There is no user ${user.username} in this Battle!`)
+			return;
+		}
 
 		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'game-leave',
@@ -169,13 +225,30 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const user = client.data.user;
 		const currentGame = this.gamesMap.get(gameId);
 
-		if (!currentGame || !currentGame.gamePlayers.has(user.userId))
+		if (!currentGame)
+		{
+			this.errorMessage(client, `Room ${gameId} doesn\'t exist!`)
 			return;
+		}
+		
+		if (!currentGame.gamePlayers.has(user.userId))
+		{
+			this.errorMessage(client, `There is no user ${user.username} in this Battle!`)
+			return;
+		}
 
 		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'code-submit',
 			player: user.username
 		});
 		//passer le code a l'api de tests
+	}
+
+	private errorMessage(@ConnectedSocket() client : Socket, msg : string)
+	{
+		client.emit('game-info', {
+				event: 'error',
+				message: msg
+			});
 	}
 }
