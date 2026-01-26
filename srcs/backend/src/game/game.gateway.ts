@@ -47,68 +47,84 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	@SubscribeMessage('create-room')
 	createGameRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: createRoomDto)
 	{
-		if (this.gamesMap.has(payload.gameId))
+		const gameId = payload.gameId;
+
+		if (this.gamesMap.has(gameId))
 			return;
 		
-		this.gamesMap.set(payload.gameId, new Game(payload.gameId, payload.playerNumber));
-		this.gamesMap.get(payload.gameId).roomPlayers.add(client.data.user.userId);
+		const playerNumber = payload.playerNumber;
+		const user = client.data.user;
 
-		client.join(`game_${payload.gameId}`);
+		this.gamesMap.set(gameId, new Game(gameId, playerNumber));
+		this.gamesMap.get(gameId).roomPlayers.add(user.userId);
 
-		this.server.to(`game_${payload.gameId}`).emit('game-info', {
+		client.join(`game_${gameId}`);
+
+		this.server.to(`game_${gameId}`).emit('game-info', {
 			event: 'create-room',
-			roomid: payload.gameId,
-			newplayer: client.data.user.username
+			roomid: gameId,
+			newplayer: user.username
 		});
 	}
 
 	@SubscribeMessage('join-room')
 	handleJoinGame(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
 	{
-		if (this.gamesMap.get(payload.gameId).roomPlayers.has(client.data.user.userId))
+		const gameId = payload.gameId;
+		const user = client.data.user;
+
+		if (this.gamesMap.get(gameId).roomPlayers.has(user.userId))
 				return;
 		
-		client.join(`game_${payload.gameId}`);
+		client.join(`game_${gameId}`);
 
-		this.gamesMap.get(payload.gameId).roomPlayers.add(client.data.user.userId);//limite d'users present dans la room??
+		this.gamesMap.get(gameId).roomPlayers.add(user.userId);//limite d'users present dans la room??
 
-		client.to(`game_${payload.gameId}`).emit('game-info', {
+		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'join-room',
-			player: client.data.user.username
+			player: user.username
 		});
 	}
 
 	@SubscribeMessage('leave-room')
 	leaveRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
 	{
-		client.to(`game_${payload.gameId}`).emit('game-info', {
+		const gameId = payload.gameId;
+		const user = client.data.user;
+		const currentGame = this.gamesMap.get(gameId);
+
+		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'leave-room',
-			player: client.data.user.username
+			player: user.username
 		});
 
-		this.gamesMap.get(payload.gameId).roomPlayers.delete(client.data.user.userId);
-		if (!this.gamesMap.get(payload.gameId).roomPlayers.size)//on pourrait aussi faire un event de suppression de la room
-			this.gamesMap.delete(payload.gameId);
+		currentGame.roomPlayers.delete(user.userId);
+		if (!currentGame.roomPlayers.size)//on pourrait aussi faire un event de suppression de la room
+			this.gamesMap.delete(gameId);
 	}
 
 	@SubscribeMessage('join-game')
 	launchBattle(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
 	{
-		if (this.gamesMap.get(payload.gameId).gamePlayers.has(client.data.user.userId)
-			|| !this.gamesMap.get(payload.gameId).roomPlayers.has(client.data.user.userId))
+		const gameId = payload.gameId;
+		const user = client.data.user;
+		const currentGame = this.gamesMap.get(gameId);
+
+		if (currentGame.gamePlayers.has(user.userId)
+			|| !currentGame.roomPlayers.has(user.userId))
 			return;
 
-		client.to(`game_${payload.gameId}`).emit('game-info', {
+		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'join-game',
-			player: client.data.user.username
+			player: user.username
 		});
 
-		this.gamesMap.get(payload.gameId).gamePlayers.add(client.data.user.userId);
+		currentGame.gamePlayers.add(user.userId);
 		console.log('gameId: ', this.gamesMap.get(payload.gameId));
 
-		if (this.gamesMap.get(payload.gameId).gamePlayers.size === this.gamesMap.get(payload.gameId).playerNumber)
+		if (currentGame.gamePlayers.size === currentGame.playerNumber)
 		{
-			this.server.to(`game_${payload.gameId}`).emit('game-info', {
+			this.server.to(`game_${gameId}`).emit('game-info', {
 				event: 'start' 	
 			});
 		}
@@ -117,26 +133,33 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	@SubscribeMessage('leave-game')
 	leaveGame(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
 	{
-		client.to(`game_${payload.gameId}`).emit('game-info', {
+		const gameId = payload.gameId;
+		const user = client.data.user;
+		const currentGame = this.gamesMap.get(gameId);
+
+		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'game-leave',
-			player: client.data.user.username
+			player: user.username
 		});
 
-		this.gamesMap.get(payload.gameId).gamePlayers.delete(client.data.user.userId);
+		currentGame.gamePlayers.delete(user.userId);
 		
-		if (this.gamesMap.get(payload.gameId).gamePlayers.size === 1)
-			this.server.to(`game_${payload.gameId}`).emit('game-info', {
+		if (currentGame.gamePlayers.size === 1)
+			this.server.to(`game_${gameId}`).emit('game-info', {
 				event: 'results',
-				winner: this.gamesMap.get(payload.gameId).gamePlayers[0]
+				winner: currentGame.gamePlayers[0]
 			});
 	}
 
 	@SubscribeMessage('code-submit')
 	async handleCodeSubmit(@ConnectedSocket() client: Socket, @MessageBody() payload: codeSubmitDto)
 	{
-		client.to(`game_${payload.gameId}`).emit('game-info', {
+		const gameId = payload.gameId;
+		const user = client.data.user;
+
+		client.to(`game_${gameId}`).emit('game-info', {
 			event: 'code-submit',
-			player: client.data.user.username
+			player: user.username
 		});
 		
 		//passer le code a l'api de tests
