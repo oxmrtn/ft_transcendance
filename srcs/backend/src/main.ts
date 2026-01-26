@@ -4,6 +4,7 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { ValidationPipe } from '@nestjs/common';
 import { TrimPipe } from './pipes/trim.pipe';
 import * as fs from 'fs';
+import fastifyMultipart from '@fastify/multipart';
 
 async function bootstrap() {
 	const httpsOptions = {
@@ -15,6 +16,9 @@ async function bootstrap() {
     new FastifyAdapter({https: httpsOptions}),
     { cors: true }
   );
+
+  	const fastifySousLeCapot = app.getHttpAdapter().getInstance();
+	fastifySousLeCapot.register(fastifyMultipart);
 
 	app.useGlobalPipes(new TrimPipe);
 
