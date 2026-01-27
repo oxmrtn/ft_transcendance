@@ -8,7 +8,7 @@ import {
 	OnGatewayConnection	
 	} from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
-import { UseGuards } from "@nestjs/common";
+import { UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { WsJwtGuard } from "src/auth/wsjwt/wsjwt.guard";
 import { codeSubmitDto } from "src/dto/code-submit.dto";
 import { createRoomDto } from "src/dto/create-room.dto";
@@ -28,6 +28,7 @@ class GameSession {
 };
 
 @UseGuards(WsJwtGuard)
+@UsePipes(new ValidationPipe ({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
 @WebSocketGateway({cors: { origin: '*' } })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 {
@@ -36,7 +37,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	private gameSessions = new Map<string, GameSession>();
 	private clientToRoom = new Map<number, string>();
-
 
 	handleConnection(@ConnectedSocket() client: Socket) {}
 
