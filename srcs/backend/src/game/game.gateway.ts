@@ -46,8 +46,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const gameId :string = this.clientToRoom.get(userId);
 		const currentGame = this.gameSessions.get(gameId);
 	
-		if (!gameId || !currentGame)
+		if (!gameId)
 			return;
+
+		if (!currentGame)
+		{
+			this.clientToRoom.delete(userId)
+			return;
+		}
 
 		if (this.clientToRoom.has(userId))
 			this.clientToRoom.delete(userId);
@@ -57,11 +63,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		if (currentGame.gamePlayers.size === 1)
 		{
+			const winnerId = Array.from(currentGame.gamePlayers)[0];
 			this.server.to(`game_${gameId}`).emit('game-info', {
 				event: 'results',
-				winner: currentGame.gamePlayers[0]
+				winner: winnerId
 			});
-			currentGame.gamePlayers.clear;
+			currentGame.gamePlayers.clear();
 		}
 
 		if (currentGame.roomPlayers.has(userId))
@@ -72,8 +79,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		this.server.to(`game_${gameId}`).emit('game-info', {
 			event: 'room-status',
-			roomPlayers: currentGame.roomPlayers,
-			gamePlayers: currentGame.gamePlayers,
+			roomPlayers: Array.from(currentGame.roomPlayers),
+			gamePlayers: Array.from(currentGame.gamePlayers),
 			playerNumber: currentGame.playerNumber,
 			gameId: currentGame.gameId
 		});
@@ -169,13 +176,20 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		{
 			this.errorMessage(client, ` There is no user ${user.username} in this room!`);
 			return;
-		}			
+		}
+
+		client.leave(`game_${gameId}`);
 
 		currentGame.roomPlayers.delete(user.userId);
 		this.clientToRoom.delete(user.userId);
 
+		if(currentGame.gamePlayers.has(user.userId))
+			currentGame.gamePlayers.delete(user.userId);
+
 		if (!currentGame.roomPlayers.size)
 			this.gameSessions.delete(gameId);
+		else
+			this.notifyGameStatus(client);
 	}
 
 	@SubscribeMessage('join-game')
@@ -244,12 +258,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		
 		if (currentGame.gamePlayers.size === 1)
 		{
+			const winnerId = Array.from(currentGame.gamePlayers)[0];
 			this.server.to(`game_${gameId}`).emit('game-info', {
 				event: 'results',
-				winner: currentGame.gamePlayers[0]
+				winner: winnerId
 			});
-			currentGame.gamePlayers.clear;
+			currentGame.gamePlayers.clear();
 		}
+
+		this.notifyGameStatus(client);
 	}
 
 	@SubscribeMessage('code-submit')
@@ -291,10 +308,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const userId : number = client.data.user.userId;
 		const currentGame = this.gameSessions.get(this.clientToRoom.get(userId))
 
+		if (!currentGame)
+				return;
+
 		this.server.to(`game_${currentGame.gameId}`).emit('game-info', {
 			event: 'room-status',
-			roomPlayers: currentGame.roomPlayers,
-			gamePlayers: currentGame.gamePlayers,
+			roomPlayers: Array.from(currentGame.roomPlayers),
+			gamePlayers: Array.from(currentGame.gamePlayers),
 			playerNumber: currentGame.playerNumber,
 			gameId: currentGame.gameId
 		});
