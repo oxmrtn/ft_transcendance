@@ -21,10 +21,12 @@ async function bootstrap() {
 	fastifySousLeCapot.register(fastifyMultipart, {
 		limits: {
 			fileSize: 5 * 1024 * 1024,
-		}
+			files: 2,
+		},
+		attachFieldsToBody: true,
 	});
 
-	app.useGlobalPipes(new TrimPipe);
+	// app.useGlobalPipes(new TrimPipe);
 
 	app.useGlobalPipes(new ValidationPipe({
 		whitelist: true,
@@ -33,7 +35,7 @@ async function bootstrap() {
 		transformOptions: { enableImplicitConversion: true },
 	}));
 
-  await app.listen(3333, '0.0.0.0'); 
+  await app.listen(3333, '0.0.0.0');
 }
 
 bootstrap();
