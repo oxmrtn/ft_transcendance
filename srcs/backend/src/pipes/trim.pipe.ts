@@ -22,14 +22,9 @@ export class TrimPipe implements PipeTransform {
 			if (key !== 'password')
 			{
 				if (this.isObj(values[key]))
-					{
 						this.trim(values[key], _refs);
-					}
 				else if (typeof values[key] === 'string')
-				{
-					console.log(values[key]);
 					values[key] = values[key].trim();
-				}
 			}
 		});
 		_refs.delete(values);
@@ -41,9 +36,7 @@ export class TrimPipe implements PipeTransform {
 		const { type } = metadata;
 		const _refs = new WeakSet;
 		if (this.isObj(values) && type === 'body')
-		{
 			return this.trim(values, _refs);
-		}
 		return values;
 	}
 }
