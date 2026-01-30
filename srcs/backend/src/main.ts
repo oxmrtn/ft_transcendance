@@ -4,6 +4,7 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { ValidationPipe } from '@nestjs/common';
 import { TrimPipe } from './pipes/trim.pipe';
 import * as fs from 'fs';
+import fastifyMultipart from '@fastify/multipart';
 
 async function bootstrap() {
 	const httpsOptions = {
@@ -16,6 +17,15 @@ async function bootstrap() {
     { cors: true }
   );
 
+  	const fastifySousLeCapot = app.getHttpAdapter().getInstance();
+	fastifySousLeCapot.register(fastifyMultipart, {
+		limits: {
+			fileSize: 5 * 1024 * 1024,
+			files: 2,
+		},
+		attachFieldsToBody: true,
+	});
+
 	app.useGlobalPipes(new TrimPipe);
 
 	app.useGlobalPipes(new ValidationPipe({
@@ -25,7 +35,7 @@ async function bootstrap() {
 		transformOptions: { enableImplicitConversion: true },
 	}));
 
-  await app.listen(3333, '0.0.0.0'); 
+  await app.listen(3333, '0.0.0.0');
 }
 
 bootstrap();
