@@ -7,6 +7,7 @@ import { SocialModule } from './social/social.module';
 import { ChatModule } from './chat/chat.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { ProfileModule } from './profile/profile.module';
 import { GameModule } from './game/game.module';
 
 @Module({
@@ -22,6 +23,7 @@ import { GameModule } from './game/game.module';
     AuthModule,
     SocialModule,
     ChatModule,
+    ProfileModule,
     GameModule
   ],
   controllers: [AppController],
