@@ -11,29 +11,32 @@ export class TrimPipe implements PipeTransform {
 		return typeof obj === 'object' && obj !== null;
 	}
 
-	private trim(values)
+	private trim(values, _refs )
 	{
+		if (_refs.has(values))
+			return
+		_refs.add(values)
 		Object.keys(values).forEach((key) =>
 		{
+
 			if (key !== 'password')
 			{
 				if (this.isObj(values[key]))
-					this.trim(values[key]);
+						this.trim(values[key], _refs);
 				else if (typeof values[key] === 'string')
 					values[key] = values[key].trim();
 			}
 		});
+		_refs.delete(values);
 		return values;
 	}
 
 	transform(values: any, metadata: ArgumentMetadata)
 	{
 		const { type } = metadata;
-
+		const _refs = new WeakSet;
 		if (this.isObj(values) && type === 'body')
-		{
-			return this.trim(values);
-		}
+			return this.trim(values, _refs);
 		return values;
 	}
 }
