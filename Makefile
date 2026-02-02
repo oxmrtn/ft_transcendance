@@ -22,6 +22,9 @@ logs:
 clean:
 	$(DOCKER_COMPOSE) down -v --remove-orphans --rmi all
 
+back-install:
+	$(DOCKER_COMPOSE) exec backend npm install
+
 front-install:
 	$(DOCKER_COMPOSE) exec front npm install
 
