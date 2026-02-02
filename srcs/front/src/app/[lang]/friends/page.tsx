@@ -45,7 +45,7 @@ export default function Page() {
     setFriends([]);
 
     try {
-      const response = await fetch("http://localhost:3333/social/friends", {
+      const response = await fetch("https://localhost:3333/social/friends", {
         method: "GET",
         headers: {
           "token": token
@@ -71,7 +71,7 @@ export default function Page() {
     setPending([]);
 
     try {
-      const response = await fetch("http://localhost:3333/social/request", {
+      const response = await fetch("https://localhost:3333/social/request", {
         method: "GET",
         headers: {
           "token": token

@@ -7,10 +7,12 @@ import { SocialService } from './social.service';
 //import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { IdParamDto } from 'src/dto/id-param.dto';
 import { SearchQueryDto } from 'src/dto/search-query.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 /* modifier req.user.id manuellement pout tester */
 @Controller('social')
-//@UseGuards(JwtAuthGuard)//guard pour toutes les routes du module
+@UseGuards(AuthGuard('jwt'))
+//@UseGuards(JwtAuthGuard)//guard pour toutes les routes du module (je sais pas qui a écrt ça mais ça m'a fait perdre pas mal de temps - Jojo)
 export class SocialController
 {
 	constructor(private readonly socialService: SocialService) {}

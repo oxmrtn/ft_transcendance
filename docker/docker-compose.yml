@@ -36,6 +36,9 @@ services:
         condition: service_healthy
     networks:
       - transcendence
+    secrets:
+      - ssl_key
+      - ssl_crt
 
   front:
     container_name: front
@@ -59,3 +62,9 @@ volumes:
 networks:
   transcendence:
     driver: bridge
+
+secrets:
+  ssl_key:
+    file: ./secrets/VersusCode.key
+  ssl_crt:
+    file: ./secrets/VersusCode.crt

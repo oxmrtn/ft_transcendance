@@ -30,13 +30,13 @@ export default function RegisterForm() {
     event.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3333/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, email, password }),
-      });
+      const response = await fetch("https://localhost:3333/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, email, password }),
+        });
 
       const data = await response.json();
       if (!response.ok) {
