@@ -23,9 +23,7 @@ URIs: https://download.docker.com/linux/debian
 Suites: $(. /etc/os-release && echo "$VERSION_CODENAME")
 Components: stable
 Signed-By: /etc/apt/keyrings/docker.asc
-
 EOF
-
 #Enfin on DL docker 
 RUN apt-get update && apt-get install -y \
     docker-ce \
