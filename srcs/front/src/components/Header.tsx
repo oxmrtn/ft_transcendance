@@ -86,12 +86,12 @@ export default function Header() {
             {username}
           </DropdownMenuTrigger>
           <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()} className="mr-2 bg-white/5 backdrop-blur-xl border border-white/10">
-            <DropdownMenuItem className="hover:bg-white/10" onClick={() => openModal(<SettingsModal />)}>
-              < Settings className="mr-2 h-4 w-4" />
+            <DropdownMenuItem className="hover:bg-white/10 gap-2.5" onClick={() => openModal(<SettingsModal />)}>
+              < Settings className="h-4 w-4" />
               <span>{dictionary.header.settings}</span>
             </DropdownMenuItem>
-            <DropdownMenuItem variant="destructive" onClick={logout}>
-              < LogOut className="mr-2 h-4 w-4" />
+            <DropdownMenuItem className="gap-2.5" variant="destructive" onClick={logout}>
+              < LogOut className="h-4 w-4" />
               <span>{dictionary.header.logout}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>

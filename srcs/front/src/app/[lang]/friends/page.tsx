@@ -216,7 +216,7 @@ export default function Page() {
                   <p className="text-sub-text">{dictionary.friends.noFriends}</p>
                 </div>
               ) : (
-                <div className="h-full w-full flex flex-col justify-between py-2">
+                <div className="h-full w-full flex flex-col py-2.5 gap-0.5">
                   {displayedFriends.map((friend, index) => (
                     <UserProfile
                       user={friend}

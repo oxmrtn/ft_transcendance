@@ -1,7 +1,12 @@
 import { cn } from '../lib/utils';
-import { toast } from "sonner";
-import { X, EllipsisVertical, Check } from 'lucide-react';
+import { X, User, EllipsisVertical, MessageCircleMore, Check } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+  } from "./dropdown-menu"
 
 export interface User {
     username: string;
@@ -66,9 +71,21 @@ export default function UserProfile({
                     <X className="size-5 text-destructive" onClick={onRemove}/>
                 </button>
                 {display === "friendsList" && (
-                    <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer transition-colors duration-200">
-                        <EllipsisVertical className="size-5 text-white" />
-                    </button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer transition-colors duration-200">
+                            <EllipsisVertical className="size-5 text-white" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()} className="mr-2 bg-white/5 backdrop-blur-xl border border-white/10">
+                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5">
+                                <User className="h-4 w-4" />
+                                <span className="text-sm">View Profile</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5">
+                                <MessageCircleMore className="h-4 w-4" />
+                                <span className="text-sm">Send Message</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 )}
                 {display === "pendingList" && (
                     <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-green/10 cursor-pointer transition-colors duration-200">
