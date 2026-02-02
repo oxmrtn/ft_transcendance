@@ -18,7 +18,7 @@ export default function Toaster({ ...props }: ToasterProps) {
       toastOptions={{
         unstyled: true,
         classNames: {
-          toast: "!w-fit !bg-white/10 backdrop-blur-xl !border !border-white/10 !text-white shadow-lg rounded-md py-3 pr-6 pl-5 flex items-center gap-3",
+          toast: "!text-sm !w-fit !bg-white/10 backdrop-blur-xl !border !border-white/10 !text-white shadow-lg rounded-md py-3 pr-6 pl-5 flex items-center gap-3",
         },
       }}
       {...props}
