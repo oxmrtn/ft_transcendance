@@ -10,6 +10,7 @@ import Button from '../../../components/Button';
 import { TextInput } from '../../../components/Input';
 import { Loader2Icon } from "lucide-react"
 import { useLanguage } from '../../../contexts/LanguageContext';
+import { API_URL } from '../../../lib/utils';
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function RegisterForm() {
     event.preventDefault();
 
     try {
-      const response = await fetch("https://localhost:3333/auth/register", {
+      const response = await fetch(`${API_URL}/auth/register`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

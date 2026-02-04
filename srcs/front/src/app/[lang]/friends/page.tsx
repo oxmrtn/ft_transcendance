@@ -13,6 +13,7 @@ import { FriendsSkeleton } from '../../../components/skeleton';
 import Pagination from '../../../components/pagination';
 import UserProfile, { type User } from '../../../components/UserProfile';
 import { toast } from 'sonner';
+import { API_URL } from '../../../lib/utils';
 
 export default function Page() {
   const { token } = useAuth();
@@ -45,10 +46,10 @@ export default function Page() {
     setFriends([]);
 
     try {
-      const response = await fetch("https://localhost:3333/social/friends", {
+      const response = await fetch(`${API_URL}/social/friends`, {
         method: "GET",
         headers: {
-          "token": token
+          "Authorization": `Bearer ${token}`
         }
       });
 
@@ -71,10 +72,10 @@ export default function Page() {
     setPending([]);
 
     try {
-      const response = await fetch("https://localhost:3333/social/request", {
+      const response = await fetch(`${API_URL}/social/request`, {
         method: "GET",
         headers: {
-          "token": token
+          "Authorization": `Bearer ${token}`
         }
       });
 
@@ -95,10 +96,10 @@ export default function Page() {
     const toastId = toast.loading(`${dictionary.friends.sendingRequest} ${friendUsername}...`);
 
     try {
-      const response = await fetch(`http://localhost:3333/social/request/${friendUsername}`, {
+      const response = await fetch(`${API_URL}/social/request/${friendUsername}`, {
         method: "POST",
         headers: {
-          "token": token
+          "Authorization": `Bearer ${token}`
         }
       });
 
@@ -124,10 +125,10 @@ export default function Page() {
     const toastId = toast.loading(`${dictionary.friends.removingFriend} ${friendUsername}...`);
 
     try {
-      const response = await fetch(`http://localhost:3333/social/friends/${friendUsername}`, {
+      const response = await fetch(`${API_URL}/social/friends/${friendUsername}`, {
         method: "DELETE",
         headers: {
-          "token": token
+          "Authorization": `Bearer ${token}`
         }
       });
 
@@ -157,10 +158,10 @@ export default function Page() {
     const toastId = toast.loading(`${isAccept ? dictionary.friends.accepting : dictionary.friends.rejecting} ${pendingUsername}...`);
 
     try {
-      const response = await fetch(`http://localhost:3333/social/request/${pendingUsername}/${isAccept ? "accept" : "reject"}`, {
+      const response = await fetch(`${API_URL}/social/request/${pendingUsername}/${isAccept ? "accept" : "reject"}`, {
         method: "PATCH",
         headers: {
-          "token": token
+          "Authorization": `Bearer ${token}`
         }
       });
 
