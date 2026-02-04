@@ -31,7 +31,6 @@ services:
       - "3333:3333"
     volumes:
       - ../srcs/backend:/app
-      - /var/run/docker.sock:/var/run/docker.sock #On monte la socker sur laquelle coute le deamon docker dans l'host a linterieu du container back
     depends_on:
       db:
         condition: service_healthy
@@ -55,6 +54,11 @@ services:
       - ./.env
     networks:
       - transcendence
+  
+  sandbox:
+    container_name: sandbox
+    image: docker:dind
+    privileged: true
 
 volumes:
   postgres_data:
