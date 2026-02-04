@@ -1,21 +1,20 @@
 import { Controller, 
 		Get, Post, Delete, Patch,
 		Query, Req, Param,
-		UseGuards, ValidationPipe, ParseIntPipe,
+		UseGuards
 	} from '@nestjs/common';
 import { SocialService } from './social.service';
-//import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { IdParamDto } from 'src/dto/id-param.dto';
 import { SearchQueryDto } from 'src/dto/search-query.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { ParseUserPipe } from '../pipes/parseUser.pipe';
+import { SocialGateway } from './social.gateway';
 
-/* modifier req.user.id manuellement pout tester */
 @Controller('social')
 @UseGuards(AuthGuard('jwt'))
-//@UseGuards(JwtAuthGuard)//guard pour toutes les routes du module (je sais pas qui a écrt ça mais ça m'a fait perdre pas mal de temps - Jojo)
 export class SocialController
 {
-	constructor(private readonly socialService: SocialService) {}
+	constructor(private readonly socialService: SocialService,
+				private readonly socialGateway: SocialGateway) {}
 
 	@Get('search')
 	search(@Query() query: SearchQueryDto)
@@ -26,37 +25,45 @@ export class SocialController
 	@Get('friends')
 	getFriends(@Req() req)
 	{
-		return this.socialService.getFriends(req.user.id, 'ACCEPT');
+		return (this.socialService.getFriends(req.user.userId, 'ACCEPT'));
 	}
 
-	@Post('request/:id')
-	sendRequest(@Req() req, @Param() param: IdParamDto)
+	@Post('request/:targetName')
+	sendRequest(@Req() req, @Param('targetName', ParseUserPipe) targetId: any) 
 	{
-		return this.socialService.sendFriendRequest(req.user.id, param.id);
+		return this.socialService.sendFriendRequest(req.user.userId, targetId);
 	}
 
-	@Patch('request/:id/accept')
-	accept(@Req() req, @Param() param: IdParamDto)
+	@Patch('request/:targetName/accept')
+	async accept(@Req() req, @Param('targetName', ParseUserPipe) targetId: any)
 	{
-		return this.socialService.handleRequest(req.user.id, param.id, true);
+		const res = await this.socialService.handleRequest(req.user.userId, targetId, true);
+
+		this.socialGateway.newFriendship(req.user.userId, targetId);
+
+		return res;
 	}
 
-	@Patch('request/:id/reject')
-	reject(@Req() req, @Param() param: IdParamDto)
+	@Patch('request/:targetName/reject')
+	reject(@Req() req, @Param('targetName', ParseUserPipe) targetId: any)
 	{
-		return this.socialService.handleRequest(req.user.id, param.id, false);
+		return this.socialService.handleRequest(req.user.userId, targetId, false);
 	}
 
-	@Delete('friends/:id')
-	remove(@Req() req, @Param() param: IdParamDto)
+	@Delete('friends/:targetName')
+	async remove(@Req() req, @Param('targetName', ParseUserPipe) targetId: any)
 	{
-		return this.socialService.removeFriend(req.user.id, param.id);
+		const res = await this.socialService.removeFriend(req.user.userId, targetId);
+
+		this.socialGateway.friendshipRemoved(req.user.userId, targetId);
+
+		return res;
 	}
 
 	@Get('request')
 	getRequest(@Req() req)
 	{
-		return this.socialService.getFriends(req.user.id, 'PENDING');
+		return this.socialService.getFriends(req.user.userId, 'PENDING');
 	}
 }
 
