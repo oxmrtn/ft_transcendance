@@ -1,9 +1,14 @@
 import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
 
-export class SearchQueryDto
+export class privateMessageDto
 {
 	@IsString()
 	@IsNotEmpty()
+	@MaxLength(1600)
+	body: string;
+
+	@IsString()
+	@IsNotEmpty()
 	@MaxLength(100)
-	q: string;
+	target: string;
 }

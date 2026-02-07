@@ -1,9 +1,14 @@
 import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
 
-export class SearchQueryDto
+export class codeSubmitDto
 {
 	@IsString()
 	@IsNotEmpty()
 	@MaxLength(100)
-	q: string;
+	gameId: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@MaxLength(1600)
+	body: string;
 }

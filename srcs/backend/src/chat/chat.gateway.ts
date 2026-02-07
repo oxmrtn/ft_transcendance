@@ -1,40 +1,50 @@
 import {
+	ConnectedSocket,
 	MessageBody,
-	OnGatewayDisconnect,
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
-	OnGatewayConnection	
 	} from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
+import { UseGuards } from "@nestjs/common";
+import { WsJwtGuard } from "src/auth/wsjwt/wsjwt.guard";
+import { ParseUserPipe } from "src/pipes/parseUser.pipe";
+import { privateMessageDto } from "src/dto/private-msg.dto";
 
-// class ChatMessage {
-// 	username: string;
-// 	message: string;
-// }
-
+@UseGuards(WsJwtGuard)
 @WebSocketGateway({cors: { origin: '*' } })
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-
+export class ChatGateway
+{
 	@WebSocketServer() server: Server;
 
-	handleConnection(client: Socket)
+	@SubscribeMessage('chat-message')
+	handleNewMaessage(@MessageBody() message: string, @ConnectedSocket() client: Socket)
 	{
-		client.broadcast.emit('user-joined', {
-			message: `${client.id} joined the chat!`,
-		})
+		this.server.emit('chat-message', { message: message,
+			username: client.data.user.username, 
+			timestamp: new Date()
+		});
 	}
- 
-	handleDisconnect(client: Socket)
-	{
-		client.broadcast.emit('user-left', {
-			message: `${client.id} left the chat!`,
-		})
-    }
 
-	@SubscribeMessage('newMessage')
-	handleNewMaessage(@MessageBody() message: string, client: Socket)
+	@SubscribeMessage('private-message')
+	handlePrivateMessage(@MessageBody() message: privateMessageDto,
+		@MessageBody('target', ParseUserPipe) targetId : any,
+			@ConnectedSocket() client: Socket)
 	{
-		this.server.emit('message', message, client.id , new Date());
+		const targetRoom = `user_${targetId}`;
+		const senderId = client.data.user.userId;
+
+		this.server.to(targetRoom).emit('private-message', {
+			fromUsername: senderId,
+			message: message,
+			timestamp: new Date()
+		});
+
+		this.server.to(`user_${senderId}`).emit('private-message', {
+			from: senderId,
+			to: senderId,
+			message: message,
+			timestamp: new Date()
+		});
 	}
 }
