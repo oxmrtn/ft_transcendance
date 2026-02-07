@@ -31,6 +31,8 @@ services:
       - "3333:3333"
     volumes:
       - ../srcs/backend:/app
+      - ../srcs/sandbox/tester/submissions:/app/submissions
+      - ../srcs/sandbox/tester/results:/app/results
     depends_on:
       db:
         condition: service_healthy
@@ -54,11 +56,19 @@ services:
       - ./.env
     networks:
       - transcendence
-  
+
   sandbox:
     container_name: sandbox
-    image: docker:dind
     privileged: true
+    build:
+      context: ..
+      dockerfile: docker/sandbox/Dockerfile
+    volumes:
+      - ../srcs/sandbox:/app
+    ports:
+      - "4444:4444"
+    networks:
+      - transcendence
 
 volumes:
   postgres_data:

@@ -4,5 +4,7 @@ srcs/backend/node_modules
 srcs/front/.next
 srcs/front/node_modules
 
+srcs/sandbox/node_modules
+srcs/sandbox/dist
 .vscode
 .DS_Store

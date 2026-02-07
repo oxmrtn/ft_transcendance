@@ -1,9 +1,9 @@
 import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
 
-export class SearchQueryDto
+export class gameIdDto
 {
 	@IsString()
 	@IsNotEmpty()
 	@MaxLength(100)
-	q: string;
+	gameId: string;
 }
