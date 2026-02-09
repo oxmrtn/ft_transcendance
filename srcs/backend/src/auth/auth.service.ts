@@ -40,15 +40,20 @@ export class AuthService
         return { token };
     } catch (error)
         {
-            // TO DO --- COMMENT GERER PROPREMENT ? 
-            throw new ConflictException("User already exist in database !");
+            if (this.findOneByUsername(username))
+                throw new ConflictException("Username is already taken !");
+            else 
+                throw new ConflictException("Email is already taken !");
         }
     }
     async login(email : string, password : string) : Promise<{token: string}>
     {
-    const user = await this.prisma.user.findUnique({ where : { email }});
-        if (!user || !(await bcrypt.compare(password, user.hashedPwd)))
-            throw new UnauthorizedException('Invalid mail or password');
+        const user = await this.prisma.user.findUnique({ where : { email }});
+        if (!user)
+            throw new UnauthorizedException('Invalid credential !'); // INVALID MAIL
+        if (!(await bcrypt.compare(password, user.hashedPwd)))
+            throw new UnauthorizedException('Invalid credential !'); // INVALID PWD
+        
         const token = await this.generateToken(user.id, user.username);
         return { token };
     }

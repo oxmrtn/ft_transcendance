@@ -26,9 +26,7 @@ async function bootstrap() {
 		attachFieldsToBody: true,
 	});
 
-	app.useGlobalPipes(new TrimPipe);
-
-	app.useGlobalPipes(new ValidationPipe({
+	app.useGlobalPipes(new TrimPipe, new ValidationPipe({
 		whitelist: true,
 		forbidNonWhitelisted: true,
 		transform: true,

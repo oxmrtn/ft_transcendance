@@ -22,7 +22,7 @@ export class TrimPipe implements PipeTransform {
 			if (key !== 'password')
 			{
 				if (this.isObj(values[key]))
-						this.trim(values[key], _refs);
+					this.trim(values[key], _refs);
 				else if (typeof values[key] === 'string')
 					values[key] = values[key].trim();
 			}
