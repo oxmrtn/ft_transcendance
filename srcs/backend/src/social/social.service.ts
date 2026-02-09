@@ -46,6 +46,7 @@ export class SocialService
 				userId1: true,
 				user1: {
 					select: {
+						id: true,
 						username: true,
 						profilePictureUrl: true,
 						title: true,
@@ -54,6 +55,7 @@ export class SocialService
 				},
 				user2: {
 					select: {
+						id: true,
 						username: true,
 						profilePictureUrl: true,
 						title: true,
