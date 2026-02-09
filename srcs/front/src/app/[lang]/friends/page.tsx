@@ -6,11 +6,11 @@ import ContentWrapper from '../../../components/ContentWrapper';
 import AuthGuard from '../../../components/AuthGuard';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import { useAuth } from '../../../contexts/AuthContext';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/tabs"
-import { TextInput } from '../../../components/Input';
-import Button from '../../../components/Button';
-import { FriendsSkeleton } from '../../../components/skeleton';
-import Pagination from '../../../components/pagination';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs"
+import { TextInput } from '../../../components/ui/Input';
+import Button from '../../../components/ui/Button';
+import { FriendsSkeleton } from '../../../components/ui/skeleton';
+import Pagination from '../../../components/ui/pagination';
 import UserProfile, { type User } from '../../../components/UserProfile';
 import { toast } from 'sonner';
 import { API_URL } from '../../../lib/utils';

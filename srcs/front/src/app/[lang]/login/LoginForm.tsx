@@ -4,9 +4,9 @@ import { useState, FormEvent } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Divider from '../../../components/Divider';
-import Button from '../../../components/Button';
-import { TextInput } from '../../../components/Input';
+import Divider from '../../../components/ui/Divider';
+import Button from '../../../components/ui/Button';
+import { TextInput } from '../../../components/ui/Input';
 import { Loader2Icon } from "lucide-react"
 import { useLanguage } from '../../../contexts/LanguageContext';
 import { API_URL } from '../../../lib/utils';

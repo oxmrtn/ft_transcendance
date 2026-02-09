@@ -2,7 +2,7 @@
 
 import { ChangeEvent, useState } from 'react';
 import { Eye, EyeOff, Upload } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 
 interface TextInputProps {
   customWidth?: string;
