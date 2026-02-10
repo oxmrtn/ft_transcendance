@@ -26,7 +26,6 @@ export default function Nav({ tabs }: NavProps) {
   if (!tabs || tabs.length === 0)
     throw new Error("Missing tabs prop");
 
-
   const cleanedPath = pathname.replace(`/${lang}`, '') || '/';
 
   return (

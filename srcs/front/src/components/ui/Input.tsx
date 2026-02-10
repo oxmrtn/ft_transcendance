@@ -2,8 +2,10 @@
 
 import { ChangeEvent, useState } from 'react';
 import { Eye, EyeOff, Upload } from 'lucide-react';
+import { cn } from '../../lib/utils';
 
 interface TextInputProps {
+  customWidth?: string;
   disabled?: boolean;
   required?: boolean;
   label?: string;
@@ -24,6 +26,7 @@ interface FileInputProps {
 }
 
 function TextInput({
+  customWidth,
   disabled,
   required,
   label,
@@ -43,7 +46,10 @@ function TextInput({
   return (
     <>
       {label && <label htmlFor={id} className="text-sm font-medium text-sub-text mb-1">{label}</label>}
-      <div className="w-full relative">
+      <div className={cn(
+        customWidth || "w-full",
+        "relative"
+      )}>
         <input
           disabled={disabled}
           required={required}
@@ -54,11 +60,13 @@ function TextInput({
           value={value}
           onChange={onChange}
           autoComplete="off"
-          className="w-full py-2 px-4 rounded-md text-white bg-white/5 border border-white/10 transition-colors duration-200 placeholder:text-muted-text
-          hover:bg-white/10
-          focus:outline-none focus:ring focus:ring-primary/50
-          disabled:opacity-50 disabled:cursor-default"
-        />
+          className={cn(
+          customWidth || "w-full",
+          "py-2 px-4 rounded-md text-white bg-white/5 border border-white/10 transition-colors duration-200 placeholder:text-muted-text",
+          "hover:bg-white/10",
+          "focus:outline-none focus:ring focus:ring-primary/50",
+          "disabled:opacity-20 disabled:cursor-default"
+        )}/>
         {type === "password" && (
           <button
             type="button"

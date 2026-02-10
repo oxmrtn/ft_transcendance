@@ -39,5 +39,25 @@
     "languageSelector": "Selectionnez une langue",
     "privacyPolicy": "Politique de confidentialité",
     "termsOfService": "Conditions d'utilisation"
+  },
+  "friends": {
+    "title": "amis",
+    "friendsTab": "amis",
+    "pendingTab": "en attente",
+    "noFriends": "Vous n'avez pas encore d'amis",
+    "noPending": "Aucune demande en attente",
+    "searchPlaceholder": "Rechercher un joueur",
+    "addButton": "ajouter",
+    "sendingRequest": "Envoi de la demande d'ami à",
+    "requestSent": "Demande d'ami envoyée à",
+    "removingFriend": "Suppression de",
+    "friendRemoved": "a été retiré de vos amis",
+    "accepting": "Acceptation de",
+    "rejecting": "Rejet de",
+    "accepted": "a été accepté",
+    "rejected": "a été rejeté",
+    "error": "Erreur",
+    "online": "En ligne",
+    "offline": "Hors ligne"
   }
 }

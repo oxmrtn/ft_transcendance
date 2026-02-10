@@ -3,13 +3,13 @@
 import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import Spinner from './Spinner';
+import { Loader2Icon } from "lucide-react"
 
 export default function AuthGuard({
   supposelyAuth,
   children
 }: {
-  supposelyAuth?: Boolean,
+  supposelyAuth?: boolean,
   children: React.ReactNode
 }) {
   const router = useRouter();
@@ -26,8 +26,8 @@ export default function AuthGuard({
 
   if (isLoading || (supposelyAuth && isAuthenticated) || (!supposelyAuth && !isAuthenticated)) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <Spinner className="h-10 w-10" />
+      <div className="h-full flex items-center justify-center">
+        <Loader2Icon className="size-10 animate-spin" />
       </div>
     );
   }
