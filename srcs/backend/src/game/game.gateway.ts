@@ -102,7 +102,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		if (this.clientToRoom.has(userId))
 		{
-			this.errorMessage(client, `${client.data.user.username} already join anonther room!`);
+			this.errorMessage(client, `${client.data.user.username} already joined another room!`);
 			return;
 		}
 
@@ -292,6 +292,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			event: 'code-submit',
 			player: user.username
 		});
+		// Bien penser que le code est dans rawCode et pas BODY
 		//passer le code a l'api de tests
 	}
 

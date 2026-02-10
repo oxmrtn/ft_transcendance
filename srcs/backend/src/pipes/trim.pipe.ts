@@ -18,8 +18,7 @@ export class TrimPipe implements PipeTransform {
 		_refs.add(values)
 		Object.keys(values).forEach((key) =>
 		{
-
-			if (key !== 'password')
+			if (key !== 'password' && key !== 'rawCode') // TO DO - MODIFIER L'ENVOIE DU JSON ENVOYE PAR LE FRONT AVEC LE NOM rawCode
 			{
 				if (this.isObj(values[key]))
 					this.trim(values[key], _refs);

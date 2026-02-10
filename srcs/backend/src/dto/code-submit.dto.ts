@@ -9,6 +9,6 @@ export class codeSubmitDto
 
 	@IsString()
 	@IsNotEmpty()
-	@MaxLength(1600)
-	body: string;
+	@MaxLength(5000)
+	rawCode: string;
 }
