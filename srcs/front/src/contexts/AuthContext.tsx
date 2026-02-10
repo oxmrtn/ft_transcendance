@@ -1,11 +1,12 @@
 "use client";
 
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { jwtDecode } from 'jwt-decode';
 
 interface AuthContextType {
   token: string | null;
   username: string | null;
+  userId: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (token: string) => void;
@@ -14,6 +15,7 @@ interface AuthContextType {
 
 interface DecodedToken {
   username: string;
+  userId: string;
   exp: number;
 }
 
@@ -22,43 +24,44 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     try {
       const storedToken = localStorage.getItem('jwt');
-      if (storedToken) {
-        const decodedToken = jwtDecode<DecodedToken>(storedToken);
-        if (decodedToken.exp * 1000 > Date.now()) {
-          setToken(storedToken);
-          setUsername(decodedToken.username);
-        } else {
-          localStorage.removeItem('jwt');
-        }
-      }
+      if (storedToken)
+        login(storedToken);
     } catch (error) {
-      localStorage.removeItem('jwt');
+      logout();
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const login = (newToken: string) => {
-    const decodedToken = jwtDecode<DecodedToken>(newToken);
-    localStorage.setItem('jwt', newToken);
-    setToken(newToken);
-    setUsername(decodedToken.username);
+  const login = (token: string) => {
+    const decodedToken = jwtDecode<DecodedToken>(token);
+    if (decodedToken.exp * 1000 > Date.now()) {
+      localStorage.setItem('jwt', token);
+      setToken(token);
+      setUsername(decodedToken.username);
+      setUserId(decodedToken.userId);
+    } else {
+      logout();
+    }
   }
 
   const logout = () => {
     localStorage.removeItem('jwt');
     setToken(null);
+    setUsername(null);
+    setUserId(null);
   }
 
   const isAuthenticated = !!token;
 
   return (
-    <AuthContext.Provider value={{ token, username, isAuthenticated, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ token, username, userId, isAuthenticated, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

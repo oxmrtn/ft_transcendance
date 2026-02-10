@@ -10,8 +10,10 @@ import { Bebas_Neue } from 'next/font/google';
 import { AuthProvider } from '../../contexts/AuthContext';
 import { LanguageProvider } from '../../contexts/LanguageContext';
 import { ModalProvider } from '../../contexts/ModalContext';
+import { SocketProvider } from '../../contexts/SocketContext';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import Toaster from '../../components/ui/Toaster';
 
 const bebas = Bebas_Neue({
   weight: '400',
@@ -56,11 +58,14 @@ export default async function RootLayout({
       <body className={`${GeistSans.className} ${GeistMono.variable} ${bebas.variable}`}>
         <AuthProvider>
           <LanguageProvider initialLang={lang} initialDictionary={dict}>
-            <ModalProvider>
-              <Header />
-              <main>{children}</main>
-              <Footer />
-            </ModalProvider>
+            <SocketProvider>
+              <ModalProvider>
+                <Header />
+                <main>{children}</main>
+                <Footer />
+                <Toaster />
+              </ModalProvider>
+              </SocketProvider>
           </LanguageProvider>
         </AuthProvider>
       </body>
