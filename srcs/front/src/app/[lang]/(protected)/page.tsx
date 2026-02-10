@@ -3,7 +3,6 @@
 import React from 'react';
 import AuthGuard from '../../../components/AuthGuard';
 import ContentWrapper from '../../../components/ContentWrapper';
-import { useAuth } from '../../../contexts/AuthContext';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function Page() {
@@ -13,10 +12,8 @@ export default function Page() {
     return null;
 
   return (
-    <AuthGuard>
-      <ContentWrapper title="history">
+      <ContentWrapper title="play">
         <div></div>
       </ContentWrapper>
-    </AuthGuard>
   );
 }

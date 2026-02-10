@@ -1,9 +1,7 @@
 import React from 'react';
-import AuthGuard from './AuthGuard';
 
 export default function LoginWrapper({ children }: { children: React.ReactNode }) {
-return (
-  <AuthGuard supposelyAuth={true}>
+  return (
     <div className="h-[420px] flex bg-modal-bg backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-[0_0_30px] shadow-black/70">
       <div className="hidden w-2xs items-center justify-center border border-white/10 rounded-xl -m-px relative overflow-hidden md:flex bg-linear-to-r from-[#242c3a] to-[#181d27]">
         <div className="flex gap-1 w-full absolute top-0 left-0 p-3 bg-black/40">
@@ -37,6 +35,5 @@ return (
       </div>
       {children}
     </div>
-  </AuthGuard>
   );
 }
