@@ -28,7 +28,6 @@ export default function LoginForm() {
     event.preventDefault();
 
     try {
-<<<<<<< HEAD
       const response = await fetch("https://localhost:3333/auth/login", {
           method: "POST",
           headers: {
@@ -36,16 +35,6 @@ export default function LoginForm() {
           },
           body: JSON.stringify({ email, password }),
         });
-=======
-      const response = await fetch("http://localhost:3333/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
->>>>>>> f503b71 (Working on friends list, responsive problems)
-
       const data = await response.json();
 
       if (!response.ok) {

@@ -30,7 +30,6 @@ export default function RegisterForm() {
     event.preventDefault();
 
     try {
-<<<<<<< HEAD
       const response = await fetch("https://localhost:3333/auth/register", {
           method: "POST",
           headers: {
@@ -38,16 +37,6 @@ export default function RegisterForm() {
           },
           body: JSON.stringify({ username, email, password }),
         });
-=======
-      const response = await fetch("http://localhost:3333/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, email, password }),
-      });
->>>>>>> f503b71 (Working on friends list, responsive problems)
-
       const data = await response.json();
 
       if (!response.ok) {
