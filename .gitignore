@@ -5,6 +5,7 @@ srcs/front/.next
 srcs/front/node_modules
 
 srcs/sandbox/node_modules
+srds/sandbox/dist
 
 .vscode
 .DS_Store
