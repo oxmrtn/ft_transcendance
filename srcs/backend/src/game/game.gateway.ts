@@ -265,7 +265,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			});
 			currentGame.gamePlayers.clear();
 		}
-
 		this.notifyGameStatus(client);
 	}
 

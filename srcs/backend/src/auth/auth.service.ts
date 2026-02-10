@@ -40,12 +40,14 @@ export class AuthService
         return { token };
     } catch (error)
         {
-            if (this.findOneByUsername(username))
-                throw new ConflictException("Username is already taken !");
+            const userCheck = await(this.findOneByUsername(username));
+            if (userCheck)
+                throw new ConflictException("Username is not available !");
             else 
-                throw new ConflictException("Email is already taken !");
+                throw new ConflictException("This mail is registered, try login instead ?");
         }
     }
+
     async login(email : string, password : string) : Promise<{token: string}>
     {
         const user = await this.prisma.user.findUnique({ where : { email }});
