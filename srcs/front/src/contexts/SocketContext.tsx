@@ -48,7 +48,6 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
         });
 
         setSocket(newSocket);
-        console.log("socket connected");
     }
 
     const disconnectSocket = () => {
