@@ -4,3 +4,4 @@
 Makefile
 srcs/front
 srcs/backend/node_modules
+srcs/sandbox
