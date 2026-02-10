@@ -4,7 +4,7 @@ import React, { ReactNode, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useModal } from '../contexts/ModalContext';
 
-export default function Modal({ children }: { children: React.ReactNode }) {
+export default function Modal({ children } : { children: React.ReactNode }) {
   const { isOpen, closeModal } = useModal();
   const modalRef = useRef<HTMLDivElement>(null);
 
