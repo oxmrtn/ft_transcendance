@@ -1,4 +1,4 @@
-#!/bin/bash  
+#!/bin/sh  
 
 PLAYER_FILE=$1
 

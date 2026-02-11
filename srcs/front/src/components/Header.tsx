@@ -59,7 +59,7 @@ export default function Header() {
     return null;
 
   return (
-    <div className={cn(
+    <header className={cn(
       "z-30 h-[64px] flex justify-between items-center gap-4 bg-modal-bg backdrop-blur-xl w-full px-8",
       "md:border-b md:border-white/10 md:shadow-[0_0_30px] md:shadow-black/70",
       showShadow && "shadow-[0_0_30px] shadow-black/70"
@@ -86,12 +86,12 @@ export default function Header() {
             {username}
           </DropdownMenuTrigger>
           <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()} className="mr-2 bg-white/5 backdrop-blur-xl border border-white/10">
-            <DropdownMenuItem className="hover:bg-white/10" onClick={() => openModal(<SettingsModal />)}>
-              < Settings className="mr-2 h-4 w-4" />
+            <DropdownMenuItem className="hover:bg-white/10 gap-2.5" onClick={() => openModal(<SettingsModal />)}>
+              < Settings className="h-4 w-4" />
               <span>{dictionary.header.settings}</span>
             </DropdownMenuItem>
-            <DropdownMenuItem variant="destructive" onClick={logout}>
-              < LogOut className="mr-2 h-4 w-4" />
+            <DropdownMenuItem className="gap-2.5" variant="destructive" onClick={logout}>
+              < LogOut className="h-4 w-4" />
               <span>{dictionary.header.logout}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -104,6 +104,6 @@ export default function Header() {
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
-    </div>
+    </header>
   );
 }

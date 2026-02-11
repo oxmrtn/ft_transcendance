@@ -1,15 +1,16 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth } from '../../../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import Divider from '../../../components/Divider';
-import Button from '../../../components/Button';
-import { TextInput } from '../../../components/Input';
-import Spinner from '../../../components/Spinner';
-import { useLanguage } from '../../../contexts/LanguageContext';
+import Divider from '../../../../components/ui/Divider';
+import Button from '../../../../components/ui/Button';
+import { TextInput } from '../../../../components/ui/Input';
+import { Loader2Icon } from "lucide-react"
+import { useLanguage } from '../../../../contexts/LanguageContext';
+import { API_URL } from '../../../../lib/utils';
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function RegisterForm() {
     event.preventDefault();
 
     try {
-      const response = await fetch("https://localhost:3333/auth/register", {
+      const response = await fetch(`${API_URL}/auth/register`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -38,19 +39,17 @@ export default function RegisterForm() {
           body: JSON.stringify({ username, email, password }),
         });
 
-        const data = await response.json();
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || dictionary.register.unexpectedError);
+      }
 
-        if (!response.ok) {
-          throw new Error(data.message || dictionary.register.unexpectedError);
-        }
-
-        if (data.token) {
-          login(data.token);
-          router.push('/');
-        } else {
-          throw new Error(dictionary.register.unexpectedError);
-        }
-
+      if (data.token) {
+        login(data.token);
+        router.push('/');
+      } else {
+        throw new Error(dictionary.register.unexpectedError);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -104,7 +103,7 @@ export default function RegisterForm() {
         )}
         <Button disabled={isLoading} fullWidth={true} type="submit" variant="primary">
           {isLoading ? dictionary.register.loadingButton : dictionary.register.registerButton}
-          {isLoading && <Spinner />}
+          {isLoading && <Loader2Icon className="size-4 animate-spin" />}
         </Button>
       </div>
     </form>

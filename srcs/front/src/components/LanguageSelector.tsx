@@ -11,7 +11,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "./Select"
+} from "./ui/Select"
 
 export default function LanguageSelector() {
     const { lang, dictionary, changeLanguage } = useLanguage();

@@ -7,13 +7,13 @@ RUN apt-get update && apt-get install -y \
     python3 \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
-
+    
 WORKDIR /app
 
 COPY ./srcs/backend/package*.json ./
 COPY ./srcs/backend/tsconfig*.json ./
 COPY ./srcs/backend/nest-cli.json ./
-EXPOSE 3000
+EXPOSE 3333
 
 CMD ["npm", "run", "start:dev"]
 

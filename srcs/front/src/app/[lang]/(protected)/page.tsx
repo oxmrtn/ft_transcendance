@@ -7,14 +7,13 @@ import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function Page() {
   const { dictionary } = useLanguage();
+
   if (!dictionary)
     return null;
 
   return (
-    <AuthGuard>
-      <ContentWrapper title="history">
+      <ContentWrapper title="play">
         <div></div>
       </ContentWrapper>
-    </AuthGuard>
   );
 }

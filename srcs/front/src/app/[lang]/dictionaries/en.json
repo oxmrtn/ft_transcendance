@@ -39,5 +39,25 @@
     "languageSelector": "Select a language",
     "privacyPolicy": "Privacy policy",
     "termsOfService": "Terms of service"
+  },
+  "friends": {
+    "title": "friends",
+    "friendsTab": "friends",
+    "pendingTab": "pending",
+    "noFriends": "No friends added yet",
+    "noPending": "No pending requests",
+    "searchPlaceholder": "Search for a player",
+    "addButton": "add",
+    "sendingRequest": "Sending friend request to",
+    "requestSent": "Friend request sent to",
+    "removingFriend": "Removing",
+    "friendRemoved": "has been removed from your friends",
+    "accepting": "Accepting",
+    "rejecting": "Rejecting",
+    "accepted": "has been accepted",
+    "rejected": "has been rejected",
+    "error": "Error",
+    "online": "Online",
+    "offline": "Offline"
   }
 }
