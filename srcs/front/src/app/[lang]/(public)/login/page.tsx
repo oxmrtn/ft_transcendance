@@ -1,14 +1,15 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth } from '../../../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Divider from '../../../components/Divider';
-import Button from '../../../components/Button';
-import { TextInput } from '../../../components/Input';
-import Spinner from '../../../components/Spinner';
-import { useLanguage } from '../../../contexts/LanguageContext';
+import Divider from '../../../../components/ui/Divider';
+import Button from '../../../../components/ui/Button';
+import { TextInput } from '../../../../components/ui/Input';
+import { Loader2Icon } from "lucide-react"
+import { useLanguage } from '../../../../contexts/LanguageContext';
+import { API_URL } from '../../../../lib/utils';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function LoginForm() {
     event.preventDefault();
 
     try {
-      const response = await fetch("https://localhost:3333/auth/login", {
+      const response = await fetch(`${API_URL}/auth/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -36,19 +37,17 @@ export default function LoginForm() {
           body: JSON.stringify({ email, password }),
         });
 
-        const data = await response.json();
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || dictionary.login.unexpectedError);
+      }
 
-        if (!response.ok) {
-          throw new Error(data.message || dictionary.login.unexpectedError);
-        }
-
-        if (data.token) {
-          login(data.token);
-          router.push('/');
-        } else {
-          throw new Error(dictionary.login.unexpectedError);
-        }
-
+      if (data.token) {
+        login(data.token);
+        router.push('/');
+      } else {
+        throw new Error(dictionary.login.unexpectedError);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -87,8 +86,8 @@ export default function LoginForm() {
           <p className="text-sm text-red-400">{error}</p>
         )}
         <Button disabled={isLoading} fullWidth={true} type="submit" variant="primary">
+          {isLoading && <Loader2Icon className="size-4 animate-spin" />}
           {isLoading ? dictionary.register.loadingButton : dictionary.login.loginButton}
-          {isLoading && <Spinner />}
         </Button>
       </div>
       <Divider />

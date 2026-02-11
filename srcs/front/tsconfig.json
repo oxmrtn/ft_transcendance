@@ -30,7 +30,7 @@
     "**/*.mts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "server.js"  ],
   "exclude": [
     "node_modules"
   ]
