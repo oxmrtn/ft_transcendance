@@ -15,7 +15,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./dropdown-menu"
+} from "./ui/dropdown-menu"
 
 export default function Header() {
   const { logout, username, isAuthenticated } = useAuth();

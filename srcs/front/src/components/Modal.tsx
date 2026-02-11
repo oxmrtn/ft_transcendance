@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { useModal } from '../contexts/ModalContext';
 
 export default function Modal({ children } : { children: React.ReactNode }) {
-  const { isOpen, closeModal } = useModal();
+  const { isOpen, modalOptions, closeModal } = useModal();
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -23,11 +23,13 @@ export default function Modal({ children } : { children: React.ReactNode }) {
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
-      document.addEventListener('mousedown', handleClickOutside);
+      if (!modalOptions.preventClose)
+        document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
+      if (!modalOptions.preventClose)
       document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen]);
@@ -36,7 +38,10 @@ export default function Modal({ children } : { children: React.ReactNode }) {
     return null;
 
   return createPortal(
-    (<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black/5 backdrop-blur-xl">
+    (<div className={modalOptions.variant === "default"
+      ? "fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black/5 backdrop-blur-xl"
+      : "fixed top-1/2 left-0 z-50"
+      }>
       <div ref={modalRef}>
         {children}
       </div>

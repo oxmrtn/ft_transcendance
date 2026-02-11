@@ -8,7 +8,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "./dropdown-menu"
+} from "./ui/dropdown-menu"
 
 export interface User {
     username: string;
