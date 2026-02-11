@@ -8,13 +8,15 @@ import { SearchQueryDto } from 'src/dto/search-query.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ParseUserPipe } from '../pipes/parseUser.pipe';
 import { SocialGateway } from './social.gateway';
+import { PrismaService } from 'prisma/prisma.service';
 
 @Controller('social')
 @UseGuards(AuthGuard('jwt'))
 export class SocialController
 {
 	constructor(private readonly socialService: SocialService,
-				private readonly socialGateway: SocialGateway) {}
+				private readonly socialGateway: SocialGateway,
+				private readonly prismaService: PrismaService) {}
 
 	@Get('search')
 	search(@Query() query: SearchQueryDto)
@@ -23,9 +25,13 @@ export class SocialController
 	}
 
 	@Get('friends')
-	getFriends(@Req() req)
+	async getFriends(@Req() req)
 	{
-		return (this.socialService.getFriends(req.user.userId, 'ACCEPT'));
+		const res = await this.socialService.getFriends(req.user.userId, 'ACCEPT');
+
+		this.socialGateway.sendOnlineFriendStatus(req.user.userId);
+
+		return res;
 	}
 
 	@Post('request/:targetName')
@@ -39,7 +45,7 @@ export class SocialController
 	{
 		const res = await this.socialService.handleRequest(req.user.userId, targetId, true);
 
-		this.socialGateway.newFriendship(req.user.userId, targetId);
+		this.socialGateway.newFriendship(req.user, this.prismaService.user.findUnique({ where: targetId}));
 
 		return res;
 	}
@@ -55,7 +61,7 @@ export class SocialController
 	{
 		const res = await this.socialService.removeFriend(req.user.userId, targetId);
 
-		this.socialGateway.friendshipRemoved(req.user.userId, targetId);
+		this.socialGateway.friendshipRemoved(req.user, this.prismaService.user.findUnique({ where: targetId}));
 
 		return res;
 	}
