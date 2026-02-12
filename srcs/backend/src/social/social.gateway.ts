@@ -36,8 +36,6 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (this.onlineUsers.get(userId).size === 1)
 			await this.handleOnlineUser(user);
 
-		//await this.sendOnlineFriendStatus(client);
-
 		await client.join(`user_${userId}`);
 	}
 
@@ -66,7 +64,7 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 		friends.forEach(friend =>
 		{
 			this.server.to(`user_${friend.id}`).emit('user-status', {
-				username: user.userName,
+				username: user.username,
 				status: true
 			});
 		});
@@ -79,16 +77,14 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 		friends.forEach(friend =>
 		{
 			this.server.to(`user_${friend.id}`).emit('user-status', {
-				username: user.userName,
+				username: user.username,
 				status: false
 			});
 		});
 	}
 
-	public async sendOnlineFriendStatus(@ConnectedSocket() client : Socket)
+	public async sendOnlineFriendStatus(userId : number)
 	{
-		const userId = client.data.user.userId;
-
 		const friends = await this.socialService.getFriends(userId, 'ACCEPT');
 
 		const friendStatus = friends.map(friend => {
