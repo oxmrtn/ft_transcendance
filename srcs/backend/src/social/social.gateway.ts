@@ -94,7 +94,10 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		friendStatus.forEach(user => {
 			if (user.status === true)
-					this.server.to(`user_${userId}`).emit('user-status', user);
+					this.server.to(`user_${userId}`).emit('user-status', {
+						username: user.username,
+						status: true
+					});
 		});
 	}
 
