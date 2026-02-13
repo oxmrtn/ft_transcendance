@@ -59,6 +59,8 @@ export default function Page() {
         throw new Error(data.message || dictionary.login.unexpectedError);
       }
 
+      console.log("data", data);
+
       setFriends(data);
     } catch (err: any) {
       setError(err.message);
