@@ -26,6 +26,7 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 
 		const userId = client.data.user.userId;
+		const user = client.data.user;
 
 		if (!this.onlineUsers.has(userId))
 			this.onlineUsers.set(userId, new Set());
@@ -33,9 +34,7 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 		this.onlineUsers.get(userId).add(client.id);
 
 		if (this.onlineUsers.get(userId).size === 1)
-			await this.handleOnlineUser(userId);
-
-		await this.sendOnlineFriendStatus(client);
+			await this.handleOnlineUser(user);
 
 		await client.join(`user_${userId}`);
 	}
@@ -46,6 +45,7 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 
 		const userId = client.data.user.userId;
+		const user  = client.data.user;
 
 		if (this.onlineUsers.has(userId))
 			this.onlineUsers.get(userId).delete(client.id);
@@ -53,82 +53,80 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (this.onlineUsers.get(userId).size === 0)
 		{
 			this.onlineUsers.delete(userId);
-			this.handleOfflineUser(userId);
+			this.handleOfflineUser(user);
 		}
 	}
 
-	private async handleOnlineUser(userId : number)
+	private async handleOnlineUser(user : any)
 	{
-		const friends = await this.socialService.getFriends(userId, 'ACCEPT');
+		const friends = await this.socialService.getFriends(user.userId, 'ACCEPT');
 
 		friends.forEach(friend =>
 		{
 			this.server.to(`user_${friend.id}`).emit('user-status', {
-				id: userId,
-				status: 'ONLINE'
+				username: user.username,
+				status: true
 			});
 		});
 	}
 
-	private async handleOfflineUser(userId : number)
+	private async handleOfflineUser(user : any)
 	{
-		const friends = await this.socialService.getFriends(userId, 'ACCEPT');
+		const friends = await this.socialService.getFriends(user.userId, 'ACCEPT');
 		
 		friends.forEach(friend =>
 		{
 			this.server.to(`user_${friend.id}`).emit('user-status', {
-				id: userId,
-				status: 'OFFLINE'
+				username: user.username,
+				status: false
 			});
 		});
 	}
 
-	private async sendOnlineFriendStatus(@ConnectedSocket() client : Socket)
+	public async sendOnlineFriendStatus(userId : number)
 	{
-		const userId = client.data.user.userId;
-
 		const friends = await this.socialService.getFriends(userId, 'ACCEPT');
 
 		const friendStatus = friends.map(friend => {
 			const isOnline = this.onlineUsers.has(friend.id);
-			return { id: friend.id, status : isOnline ? 'ONLINE' : 'OFFLINE'};
+			return { username: friend.username, status : isOnline ? true : false};
 		});
 
 		friendStatus.forEach(user => {
-			if (user.status === 'ONLINE')
-					client.emit('user-status', user);
+			if (user.status === true)
+					this.server.to(`user_${userId}`).emit('user-status', user);
 		});
 	}
 
-	public newFriendship(userId1: number, userId2: number)
+	public newFriendship(user1: any, user2: any)
 	{
-		if (this.onlineUsers.has(userId1))
+		if (this.onlineUsers.has(user1.userId))
 		{
-			this.server.to(`user_${userId2}`).emit('user-status', {
-				id: userId1,
-				status: 'ONLINE'
+			this.server.to(`user_${user2.userId}`).emit('user-status', {
+				username: user1.username,
+				status: true
 			});
 		}
 
-		if (this.onlineUsers.has(userId2))
+		if (this.onlineUsers.has(user2.userId))
 		{
-			this.server.to(`user_${userId1}`).emit('user-status', {
-			id: userId2,
-			status: 'ONLINE'
+			this.server.to(`user_${user1.userId}`).emit('user-status', {
+			username: user2.username,
+			status: true
 			});
 		}
 	}
 
-	public friendshipRemoved(userId1: number, userId2: number)
+	public friendshipRemoved(user1: any, user2: any)
 	{
-		this.server.to(`user_${userId2}`).emit('user-status', {
-			id: userId1,
-			status: 'OFFLINE'
+		this.server.to(`user_${user2.userId}`).emit('user-status', {
+			username: user1.username,
+			status: false
 		});
 
-		this.server.to(`user_${userId1}`).emit('user-status', {
-			id: userId2,
-			status: 'OFFILNE'
+		this.server.to(`user_${user1.userId}`).emit('user-status', {
+			username: user2.username,
+			status: false
 		});
 	}
 }
