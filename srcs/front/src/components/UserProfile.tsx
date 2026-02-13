@@ -9,6 +9,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
+import { Coming_Soon } from 'next/font/google';
 
 export interface User {
     username: string;
@@ -39,6 +40,8 @@ export default function UserProfile({
         throw new Error("Missing onAccept prop");
     if (!onRemove)
         throw new Error("Missing onRemove prop");
+
+    console.log("user", user);
 
     return (
         <div className={cn(
