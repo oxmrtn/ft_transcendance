@@ -1,14 +1,18 @@
-import { Injectable,
+import { Injectable, Inject, forwardRef,
 		BadRequestException, NotFoundException,
 		ForbiddenException, ConflictException
 	} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { SocialGateway } from './social.gateway';
 
 
 @Injectable()
 export class SocialService
 {
-	constructor(private prisma: PrismaService) {}
+	constructor(private prisma: PrismaService,
+				@Inject(forwardRef(() => SocialGateway))
+   				 private socialGateway: SocialGateway,
+	) {}
 
 	async checkUser(userId: number)
 	{
@@ -32,6 +36,36 @@ export class SocialService
 		});
 	}
 
+	async getFriendsId(userId: number, status: string)
+	{
+		await this.checkUser(userId);
+
+		const friendships = await this.prisma.friendship.findMany({
+			where: {
+				OR: [{userId1: userId }, { userId2: userId}],
+				status: status,
+			},
+			select: {
+				userId1: true,
+				user1: {
+					select: {
+						id: true,
+						username: true,
+						profilePictureUrl: true,
+					},
+				},
+				user2: {
+					select: {
+						id: true,
+						username: true,
+						profilePictureUrl: true,
+					},
+				},
+			 },
+		});
+
+		return friendships.map((f) => (f.userId1 === userId ? f.user2 : f.user1));
+	}
 
 	async getFriends(userId: number, status: string)
 	{
@@ -49,8 +83,6 @@ export class SocialService
 						id: true,
 						username: true,
 						profilePictureUrl: true,
-						title: true,
-						xp: true,
 					},
 				},
 				user2: {
@@ -58,14 +90,19 @@ export class SocialService
 						id: true,
 						username: true,
 						profilePictureUrl: true,
-						title: true,
-						xp: true,
 					},
 				},
 			 },
 		});
 
-		return friendships.map((f) => (f.userId1 === userId ? f.user2 : f.user1));
+		const userFriends = friendships.map((f) => (f.userId1 === userId ? f.user2 : f.user1));
+
+		const friendwithStatus = userFriends.map(friend => {
+			 const isOnline = this.socialGateway.getOnlineUsers().has(friend.id);
+			return { username: friend.username, profilePictureUrl: friend.profilePictureUrl, status : isOnline ? true : false};
+		});
+
+		return friendwithStatus;
 	}
 
 	async sendFriendRequest(senderId: number, receiverId: number)
