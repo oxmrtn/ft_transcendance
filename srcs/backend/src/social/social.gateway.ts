@@ -6,7 +6,7 @@ import {
 	OnGatewayConnection	
 	} from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
-import { UseGuards } from "@nestjs/common";
+import { UseGuards, Inject, forwardRef } from "@nestjs/common";
 import { WsJwtGuard } from "src/auth/wsjwt/wsjwt.guard";
 import { SocialService } from "./social.service";
 
@@ -16,9 +16,16 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 {
 	@WebSocketServer() server: Server;
 
-	constructor(private socialService: SocialService) {}
+	constructor(@Inject(forwardRef(() => SocialService))
+				private socialService: SocialService) {}
 
 	private onlineUsers = new Map<number, Set<string>>();
+
+	public getOnlineUsers()
+	{
+		const res = this.onlineUsers;
+		return res;
+	}
 
 	async handleConnection(@ConnectedSocket() client: Socket)
 	{
@@ -59,7 +66,7 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	private async handleOnlineUser(user : any)
 	{
-		const friends = await this.socialService.getFriends(user.userId, 'ACCEPT');
+		const friends = await this.socialService.getFriendsId(user.userId, 'ACCEPT');
 
 		friends.forEach(friend =>
 		{
@@ -72,7 +79,7 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	private async handleOfflineUser(user : any)
 	{
-		const friends = await this.socialService.getFriends(user.userId, 'ACCEPT');
+		const friends = await this.socialService.getFriendsId(user.userId, 'ACCEPT');
 		
 		friends.forEach(friend =>
 		{
@@ -85,7 +92,7 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	public async sendOnlineFriendStatus(userId : number)
 	{
-		const friends = await this.socialService.getFriends(userId, 'ACCEPT');
+		const friends = await this.socialService.getFriendsId(userId, 'ACCEPT');
 
 		const friendStatus = friends.map(friend => {
 			const isOnline = this.onlineUsers.has(friend.id);
