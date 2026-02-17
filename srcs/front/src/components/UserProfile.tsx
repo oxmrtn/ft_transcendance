@@ -9,11 +9,11 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
-import { Coming_Soon } from 'next/font/google';
 
 export interface User {
     username: string;
-    online: boolean | undefined;
+    profilePictureUrl: string | null;
+    online: boolean | null;
 }
 
 export default function UserProfile({
@@ -41,8 +41,6 @@ export default function UserProfile({
     if (!onRemove)
         throw new Error("Missing onRemove prop");
 
-    console.log("user", user);
-
     return (
         <div className={cn(
             "w-full flex items-center justify-between py-2 px-4 gap-4 transition-colors duration-200 hover:bg-white/5",
@@ -51,7 +49,7 @@ export default function UserProfile({
                 <div className="h-12 w-12 rounded-full bg-white" />
                 <div className="flex flex-col justify-evenly">
                     <p className="font-mono text-semibold">{user.username}</p>
-                    {user.online !== undefined && (
+                    {user.online !== null && (
                         <div className="flex gap-2 items-center">
                             <div className={cn(
                                 "h-2.5 w-2.5 rounded-full flex items-center justify-center",

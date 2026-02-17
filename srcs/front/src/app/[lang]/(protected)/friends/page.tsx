@@ -61,7 +61,13 @@ export default function Page() {
 
       console.log("data", data);
 
-      setFriends(data);
+      const cleanFriends: User[] = data.map((user: any) => ({
+        username: user.username,
+        profilePictureUrl: user.profilePictureUrl,
+        online: false 
+      }));
+
+      setFriends(cleanFriends);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -87,7 +93,13 @@ export default function Page() {
         throw new Error(data.message || dictionary.login.unexpectedError);
       }
 
-      setPending(data);
+      const cleanPending: User[] = data.map((user: any) => ({
+        username: user.username,
+        profilePictureUrl: user.profilePictureUrl,
+        online: null 
+      }));
+
+      setPending(cleanPending);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -188,13 +200,14 @@ export default function Page() {
     }
   }
 
-  const updateUserStatus = (user: User) => {
+  const updateUserStatus = (user: any) => {
     console.log("user-status", user);
     setFriends(prevFriends => prevFriends.map(friend =>
       friend.username === user.username
-        ? { ...friend, online: user.online }
+        ? { ...friend, online: user.status }
         : friend
     ));
+    console.log("friends after update", friends);
   }
 
   useEffect(() => {
