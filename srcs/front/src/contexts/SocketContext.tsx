@@ -13,10 +13,18 @@ interface SocketContextType {
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
+interface Message {
+    id: string;
+    content: string;
+    sender: string;
+    private: boolean;
+}
+
 function SocketProvider({ children }: { children: React.ReactNode }) {
     const { isAuthenticated, token } = useAuth();
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
+    const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {
         if (isAuthenticated)
