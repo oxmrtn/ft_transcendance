@@ -3,21 +3,28 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 import { useAuth } from "./AuthContext";
+import { toast } from "sonner";
+import { useRef } from "react";
 
 interface SocketContextType {
     socket: Socket | null;
     isConnected: boolean;
+    unreadMessagesCount: number;
+    messages: Message[];
     connectSocket: (token: string) => void;
     disconnectSocket: () => void;
+    setIsChatOpen: (open: boolean) => void;
+    setUnreadMessagesCount: (count: number) => void;
 }
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
-interface Message {
-    id: string;
+export interface Message {
     content: string;
     sender: string;
-    private: boolean;
+    destination: string | null;
+    isPrivate: boolean;
+    isSender: boolean | null;
 }
 
 function SocketProvider({ children }: { children: React.ReactNode }) {
@@ -25,6 +32,10 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const isChatOpenRef = useRef(isChatOpen);
+    const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+    const unreadMessagesCountRef = useRef(unreadMessagesCount);
 
     useEffect(() => {
         if (isAuthenticated)
@@ -32,10 +43,26 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
         else
             disconnectSocket();
         return () => {
-            if (socket)
-                disconnectSocket();
+            disconnectSocket();
         };
     }, [isAuthenticated, token]);
+
+    useEffect(() => {
+        isChatOpenRef.current = isChatOpen;
+    }, [isChatOpen]);
+
+    useEffect(() => {
+        unreadMessagesCountRef.current = unreadMessagesCount;
+    }, [unreadMessagesCount]);
+
+    const handleNewMessage = (newMessage: Message) => {
+        if (!isChatOpenRef.current)
+            setUnreadMessagesCount(unreadMessagesCountRef.current + 1);
+        setMessages((prevMessages) => {
+            const updatedMessages = [...prevMessages, newMessage];
+            return updatedMessages.slice(-20); 
+        });
+    };
 
     const connectSocket = (token: string) => {
         if (socket)
@@ -55,6 +82,18 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
             setIsConnected(false);
         });
 
+        newSocket.on("chat-message", (message: any) => {
+            handleNewMessage(message);
+        });
+
+        newSocket.on("private-message", (message: any) => {
+            handleNewMessage(message);
+        });
+
+        newSocket.on("error", (error: any) => {
+            toast.error(error.message);
+        });
+
         setSocket(newSocket);
     }
 
@@ -67,7 +106,7 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <SocketContext.Provider value={{ socket, isConnected, connectSocket, disconnectSocket }}>
+        <SocketContext.Provider value={{ socket, isConnected, unreadMessagesCount, messages, connectSocket, disconnectSocket, setUnreadMessagesCount, setIsChatOpen }}>
             {children}
         </SocketContext.Provider>
     );

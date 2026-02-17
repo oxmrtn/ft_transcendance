@@ -20,9 +20,12 @@ export class ChatGateway
 	@SubscribeMessage('chat-message')
 	handleNewMaessage(@MessageBody() message: string, @ConnectedSocket() client: Socket)
 	{
-		this.server.emit('chat-message', { message: message,
-			username: client.data.user.username, 
-			timestamp: new Date()
+		this.server.emit('chat-message', {
+			content: message,
+			sender: client.data.user.username,
+			destination: null,
+			isPrivate: false,
+			isSender: null
 		});
 	}
 
@@ -33,18 +36,17 @@ export class ChatGateway
 	{
 		const targetRoom = `user_${targetId}`;
 		const senderId = client.data.user.userId;
+		if (targetId == senderId)
+			return;
 
-		this.server.to(targetRoom).emit('private-message', {
-			fromUsername: senderId,
-			message: message,
-			timestamp: new Date()
-		});
+		const messageObject = {
+			content: message.content,
+			sender: client.data.user.username,
+			destination: message.target,
+			isPrivate: true
+		};
 
-		this.server.to(`user_${senderId}`).emit('private-message', {
-			from: senderId,
-			to: senderId,
-			message: message,
-			timestamp: new Date()
-		});
+		this.server.to(targetRoom).emit('private-message', { ...messageObject, isSender: false });
+		this.server.to(`user_${senderId}`).emit('private-message', { ...messageObject, isSender: true });
 	}
 }
