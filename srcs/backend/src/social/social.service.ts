@@ -98,7 +98,9 @@ export class SocialService
 		const userFriends = friendships.map((f) => (f.userId1 === userId ? f.user2 : f.user1));
 
 		const friendwithStatus = userFriends.map(friend => {
-			 const isOnline = this.socialGateway.getOnlineUsers().has(friend.id);
+			const isOnline = status === 'ACCEPT' ? this.socialGateway.getOnlineUsers().has(friend.id) : null;
+			if (isOnline === null)
+				return { username: friend.username, profilePictureUrl: friend.profilePictureUrl, status : null }
 			return { username: friend.username, profilePictureUrl: friend.profilePictureUrl, status : isOnline ? true : false};
 		});
 
