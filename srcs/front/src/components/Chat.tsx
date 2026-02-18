@@ -8,10 +8,10 @@ import { X, Send } from 'lucide-react';
 import { ScrollArea } from './ui/scroll-area';
 import { useEffect, useState, useRef } from 'react';
 
-function ChatModal() {
+export function ChatModal({ target }: { target?: string }) {
     const { socket, messages, setUnreadMessagesCount, setIsChatOpen } = useSocket();
     const { closeModal } = useModal();
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState(target ? `/w ${target}` : "");
     const messagesAreaRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -33,10 +33,13 @@ function ChatModal() {
             const target = cleanedMessage.split(" ")[1];
             if (!target)
                 return;
+            const content = cleanedMessage.substring(target.length + 4).trim();
+            if (content === "")
+                return;
 
             socket?.emit('private-message', {
-                target: target,
-                content: cleanedMessage.substring(target.length + 4).trim()
+                target,
+                content
             });
         } else {
             socket?.emit('chat-message', message);

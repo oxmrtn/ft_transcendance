@@ -33,7 +33,17 @@ export class ProfileService
 		if(body.picture)
 			await this.updatePicture(body.picture, request.user.userId);
 		await this.udpateData(request.user.userId, body.username?.value, body.email?.value, body.password?.value)
-		return('Profile updated !');
+
+		const updatedUser = await this.prisma.user.findUnique({
+            where: { id: request.user.userId }
+        });
+        const token = await this.auth.generateToken(
+            updatedUser.id, 
+            updatedUser.username, 
+            updatedUser.email, 
+            updatedUser.profilePictureUrl
+        );
+        return { token };
 	}
 
     async updatePicture(picture : MultipartFile, userId : number)
