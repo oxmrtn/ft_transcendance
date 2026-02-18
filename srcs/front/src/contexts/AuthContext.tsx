@@ -7,6 +7,8 @@ interface AuthContextType {
   token: string | null;
   username: string | null;
   userId: string | null;
+  email: string | null;
+  profilePictureUrl: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (token: string) => void;
@@ -17,6 +19,8 @@ interface DecodedToken {
   username: string;
   userId: string;
   exp: number;
+  email: string;
+  profilePictureUrl: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,6 +29,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -46,6 +52,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(token);
       setUsername(decodedToken.username);
       setUserId(decodedToken.userId);
+      setEmail(decodedToken.email);
+      setProfilePictureUrl(decodedToken.profilePictureUrl);
     } else {
       logout();
     }
@@ -56,12 +64,14 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(null);
     setUsername(null);
     setUserId(null);
+    setEmail(null);
+    setProfilePictureUrl(null);
   }
 
   const isAuthenticated = !!token;
 
   return (
-    <AuthContext.Provider value={{ token, username, userId, isAuthenticated, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ token, username, userId, email, profilePictureUrl, isAuthenticated, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

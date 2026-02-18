@@ -9,6 +9,9 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
+import ProfilePicture from './ProfilePicture';
+import { useModal } from '../contexts/ModalContext';
+import { ChatModal } from './Chat';
 
 export interface User {
     username: string;
@@ -28,6 +31,8 @@ export default function UserProfile({
     onAccept?: () => void;
 }) {
     const { dictionary } = useLanguage();
+    const { openModal } = useModal();
+
     if (!dictionary)
         return null;
     if (!user)
@@ -46,7 +51,7 @@ export default function UserProfile({
             "w-full flex items-center justify-between py-2 px-4 gap-4 transition-colors duration-200 hover:bg-white/5",
         )}>
             <div className="flex items-center space-x-4">
-                <div className="h-12 w-12 rounded-full bg-white" />
+                <ProfilePicture profilePictureUrl={user.profilePictureUrl} size={12} />
                 <div className="flex flex-col justify-evenly">
                     <p className="font-mono text-semibold">{user.username}</p>
                     {user.online !== null && (
@@ -83,7 +88,7 @@ export default function UserProfile({
                                 <User className="h-4 w-4" />
                                 <span className="text-sm">View Profile</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5">
+                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5" onClick={() => openModal(<ChatModal target={user.username} />, { variant: 'chat', preventClose: true })}>
                                 <MessageCircleMore className="h-4 w-4" />
                                 <span className="text-sm">Send Message</span>
                             </DropdownMenuItem>

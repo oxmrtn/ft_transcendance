@@ -19,7 +19,6 @@ interface TextInputProps {
 interface FileInputProps {
   disabled?: boolean;
   required?: boolean;
-  value?: string;
   id: string;
   previewUrl?: string | null;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -86,7 +85,6 @@ function TextInput({
 
 function FileInput({
   disabled,
-  value,
   id,
   previewUrl,
   onChange
@@ -113,7 +111,6 @@ function FileInput({
         type="file"
         id={id}
         name={`${id}-name`}
-        value={value}
         onChange={onChange}
         accept="image/png, image/jpeg"
         className="hidden"

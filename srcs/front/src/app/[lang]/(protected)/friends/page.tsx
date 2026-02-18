@@ -264,17 +264,17 @@ export default function Page() {
           </div>
 
           <div className="flex justify-between gap-4 p-4 border-t border-px border-white/10">
-            <div className="flex gap-2">
+            <form className="flex gap-2" onSubmit={e => { e.preventDefault(); sendFriendRequest(searchFriend) }}>
               <TextInput
                 customWidth="w-[191px]"
                 placeholder={dictionary.friends.searchPlaceholder}
                 id="search-friend"
                 onChange={e => setSearchFriend(e.target.value)}
               />
-              <Button variant="primary" onClick={() => { sendFriendRequest(searchFriend) }}>
+              <Button variant="primary" type="submit">
                 {dictionary.friends.addButton}
               </Button>
-            </div>
+            </form>
             <Pagination
               currentPage={friendsPage}
               totalPages={totalFriendsPages}
