@@ -47,7 +47,7 @@ export function ChatModal({ target }: { target?: string }) {
     }
 
     return (
-        <div className="w-[300px] bg-white/10 backdrop-blur-xl border border-white/10">
+        <div className="w-[300px] bg-white/10 backdrop-blur-xl border border-white/10 shadow-[0_0_30px] shadow-black/70">
             <div className="flex p-2 w-full items-center justify-end">
                 <button onClick={() => {
                     closeModal();
