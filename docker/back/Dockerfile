@@ -1,22 +1,24 @@
-FROM node:20
+FROM node:20-alpine
 
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     bash \
     git \
     openssh-client \
     python3 \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+    make \
+    gcc \
+    g++
     
 WORKDIR /app
 
 COPY ./srcs/backend/package*.json ./
 COPY ./srcs/backend/tsconfig*.json ./
 COPY ./srcs/backend/nest-cli.json ./
-EXPOSE 3333
-
-CMD ["npm", "run", "start:dev"]
 
 COPY docker/back/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
+
+EXPOSE 3333
+
 ENTRYPOINT ["entrypoint.sh"]
+CMD ["npm", "run", "start:dev"]
