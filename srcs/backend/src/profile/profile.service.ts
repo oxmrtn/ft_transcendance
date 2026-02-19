@@ -50,8 +50,8 @@ export class ProfileService
 	{
 		if (picture.mimetype !== "image/jpeg" && picture.mimetype !== "image/png")
 			throw new UnsupportedMediaTypeException('Profile picture must be jpg or png only.');
-		const picPath = `./src/profile/pictures/user_${userId}_avatar.jpg`;
-		fs.promises.writeFile(picPath, await picture.toBuffer());
+		const picPath = `/pictures/${userId}_avatar.jpg`;
+		fs.promises.writeFile(`.${picPath}`, await picture.toBuffer());
 		return await this.prisma.user.update({where: {id: userId}, data: {profilePictureUrl: picPath}});
     }
 
