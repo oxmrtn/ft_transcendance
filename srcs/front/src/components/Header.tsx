@@ -99,7 +99,7 @@ export default function Header() {
         </DropdownMenu>
 
         <button
-          className="md:hidden p-2 text-white"
+          className="md:hidden p-2 text-white cursor-pointer"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
