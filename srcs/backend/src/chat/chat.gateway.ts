@@ -10,6 +10,7 @@ import { UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { WsJwtGuard } from "src/auth/wsjwt/wsjwt.guard";
 import { ParseUserPipe } from "src/pipes/parseUser.pipe";
 import { privateMessageDto } from "src/dto/private-msg.dto";
+import { chatMessageDto } from "src/dto/chat-msg.dto";
 
 @UseGuards(WsJwtGuard)
 @UsePipes(new ValidationPipe ({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
@@ -19,7 +20,7 @@ export class ChatGateway
 	@WebSocketServer() server: Server;
 
 	@SubscribeMessage('chat-message')
-	handleNewMaessage(@MessageBody() message: string, @ConnectedSocket() client: Socket)
+	handleNewMaessage(@MessageBody() message: chatMessageDto, @ConnectedSocket() client: Socket)
 	{
 		this.server.emit('chat-message', {
 			content: message,

@@ -5,5 +5,5 @@ export class chatMessageDto
 	@IsString()
 	@IsNotEmpty()
 	@MaxLength(1600)
-	body: string;
+	content: string;
 }
