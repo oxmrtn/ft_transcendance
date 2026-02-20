@@ -122,7 +122,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		if (!currentGame)
 		{
-			this.errorMessage( client, `Room ${gameId} doesn\'t exist!`);
+			this.errorMessage( client, `Room ${gameId} doesn\'t exist!`, 'room-not-found');
 			return;
 		}
 
@@ -172,6 +172,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		}
 
 		client.leave(`game_${gameId}`);
+		client.emit('game-info', { event: 'room-left' });
 
 		currentGame.roomPlayers.delete(user.userId);
 		this.clientToRoom.delete(user.userId);
@@ -288,10 +289,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		//passer le code a l'api de tests
 	}
 
-	private errorMessage(@ConnectedSocket() client : Socket, msg : string)
+	private errorMessage(@ConnectedSocket() client : Socket, msg : string, event?: string)
 	{
 		client.emit('game-info', {
-			event: 'error',
+			event: event || 'error',
 			message: msg
 		});
 	}
@@ -302,7 +303,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const currentGame = this.gameSessions.get(this.clientToRoom.get(userId))
 
 		if (!currentGame)
-				return;
+			return;
 
 		this.server.to(`game_${currentGame.gameId}`).emit('game-info', {
 			event,
