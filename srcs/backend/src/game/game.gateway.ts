@@ -294,21 +294,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		if (currentGame.gamePlayers.size > 1 && !currentGame.isStarted)
+		if (currentGame.gamePlayers.size < 2)
 		{
-			this.server.to(`game_${gameId}`).emit('game-info', {
-				event: 'start' 	
-			});
-			currentGame.isStarted = true;
+			this.errorMessage(client, `The battle need at least two players!`);
+			return;
 		}
-		else if (currentGame.gamePlayers.size < 2)
+		if (currentGame.isStarted)
 		{
-			this.errorMessage(client, `The battle need at least two players!`)
+			this.errorMessage(client, `The battle has already started!`);
+			return;
 		}
-		else
-		{
-			this.errorMessage(client, `The battle has already started!`)
-		}
+
+		this.server.to(`game_${gameId}`).emit('game-info', {
+			event: 'start' 	
+		});
+		currentGame.isStarted = true;
 	}
 
 	@SubscribeMessage('code-submit')
