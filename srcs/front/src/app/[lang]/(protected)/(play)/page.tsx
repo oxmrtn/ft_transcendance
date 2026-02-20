@@ -28,7 +28,7 @@ export default function Page() {
   return (
     <ContentWrapper title={dictionary.play.title}>
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
+        <div className="flex-wrap gap-2 flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
           <Button variant="primary" onClick={createRoom}>
             {dictionary.play.createRoom}
           </Button>

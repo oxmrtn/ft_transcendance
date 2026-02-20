@@ -32,6 +32,32 @@ function FriendsSkeleton({ isFriends } : { isFriends?: boolean }) {
   )
 }
 
+function GameSkeleton() {
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
+        <Skeleton className="h-6 w-52" />
+        <Skeleton className="h-9 w-32" />
+      </div>  
+      <div className="flex-1 grid grid-cols-2 gap-5 p-5">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div
+            key={index}
+            className="bg-black/70 border border-px border-white/10 rounded-md p-2 flex flex-col items-center justify-center gap-2 min-h-[140px] h-full"
+          >
+            <Skeleton className="h-12 w-12 rounded-full" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-center p-2 border-t border-px border-white/10">
+        <Skeleton className="h-10 w-full" />
+      </div>
+    </div>
+  )
+}
+
 export {
-    FriendsSkeleton
+  FriendsSkeleton,
+  GameSkeleton
 }

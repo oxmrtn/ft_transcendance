@@ -32,16 +32,32 @@ function GameProvider({ children }: { children: ReactNode }) {
       return;
 
     const onGameInfo = (payload: any) => {
+      console.log("payload: ", payload);
       if (payload.event === "error") {
-        toast.error(payload.message || (dictionary.common.errorOccurred ?? "An error occurred"));
+        toast.error(payload.message || dictionary.common.errorOccurred);
         return
       }
 
-      if (payload.event === "room-created" || payload.event === "room-joined") {
+      if (payload.event === "room-not-found") {
+        router.push(`/${lang}/`);
+        toast.error(payload.message || dictionary.common.errorOccurred);
+        return;
+      }
+
+      if (payload.event === "room-left") {
+        router.push(`/${lang}/`);
+        setGameId(null);
+        setPlayers([]);
+        return;
+      }
+
+      if (payload.event === "room-created"
+        || payload.event === "room-joined"
+      ) {
         setGameId(payload.gameId);
         if (payload.roomPlayers)
           setPlayers(payload.roomPlayers);
-        if (payload.event === "room-created")
+        if (!window.location.pathname.includes(`/game/${payload.gameId}`))
           router.push(`/${lang}/game/${payload.gameId}`);
         return;
       }

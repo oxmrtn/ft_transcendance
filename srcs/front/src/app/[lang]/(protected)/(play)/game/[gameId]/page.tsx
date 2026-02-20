@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import ContentWrapper from "../../../../../../components/ContentWrapper";
 import { useGame } from "../../../../../../contexts/GameContext";
 import Button from "../../../../../../components/ui/Button";
@@ -9,27 +9,51 @@ import { Copy } from "lucide-react";
 import { useSocket } from "../../../../../../contexts/SocketContext";
 import { useLanguage } from "../../../../../../contexts/LanguageContext";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
+import { GameSkeleton } from "../../../../../../components/ui/skeleton";
 
 export default function GamePage() {
   const { gameId, players } = useGame();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
 
+  useEffect(() => {
+    if (!socket || gameId)
+      return;
+    
+    if (!window.location.pathname.includes("/game/"))
+      return;
+    
+    const gameIdFromUrl = window.location.pathname.split("/game/").pop();
+    if (gameIdFromUrl) {
+      socket.emit("get-game-info", { gameId: gameIdFromUrl });
+    }
+  }, [socket, gameId]);
+
+  if (!gameId) {
+    return (
+      <ContentWrapper title={dictionary.game.title}>
+        <GameSkeleton />
+      </ContentWrapper>
+    );
+  }
+
   const shortenedGameId = `${gameId.slice(0, 4)}...${gameId.slice(-4)}`;
 
   const copyGameId = () => {
+    if (!gameId)
+      return;
     navigator.clipboard.writeText(gameId);
     toast.success(dictionary.game.gameIdCopied);
   };
 
-  const leaveGame = () => {
-    if (!socket)
+  const leaveRoom = () => {
+    if (!socket || !gameId)
       return;
-    socket.emit("leave-game", { gameId: gameId });
+    socket.emit("leave-room", { gameId: gameId });
   };
 
   const startGame = () => {
-    if (!socket)
+    if (!socket || !gameId)
       return;
     socket.emit("start-game", { gameId: gameId });
   };
@@ -48,7 +72,7 @@ export default function GamePage() {
               <Copy className="size-3 text-white cursor-pointer transition-colors duration-200" />
             </button>
           </p>
-          <Button variant="danger" onClick={leaveGame}>
+          <Button variant="danger" onClick={leaveRoom}>
             {dictionary.game.leaveRoom}
           </Button>
         </div>
