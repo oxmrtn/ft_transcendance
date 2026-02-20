@@ -1,7 +1,5 @@
 "use client";
 
-import { useLanguage } from '../contexts/LanguageContext';
-
 export default function ContentWrapper({
   title,
   children 
@@ -9,10 +7,6 @@ export default function ContentWrapper({
   title: string,
   children: React.ReactNode
 }) {
-  const { dictionary } = useLanguage();
-  if (!dictionary)
-    return null;
-
   if (!title)
     throw new Error("Missing content prop" );
 

@@ -17,9 +17,6 @@ export default function RegisterForm() {
   const router = useRouter();
   const { login } = useAuth();
   const { dictionary } = useLanguage();
-  if (!dictionary)
-    return null;
-
   const [isLoading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -40,14 +37,14 @@ export default function RegisterForm() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || dictionary.register.unexpectedError);
+        throw new Error(data.message || dictionary.common.errorOccurred);
       }
 
       if (data.token) {
         login(data.token);
         router.push('/');
       } else {
-        throw new Error(dictionary.register.unexpectedError);
+        throw new Error(dictionary.common.errorOccurred);
       }
     } catch (err: any) {
       toast.error(err.message);
