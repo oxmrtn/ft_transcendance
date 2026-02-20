@@ -163,7 +163,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	}
 
 	@SubscribeMessage('leave-room')
-	leaveRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
+	async leaveRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
 	{
 		const gameId = payload.gameId;
 		const user = client.data.user;
@@ -192,7 +192,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (!currentGame.roomPlayers.size)
 			this.gameSessions.delete(gameId);
 		else
-			this.notifyGameStatus(client, 'room-left');//marche pas
+		{
+			const roomPlayerArray = Array.from(currentGame.roomPlayers);		
+			const roomPlayerByName = await this.prismaService.user.findMany({ where: { id: { in: roomPlayerArray } }, select: { username : true, profilePictureUrl : true } });
+
+			const gamePlayerArray = Array.from(currentGame.gamePlayers);
+			const gamePlayerByName = await this.prismaService.user.findMany({ where: { id: { in: gamePlayerArray } }, select: { username : true } });
+			const gamePlayerArrayByName = gamePlayerByName.map(user => user.username);
+
+			this.server.to(`game_${currentGame.gameId}`).emit('game-info', {
+				event: 'room-left',
+				roomPlayers: roomPlayerByName,
+				gamePlayers: gamePlayerArrayByName,
+				gameId: currentGame.gameId
+			});
+		}
 	}
 
 	@SubscribeMessage('join-game')
@@ -231,7 +245,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			currentGame.playerSubmitMap[user.userId] = 0;
 
 		this.notifyGameStatus(client, 'game-joined');
-
 	}
 
 	@SubscribeMessage('leave-game')
@@ -288,9 +301,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			});
 			currentGame.isStarted = true;
 		}
-		else
+		else if (currentGame.gamePlayers.size < 2)
 		{
 			this.errorMessage(client, `The battle need at least two players!`)
+		}
+		else
+		{
+			this.errorMessage(client, `The battle has already started!`)
 		}
 	}
 
