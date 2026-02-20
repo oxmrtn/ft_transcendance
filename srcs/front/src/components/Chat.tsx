@@ -2,6 +2,7 @@
 
 import { useSocket } from '../contexts/SocketContext';
 import { useModal } from '../contexts/ModalContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { createPortal } from 'react-dom';
 import { MessageCircleMore } from 'lucide-react';
 import { X, Send } from 'lucide-react';
@@ -11,6 +12,7 @@ import { useEffect, useState, useRef } from 'react';
 export function ChatModal({ target }: { target?: string }) {
     const { socket, messages, setUnreadMessagesCount, setIsChatOpen } = useSocket();
     const { closeModal } = useModal();
+    const { dictionary } = useLanguage();
     const [message, setMessage] = useState(target ? `/w ${target}` : "");
     const messagesAreaRef = useRef<HTMLDivElement>(null);
 
@@ -62,7 +64,7 @@ export function ChatModal({ target }: { target?: string }) {
                         <div className="pr-3" key={index}>
                             <p className="text-sm break-all">
                                 <span className={message.isPrivate ? "text-private-message-sender" : "text-global-message-sender"}>
-                                    {message.isPrivate ? (message.isSender ? `to ${message.destination}` : `from ${message.sender}`) : message.sender}:
+                                    {message.isPrivate ? (message.isSender ? `${dictionary?.chat?.to ?? "to"} ${message.destination}` : `${dictionary?.chat?.from ?? "from"} ${message.sender}`) : message.sender}:
                                 </span>
                                 <span> {message.content}</span>
                             </p>
@@ -76,7 +78,7 @@ export function ChatModal({ target }: { target?: string }) {
                 handleSendMessage(message);
             }}>
                 <div className="flex border-t bg-white/10 backdrop-blur-xl border-white/10">
-                    <input type="text" className="text-sm w-full py-1 px-2 border-none outline-none" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} />
+                    <input type="text" className="text-sm w-full py-1 px-2 border-none outline-none" placeholder={dictionary?.chat?.messagePlaceholder ?? "Message"} value={message} onChange={(e) => setMessage(e.target.value)} />
                     <button type="submit" className="py-1 px-2">
                         <Send className="size-4 text-white hover:text-white/50 cursor-pointer transition-colors duration-200" />
                     </button>

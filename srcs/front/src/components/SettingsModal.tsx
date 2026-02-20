@@ -15,16 +15,12 @@ export default function SettingsModal() {
   const { username: actualUsername, email: actualEmail, profilePictureUrl: actualProfilePictureUrl, token, login } = useAuth();
   const { dictionary } = useLanguage();
   const { closeModal } = useModal();
-
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(actualProfilePictureUrl || null);
-
-  if (!dictionary)
-    return null;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -51,7 +47,7 @@ export default function SettingsModal() {
       formData.append("picture", profilePicture);
 
     if (formData.keys().next().value === undefined) {
-      toast.error("No changes to update");
+      toast.error(dictionary.settings.noChangesToUpdate);
       setIsLoading(false);
       return;
     }
@@ -76,7 +72,7 @@ export default function SettingsModal() {
         throw new Error(dictionary.settings.unexpectedError);
       }
 
-      toast.success("Profile updated");
+      toast.success(dictionary.settings.profileUpdated);
       setUsername("");
       setEmail("");
       setPassword("");
@@ -98,7 +94,7 @@ export default function SettingsModal() {
   return (
     <div className="w-[380px] bg-modal-bg rounded-xl border border-white/10 shadow-[0_0_30px] shadow-black/70 overflow-hidden">
       <div className="bg-white/5 flex flex items-center justify-between px-4 py-2 relative border-b border-white/10">
-        <h1>Settings</h1>
+        <h1>{dictionary.settings.title}</h1>
         <button className="p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer transition-colors duration-200" onClick={closeModal}>
           <X className="size-6" />
         </button>
@@ -112,14 +108,14 @@ export default function SettingsModal() {
             onChange={handleFileChange}
           />
           <div className="flex flex-col gap-0 flex-1">
-            <p className="text-sm font-medium text-sub-text">Profile picture</p>
-            <p className="text-sm text-muted-text">Must be JPEG or PNG and cannot exceed 10MB.</p>
+            <p className="text-sm font-medium text-sub-text">{dictionary.settings.profilePicture}</p>
+            <p className="text-sm text-muted-text">{dictionary.settings.profilePictureHint}</p>
           </div>
         </div>
         <div className="flex flex-col">
           <TextInput
             placeholder={actualUsername || ""}
-            label="Username"
+            label={dictionary.settings.username}
             id="username-input"
             value={username}
             onChange={e => setUsername(e.target.value)}
@@ -128,7 +124,7 @@ export default function SettingsModal() {
         <div className="flex flex-col">
           <TextInput
             placeholder={actualEmail || ""}
-            label="Email"
+            label={dictionary.settings.email}
             id="email-input"
             type="email"
             value={email}
@@ -137,16 +133,16 @@ export default function SettingsModal() {
         </div>
         <div className="flex flex-col">
           <TextInput
-            placeholder="New password"
-            label="Password"
+            placeholder={dictionary.settings.newPasswordPlaceholder}
+            label={dictionary.settings.password}
             id="password-input"
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
           />
         </div>
-        <Button disabled={isLoading} type="submit" variant="primary">
-          {isLoading ? "Loading..." : "Update"}
+        <Button fullWidth={true} disabled={isLoading} type="submit" variant="primary">
+          {isLoading ? dictionary.settings.loading : dictionary.settings.update}
         </Button>
       </form>
     </div>

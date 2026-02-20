@@ -13,8 +13,7 @@
     "loginButton": "Login",
     "loadingButton": "Loading ...",
     "noAccountText": "No account ?",
-    "registerLink": "Register",
-    "unexpectedError": "An unexpected error occurred. Please try again."
+    "registerLink": "Register"
   },
   "register": {
     "dividerText": "Register",
@@ -25,8 +24,7 @@
     "passwordPlaceholder": "Password",
     "registerButton": "Register",
     "loadingButton": "Loading ...",
-    "avatarSizeError": "File is too large",
-    "unexpectedError": "An unexpected error occurred. Please try again."
+    "avatarSizeError": "File is too large"
   },
     "header": {
     "friendsTab": "friends",
@@ -59,5 +57,43 @@
     "error": "Error",
     "online": "Online",
     "offline": "Offline"
+  },
+  "play": {
+    "title": "play",
+    "createRoom": "Create room",
+    "joinRoom": "Join room",
+    "roomIdPlaceholder": "Room ID"
+  },
+  "game": {
+    "title": "Game",
+    "roomIdLabel": "Room ID",
+    "gameIdCopied": "Game ID copied to clipboard",
+    "leaveRoom": "Leave room",
+    "startGame": "Start game"
+  },
+  "history": {
+    "title": "history"
+  },
+  "settings": {
+    "title": "Settings",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+    "noChangesToUpdate": "No changes to update",
+    "profileUpdated": "Profile updated",
+    "profilePicture": "Profile picture",
+    "profilePictureHint": "Must be JPEG or PNG and cannot exceed 10MB.",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "newPasswordPlaceholder": "New password",
+    "loading": "Loading...",
+    "update": "Update"
+  },
+  "chat": {
+    "messagePlaceholder": "Message",
+    "to": "to",
+    "from": "from"
+  },
+  "common": {
+    "errorOccurred": "An error occurred"
   }
 }

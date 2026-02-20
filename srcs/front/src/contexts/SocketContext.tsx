@@ -6,6 +6,14 @@ import { useAuth } from "./AuthContext";
 import { toast } from "sonner";
 import { useRef } from "react";
 
+interface Message {
+    content: string;
+    sender: string;
+    destination: string | null;
+    isPrivate: boolean;
+    isSender: boolean | null;
+}
+
 interface SocketContextType {
     socket: Socket | null;
     isConnected: boolean;
@@ -18,14 +26,6 @@ interface SocketContextType {
 }
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
-
-export interface Message {
-    content: string;
-    sender: string;
-    destination: string | null;
-    isPrivate: boolean;
-    isSender: boolean | null;
-}
 
 function SocketProvider({ children }: { children: React.ReactNode }) {
     const { isAuthenticated, token } = useAuth();

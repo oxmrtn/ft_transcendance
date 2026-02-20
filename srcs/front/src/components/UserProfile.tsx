@@ -12,12 +12,7 @@ import {
 import ProfilePicture from './ProfilePicture';
 import { useModal } from '../contexts/ModalContext';
 import { ChatModal } from './Chat';
-
-export interface User {
-    username: string;
-    profilePictureUrl: string | null;
-    online: boolean | null;
-}
+import type { UserType } from '../types';
 
 export default function UserProfile({
     user,
@@ -25,7 +20,7 @@ export default function UserProfile({
     onRemove,
     onAccept
 }: {
-    user: User,
+    user: UserType,
     display: "friendsList" | "pendingList"
     onRemove: () => void;
     onAccept?: () => void;
@@ -33,8 +28,6 @@ export default function UserProfile({
     const { dictionary } = useLanguage();
     const { openModal } = useModal();
 
-    if (!dictionary)
-        return null;
     if (!user)
         throw new Error("Missing user prop");
     if (!display)

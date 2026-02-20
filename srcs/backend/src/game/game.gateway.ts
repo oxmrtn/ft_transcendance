@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import {
 	ConnectedSocket,
 	MessageBody,
@@ -11,7 +12,6 @@ import { Socket, Server } from "socket.io";
 import { UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { WsJwtGuard } from "src/auth/wsjwt/wsjwt.guard";
 import { codeSubmitDto } from "src/dto/code-submit.dto";
-import { createRoomDto } from "src/dto/create-room.dto";
 import { gameIdDto } from "src/dto/game-id.dto";
 
 class GameSession {
@@ -87,17 +87,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	}
 
 	@SubscribeMessage('create-room')
-	createGameRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: createRoomDto)
+	createGameRoom(@ConnectedSocket() client: Socket)
 	{
-		const gameId = payload.gameId;
-
-		if (this.gameSessions.has(gameId))
-		{
-			this.errorMessage(client, `Room ${gameId} already exist !`);
-			return;
-		}
-		
-		const playerNumber = payload.playerNumber;
+		const playerNumber = 4;
+		const gameId = randomUUID();
 		const userId : number = client.data.user.userId;
 
 		if (this.clientToRoom.has(userId))
@@ -117,7 +110,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		client.join(`game_${gameId}`);
 
-		this.notifyGameStatus(client);
+		this.notifyGameStatus(client, 'room-created');
 	}
 
 	@SubscribeMessage('join-room')
@@ -156,7 +149,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		currentGame.roomPlayers.add(user.userId);
 		this.clientToRoom.set(user.userId, gameId);
 
-		this.notifyGameStatus(client);
+		this.notifyGameStatus(client, 'room-joined');
 	}
 
 	@SubscribeMessage('leave-room')
@@ -189,7 +182,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (!currentGame.roomPlayers.size)
 			this.gameSessions.delete(gameId);
 		else
-			this.notifyGameStatus(client);
+			this.notifyGameStatus(client, 'room-left');
 	}
 
 	@SubscribeMessage('join-game')
@@ -225,7 +218,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		currentGame.gamePlayers.add(user.userId);
 
-		this.notifyGameStatus(client);
+		this.notifyGameStatus(client, 'game-joined');
 
 		if (currentGame.gamePlayers.size === currentGame.playerNumber)
 		{
@@ -266,7 +259,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			currentGame.gamePlayers.clear();
 		}
 
-		this.notifyGameStatus(client);
+		this.notifyGameStatus(client, 'game-left');
 	}
 
 	@SubscribeMessage('code-submit')
@@ -298,12 +291,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	private errorMessage(@ConnectedSocket() client : Socket, msg : string)
 	{
 		client.emit('game-info', {
-				event: 'error',
-				message: msg
-			});
+			event: 'error',
+			message: msg
+		});
 	}
 
-	private notifyGameStatus(@ConnectedSocket() client: Socket)
+	private notifyGameStatus(@ConnectedSocket() client: Socket, event: string)
 	{
 		const userId : number = client.data.user.userId;
 		const currentGame = this.gameSessions.get(this.clientToRoom.get(userId))
@@ -312,10 +305,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 				return;
 
 		this.server.to(`game_${currentGame.gameId}`).emit('game-info', {
-			event: 'room-status',
+			event,
 			roomPlayers: Array.from(currentGame.roomPlayers),
 			gamePlayers: Array.from(currentGame.gamePlayers),
-			playerNumber: currentGame.playerNumber,
 			gameId: currentGame.gameId
 		});
 	}

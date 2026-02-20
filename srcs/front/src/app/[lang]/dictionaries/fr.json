@@ -13,8 +13,7 @@
     "loginButton": "Se connecter",
     "loadingButton": "Connexion ...",
     "noAccountText": "Pas de compte ?",
-    "registerLink": "S'inscrire",
-    "unexpectedError": "Une erreur inattendue est survenue. Veuillez ré-essayer."
+    "registerLink": "S'inscrire"
   },
   "register": {
     "dividerText": "S'inscrire",
@@ -25,8 +24,7 @@
     "passwordPlaceholder": "Mot de passe",
     "registerButton": "S'inscrire",
     "loadingButton": "Chargement ...",
-    "avatarSizeError": "Le fichier est trop volumineux",
-    "unexpectedError": "Une erreur inattendue est survenue. Veuillez ré-essayer."
+    "avatarSizeError": "Le fichier est trop volumineux"
   },
   "header": {
     "friendsTab": "amis",
@@ -59,5 +57,43 @@
     "error": "Erreur",
     "online": "En ligne",
     "offline": "Hors ligne"
+  },
+  "play": {
+    "title": "jouer",
+    "createRoom": "Créer une partie",
+    "joinRoom": "Rejoindre",
+    "roomIdPlaceholder": "ID de la partie"
+  },
+  "game": {
+    "title": "Partie",
+    "roomIdLabel": "ID de la partie",
+    "gameIdCopied": "ID copié dans le presse-papiers",
+    "leaveRoom": "Quitter la partie",
+    "startGame": "Lancer la partie"
+  },
+  "history": {
+    "title": "historique"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "unexpectedError": "Une erreur inattendue est survenue. Veuillez ré-essayer.",
+    "noChangesToUpdate": "Aucune modification à enregistrer",
+    "profileUpdated": "Profil mis à jour",
+    "profilePicture": "Photo de profil",
+    "profilePictureHint": "JPEG ou PNG, 10 Mo max.",
+    "username": "Nom d'utilisateur",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "newPasswordPlaceholder": "Nouveau mot de passe",
+    "loading": "Chargement...",
+    "update": "Mettre à jour"
+  },
+  "chat": {
+    "messagePlaceholder": "Message",
+    "to": "à",
+    "from": "de"
+  },
+  "common": {
+    "errorOccurred": "Une erreur est survenue"
   }
 }
