@@ -39,7 +39,7 @@ function GameSkeleton() {
         <Skeleton className="h-6 w-52" />
         <Skeleton className="h-9 w-32" />
       </div>  
-      <div className="flex-1 grid grid-cols-2 gap-5 p-5">
+      <div className="flex-1 grid grid-cols-2 gap-4 p-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
