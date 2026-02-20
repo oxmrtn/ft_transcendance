@@ -5,7 +5,7 @@ export class privateMessageDto
 	@IsString()
 	@IsNotEmpty()
 	@MaxLength(1600)
-	body: string;
+	content: string;
 
 	@IsString()
 	@IsNotEmpty()

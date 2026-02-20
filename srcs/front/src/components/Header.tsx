@@ -15,10 +15,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./dropdown-menu"
+} from "./ui/dropdown-menu"
+import ProfilePicture from './ProfilePicture';
 
 export default function Header() {
-  const { logout, username, isAuthenticated } = useAuth();
+  const { logout, username, profilePictureUrl, isAuthenticated } = useAuth();
   const { dictionary } = useLanguage();
   const { openModal } = useModal();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -75,14 +76,14 @@ export default function Header() {
       )}>
         <Nav tabs={[
           { name: dictionary.header.friendsTab, href: "/friends" },
-          { name: dictionary.header.playTab, href: "/" },
-          { name: dictionary.header.historyTab, href: "/history" }
+          { name: dictionary.header.playTab, href: "/" }
         ]} />
       </div>
 
       <div className="flex items-center gap-4 md:z-auto z-50">
         <DropdownMenu>
-          <DropdownMenuTrigger className="text-sm font-mono rounded-full py-1.5 px-4 bg-white/5 border border-white/10 transition-colors duration-200 cursor-pointer hover:bg-white/10">
+          <DropdownMenuTrigger className="flex items-center gap-2 text-sm font-mono rounded-full py-1 pl-1.5 pr-2.5 bg-white/5 border border-white/10 transition-colors duration-200 cursor-pointer hover:bg-white/10">
+            <ProfilePicture profilePictureUrl={profilePictureUrl} size={7} />
             {username}
           </DropdownMenuTrigger>
           <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()} className="mr-2 bg-white/5 backdrop-blur-xl border border-white/10">
@@ -98,7 +99,7 @@ export default function Header() {
         </DropdownMenu>
 
         <button
-          className="md:hidden p-2 text-white"
+          className="md:hidden p-2 text-white cursor-pointer"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}

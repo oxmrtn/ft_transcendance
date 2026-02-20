@@ -5,10 +5,10 @@ DOCKER_COMPOSE = docker compose -f docker/docker-compose.yml
 all: up
 
 build:
-	$(DOCKER_COMPOSE) build
+	COMPOSE_PARALLEL_LIMIT=1 $(DOCKER_COMPOSE) build
 
 up:
-	$(DOCKER_COMPOSE) up -d
+	COMPOSE_PARALLEL_LIMIT=1 $(DOCKER_COMPOSE) up -d
 
 down:
 	$(DOCKER_COMPOSE) down --remove-orphans

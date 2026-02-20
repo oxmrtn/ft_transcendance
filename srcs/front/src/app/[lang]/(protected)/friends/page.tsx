@@ -11,9 +11,10 @@ import { TextInput } from '../../../../components/ui/Input';
 import Button from '../../../../components/ui/Button';
 import { FriendsSkeleton } from '../../../../components/ui/skeleton';
 import Pagination from '../../../../components/ui/pagination';
-import UserProfile, { type User } from '../../../../components/UserProfile';
+import UserProfile from '../../../../components/UserProfile';
 import { toast } from 'sonner';
 import { API_URL } from '../../../../lib/utils';
+import type { UserType } from '../../../../types';
 
 export default function Page() {
   const { token } = useAuth();
@@ -21,15 +22,12 @@ export default function Page() {
   const { dictionary } = useLanguage();
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [friends, setFriends] = useState<User[]>([]);
-  const [pending, setPending] = useState<User[]>([]);
+  const [friends, setFriends] = useState<UserType[]>([]);
+  const [pending, setPending] = useState<UserType[]>([]);
   const [searchFriend, setSearchFriend] = useState("");
   const [friendsPage, setFriendsPage] = useState(1);
   const [pendingPage, setPendingPage] = useState(1);
   const itemsPerPage = 7;
-
-  if (!dictionary)
-    return null;
 
   const totalFriendsPages = Math.ceil(friends.length / itemsPerPage) || 1;
   const startFriendsIndex = (friendsPage - 1) * itemsPerPage;
@@ -56,10 +54,16 @@ export default function Page() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || dictionary.login.unexpectedError);
+        throw new Error(data.message || dictionary.common.errorOccurred);
       }
 
-      setFriends(data);
+      const cleanFriends: UserType[] = data.map((user: any) => ({
+        username: user.username,
+        profilePictureUrl: user.profilePictureUrl,
+        online: user.status
+      }));
+
+      setFriends(cleanFriends);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -82,10 +86,16 @@ export default function Page() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || dictionary.login.unexpectedError);
+        throw new Error(data.message || dictionary.common.errorOccurred);
       }
 
-      setPending(data);
+      const cleanPending: UserType[] = data.map((user: any) => ({
+        username: user.username,
+        profilePictureUrl: user.profilePictureUrl,
+        online: null 
+      }));
+
+      setPending(cleanPending);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -106,7 +116,7 @@ export default function Page() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || dictionary.login.unexpectedError);
+        throw new Error(data.message || dictionary.common.errorOccurred);
       }
 
       toast.success(`${dictionary.friends.requestSent} ${friendUsername}`, {
@@ -135,7 +145,7 @@ export default function Page() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || dictionary.login.unexpectedError);
+        throw new Error(data.message || dictionary.common.errorOccurred);
       }
 
       setFriends(prevFriends => prevFriends.filter(friend => friend.username !== friendUsername));
@@ -168,7 +178,7 @@ export default function Page() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || dictionary.login.unexpectedError);
+        throw new Error(data.message || dictionary.common.errorOccurred);
       }
 
       setPending(prevPending => prevPending.filter(pending => pending.username !== pendingUsername));
@@ -186,11 +196,10 @@ export default function Page() {
     }
   }
 
-  const updateUserStatus = (user: User) => {
-    console.log("user-status", user);
+  const updateUserStatus = (user: any) => {
     setFriends(prevFriends => prevFriends.map(friend =>
       friend.username === user.username
-        ? { ...friend, online: user.online }
+        ? { ...friend, online: user.status }
         : friend
     ));
   }
@@ -212,14 +221,27 @@ export default function Page() {
     <ContentWrapper title={dictionary.friends.title}>
       <Tabs defaultValue="friends" className="h-full w-full flex">
 
-        <TabsList className="flex items-center justify-center bg-black/20 border-b border-px border-white/10">
-          <TabsTrigger value="friends" className="tabs-trigger" onClick={() => { fetchFriends() }}>
-            {dictionary.friends.friendsTab}
-          </TabsTrigger>
-          <TabsTrigger value="pending" className="tabs-trigger" onClick={() => { fetchPending() }}>
-            {dictionary.friends.pendingTab}
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
+          <TabsList className="flex gap-2">
+            <TabsTrigger value="friends" onClick={() => { fetchFriends() }}>
+              {dictionary.friends.friendsTab}
+            </TabsTrigger>
+            <TabsTrigger value="pending" onClick={() => { fetchPending() }}>
+              {dictionary.friends.pendingTab}
+            </TabsTrigger>
+          </TabsList>
+          <form className="flex gap-2" onSubmit={e => { e.preventDefault(); sendFriendRequest(searchFriend) }}>
+            <TextInput
+              customWidth="w-[191px]"
+              placeholder={dictionary.friends.searchPlaceholder}
+              id="search-friend"
+              onChange={e => setSearchFriend(e.target.value)}
+            />
+            <Button variant="primary" type="submit">
+              {dictionary.friends.addButton}
+            </Button>
+          </form>
+        </div>
 
         <TabsContent value="friends" className="flex-1 flex flex-col">
           <div className="flex-1">
@@ -248,18 +270,7 @@ export default function Page() {
             )}
           </div>
 
-          <div className="flex justify-between gap-4 p-4 border-t border-px border-white/10">
-            <div className="flex gap-2">
-              <TextInput
-                customWidth="w-[191px]"
-                placeholder={dictionary.friends.searchPlaceholder}
-                id="search-friend"
-                onChange={e => setSearchFriend(e.target.value)}
-              />
-              <Button variant="primary" onClick={() => { sendFriendRequest(searchFriend) }}>
-                {dictionary.friends.addButton}
-              </Button>
-            </div>
+          <div className="flex justify-center py-2 border-t border-px border-white/10">
             <Pagination
               currentPage={friendsPage}
               totalPages={totalFriendsPages}
@@ -296,7 +307,7 @@ export default function Page() {
             )}
           </div>
 
-          <div className="flex flex-col gap-3 py-5 px-4 border-t border-px border-white/10">
+          <div className="flex justify-center py-2 border-t border-px border-white/10">
             <Pagination
               currentPage={pendingPage}
               totalPages={totalPendingPages}

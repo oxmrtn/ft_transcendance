@@ -15,9 +15,7 @@ import {
 
 export default function LanguageSelector() {
     const { lang, dictionary, changeLanguage } = useLanguage();
-    if (!dictionary)
-        return null;
-
+    
     return (
         <Select onValueChange={changeLanguage} defaultValue={lang}>
         <SelectTrigger className="bg-white/5 border border-white/10 w-[164px] transition-colors duration-200 cursor-pointer
