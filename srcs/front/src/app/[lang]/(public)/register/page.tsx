@@ -11,23 +11,19 @@ import { TextInput } from '../../../../components/ui/Input';
 import { Loader2Icon } from "lucide-react"
 import { useLanguage } from '../../../../contexts/LanguageContext';
 import { API_URL } from '../../../../lib/utils';
+import { toast } from 'sonner';
 
 export default function RegisterForm() {
   const router = useRouter();
   const { login } = useAuth();
   const { dictionary } = useLanguage();
-  if (!dictionary)
-    return null;
-
   const [isLoading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     setLoading(true);
-    setError(null);
     event.preventDefault();
 
     try {
@@ -41,17 +37,17 @@ export default function RegisterForm() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || dictionary.register.unexpectedError);
+        throw new Error(data.message || dictionary.common.errorOccurred);
       }
 
       if (data.token) {
         login(data.token);
         router.push('/');
       } else {
-        throw new Error(dictionary.register.unexpectedError);
+        throw new Error(dictionary.common.errorOccurred);
       }
     } catch (err: any) {
-      setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -98,9 +94,6 @@ export default function RegisterForm() {
         />
       </div>
       <div className="w-full flex flex-col gap-2">
-        {error && (
-          <p className="text-sm text-red-400">{error}</p>
-        )}
         <Button disabled={isLoading} fullWidth={true} type="submit" variant="primary">
           {isLoading ? dictionary.register.loadingButton : dictionary.register.registerButton}
           {isLoading && <Loader2Icon className="size-4 animate-spin" />}

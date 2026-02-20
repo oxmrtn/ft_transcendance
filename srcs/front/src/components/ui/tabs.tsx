@@ -38,7 +38,7 @@ function TabsTrigger({
   return (
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
-      className={className}
+      className={cn("cursor-pointer text-sub-text hover:text-white transition-colors duration-200 px-3 py-1 hover:bg-white/5 rounded-md data-[state=active]:bg-white/10 data-[state=active]:text-white border border-px border-transparent data-[state=active]:border-white/10", className)}
       {...props}
     />
   )

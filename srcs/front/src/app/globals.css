@@ -8,6 +8,8 @@
     --modal-background: rgba(0, 0, 0, .5);
     --sub-text: rgba(255, 255, 255, .7);
     --muted-text: rgba(255, 255, 255, .3);
+    --global-message-sender: rgb(71, 199, 221);
+    --private-message-sender: rgb(224, 93, 203);
 }
 
 @theme {
@@ -18,6 +20,8 @@
     --color-sub-text: var(--sub-text);
     --color-muted-text: var(--muted-text);
     --color-modal-bg: var(--modal-background);
+    --color-global-message-sender: var(--global-message-sender);
+    --color-private-message-sender: var(--private-message-sender);
 
     --grid-gradient-tile-size: 30px;
     --grid-gradient-grid-opacity: 0.3;
@@ -69,12 +73,5 @@
 
     .secondary-link {
         @apply text-sub-text text-sm hover:underline;
-    }
-
-    .tabs-trigger {
-        @apply flex items-center justify-center py-4 px-6 cursor-pointer transition-colors duration-200 uppercase font-semibold
-            border-b-2 h-full w-fit
-            border-transparent text-muted-text hover:border-white/70 hover:text-sub-text
-            data-[state=active]:border-primary data-[state=active]:text-white data-[state=active]:bg-linear-to-t data-[state=active]:from-primary-30 data-[state=active]:to-transparent;
     }
 }

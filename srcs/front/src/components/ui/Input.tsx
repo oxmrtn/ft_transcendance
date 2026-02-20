@@ -19,7 +19,6 @@ interface TextInputProps {
 interface FileInputProps {
   disabled?: boolean;
   required?: boolean;
-  value?: string;
   id: string;
   previewUrl?: string | null;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -61,8 +60,9 @@ function TextInput({
           onChange={onChange}
           autoComplete="off"
           className={cn(
-          customWidth || "w-full",
-          "py-2 px-4 rounded-md text-white bg-white/5 border border-white/10 transition-colors duration-200 placeholder:text-muted-text",
+          customWidth && `${customWidth} py-1 px-3`,
+          !customWidth && "w-full py-2 px-4",
+          "rounded-md text-white bg-white/5 border border-white/10 transition-colors duration-200 placeholder:text-muted-text",
           "hover:bg-white/10",
           "focus:outline-none focus:ring focus:ring-primary/50",
           "disabled:opacity-20 disabled:cursor-default"
@@ -86,7 +86,6 @@ function TextInput({
 
 function FileInput({
   disabled,
-  value,
   id,
   previewUrl,
   onChange
@@ -113,7 +112,6 @@ function FileInput({
         type="file"
         id={id}
         name={`${id}-name`}
-        value={value}
         onChange={onChange}
         accept="image/png, image/jpeg"
         className="hidden"

@@ -1,5 +1,6 @@
 srcs/backend/dist
 srcs/backend/node_modules
+srcs/backend/pictures/*.jpg
 
 srcs/front/.next
 srcs/front/node_modules
