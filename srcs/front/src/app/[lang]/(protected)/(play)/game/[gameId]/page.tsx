@@ -61,7 +61,7 @@ export default function GamePage() {
   return (
     <ContentWrapper title={dictionary.game.title}>
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
+        <div className="flex-wrap gap-2 flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
           <p className="flex items-center gap-1 text-sub-text font-mono text-sm">
             {dictionary.game.roomIdLabel}:{" "}
             <button
@@ -76,7 +76,7 @@ export default function GamePage() {
             {dictionary.game.leaveRoom}
           </Button>
         </div>
-        <div className="flex-1 grid grid-cols-2 gap-5 p-5">
+        <div className="flex-1 grid grid-cols-2 gap-4 p-4">
           {(() => {
             const cards = [];
             for (let i = 0; i < 4; i++) {
