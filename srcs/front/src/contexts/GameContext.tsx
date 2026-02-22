@@ -12,27 +12,54 @@ import { useRouter } from "next/navigation";
 import { useLanguage } from "./LanguageContext";
 import { toast } from "sonner";
 import type { UserType } from "../types";
+import { useAuth } from "./AuthContext";
 
 interface GameContextType {
   gameId: string | null;
-  players: UserType[];
+  creatorUsername: string | null;
+  isCreator: boolean;
+  roomPlayers: UserType[];
+  gamePlayers: UserType[];
+  isStarted: boolean;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 function GameProvider({ children }: { children: ReactNode }) {
+  const { username } = useAuth();
   const { socket } = useSocket();
   const router = useRouter();
   const { lang, dictionary } = useLanguage();
   const [gameId, setGameId] = useState<string | null>(null);
-  const [players, setPlayers] = useState<UserType[]>([]);
+  const [creatorUsername, setCreatorUsername] = useState<string | null>(null);
+  const [isCreator, setIsCreator] = useState<boolean>(false);
+  const [isStarted, setIsStarted] = useState<boolean>(false);
+  const [roomPlayers, setRoomPlayers] = useState<UserType[]>([]);
+  const [gamePlayers, setGamePlayers] = useState<UserType[]>([]);
+
+  const resetGame = () => {
+    setGameId(null);
+    setCreatorUsername(null);
+    setIsStarted(false);
+    setRoomPlayers([]);
+    setGamePlayers([]);
+    setIsCreator(false);
+  }
+
+  const setGame = (payload: any) => {
+    setGameId(payload.gameId);
+    setCreatorUsername(payload.creatorUsername);
+    setRoomPlayers(payload.roomPlayers);
+    setGamePlayers(payload.gamePlayers);
+    setIsCreator(payload.creatorUsername === username);
+  }
 
   useEffect(() => {
     if (!socket || !lang)
       return;
 
     const onGameInfo = (payload: any) => {
-      console.log("payload: ", payload);
+      console.log(payload);
       if (payload.event === "error") {
         toast.error(payload.message || dictionary.common.errorOccurred);
         return
@@ -44,21 +71,33 @@ function GameProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      if (payload.event === "room-left") {
+      if (payload.event === "room-kicked") {
+        resetGame();
         router.push(`/${lang}/`);
-        setGameId(null);
-        setPlayers([]);
+        toast.error(dictionary.game.roomKicked);
+        return;
+      }
+
+      if (payload.event === "room-left") {
+        resetGame();
+        router.push(`/${lang}/`);
         return;
       }
 
       if (payload.event === "room-created"
         || payload.event === "room-joined"
       ) {
-        setGameId(payload.gameId);
-        if (payload.roomPlayers)
-          setPlayers(payload.roomPlayers);
-        if (!window.location.pathname.includes(`/game/${payload.gameId}`))
-          router.push(`/${lang}/game/${payload.gameId}`);
+        router.push(`/${lang}/game/${payload.gameId}`);
+        return;
+      }
+
+      if (payload.event === "room-update") {
+        setGame(payload);
+        return;
+      }
+
+      if (payload.event === "battle-started") {
+        setIsStarted(true);
         return;
       }
     };
@@ -70,7 +109,7 @@ function GameProvider({ children }: { children: ReactNode }) {
   }, [socket, lang, router, dictionary]);
 
   return (
-    <GameContext.Provider value={ { gameId, players } }>
+    <GameContext.Provider value={ { gameId, creatorUsername, isCreator, roomPlayers, gamePlayers, isStarted } }>
       {children}
     </GameContext.Provider>
   );

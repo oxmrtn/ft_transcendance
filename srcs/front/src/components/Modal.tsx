@@ -39,7 +39,7 @@ export default function Modal({ children } : { children: React.ReactNode }) {
 
   return createPortal(
     (<div className={modalOptions.variant === "default"
-      ? "fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black/5 backdrop-blur-xl"
+      ? "fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black/50 backdrop-blur-xl"
       : "fixed top-1/2 left-0 z-50"
       }>
       <div ref={modalRef}>

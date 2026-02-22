@@ -69,7 +69,9 @@
     "roomIdLabel": "Room ID",
     "gameIdCopied": "Game ID copied to clipboard",
     "leaveRoom": "Leave room",
-    "startGame": "Start game"
+    "startGame": "Start game",
+    "startingGame": "Waiting for game to start...",
+    "roomKicked": "You have been kicked from the room"
   },
   "history": {
     "title": "history"

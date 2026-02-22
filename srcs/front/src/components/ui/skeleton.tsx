@@ -50,7 +50,7 @@ function GameSkeleton() {
           </div>
         ))}
       </div>
-      <div className="flex justify-center p-2 border-t border-px border-white/10">
+      <div className="flex justify-center px-4 py-2 border-t border-px border-white/10">
         <Skeleton className="h-10 w-full" />
       </div>
     </div>
