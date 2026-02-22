@@ -27,7 +27,7 @@ export class SocialController
 	@Get('friends')
 	async getFriends(@Req() req)
 	{
-		const res = await this.socialService.getFriends(req.user.userId, 'ACCEPT');
+		const res = await this.socialService.getFriends(req.user.userId);
 
 		this.socialGateway.sendOnlineFriendStatus(req.user.userId);
 
@@ -69,7 +69,7 @@ export class SocialController
 	@Get('request')
 	getRequest(@Req() req)
 	{
-		return this.socialService.getFriends(req.user.userId, 'PENDING');
+		return this.socialService.getFriendsRequests(req.user.userId);
 	}
 }
 
