@@ -1,16 +1,25 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useGame } from "../../../../../../contexts/GameContext";
+import { useSocket } from "../../../../../../contexts/SocketContext";
 import Room from "./room";
 import Battle from "./battle";
 
 export default function Game() {
-  const { isStarted } = useGame();
+  const { isInBattle, hasLeftRoomRef } = useGame();
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    return () => {
+      if (socket && !hasLeftRoomRef.current)
+        socket.emit("leave-room");
+    };
+  }, [socket]);
 
   return (
     <>{
-      isStarted ? <Battle /> : <Room />
+      isInBattle ? <Battle /> : <Room />
     }</>
   );
 }

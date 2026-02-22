@@ -14,7 +14,7 @@ import { useAuth } from "../../../../../../contexts/AuthContext";
 
 export default function Room() {
   const { username: myUsername } = useAuth();
-  const { gameId, creatorUsername, isCreator, roomPlayers } = useGame();
+  const { gameId, creatorUsername, isCreator, roomPlayers, isStarted, hasLeftRoomRef } = useGame();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
 
@@ -51,6 +51,7 @@ export default function Room() {
   const leaveRoom = () => {
     if (!socket || !gameId)
       return;
+    hasLeftRoomRef.current = true;
     socket.emit("leave-room");
   };
 
@@ -71,13 +72,13 @@ export default function Room() {
       <div className="flex flex-col h-full">
         <div className="flex-wrap gap-2 flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
           <p className="flex items-center gap-1 text-sub-text font-mono text-sm">
-            {dictionary.game.roomIdLabel}:{" "}
+            {dictionary.game.roomIdLabel}:
             <button
               onClick={copyGameId}
               className="flex items-center gap-2 text-white py-1 px-2 hover:bg-white/10 rounded-md cursor-pointer transition-colors duration-200"
             >
               {shortenedGameId}
-              <Copy className="size-3 text-white cursor-pointer transition-colors duration-200" />
+              <Copy className="size-3 text-white cursor-pointer" />
             </button>
           </p>
           <Button variant="danger" onClick={leaveRoom}>
@@ -103,7 +104,7 @@ export default function Room() {
                           <Crown className="size-4 text-yellow-500" />
                         )}
                       </div>
-                      {isCreator && player.username !== myUsername && (
+                      {isCreator && !isStarted && player.username !== myUsername && (
                         <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 absolute top-2 right-2">
                           <X className="size-5 text-destructive" onClick={() => kickPlayer(player.username)} />
                         </button>
@@ -119,14 +120,16 @@ export default function Room() {
           })()}
         </div>
         <div className="px-4 py-2 border-t border-px border-white/10">
-          {isCreator ? (
+          {isCreator && !isStarted ? (
             <Button variant="primary" onClick={startGame} fullWidth={true}>
               {dictionary.game.startGame}
             </Button>
           ) : (
             <div className="flex justify-center items-center gap-2 py-2">
               <Loader2Icon className="size-5 animate-spin text-white/60" />
-              <p className="text-white/60 text-sm">{dictionary.game.startingGame}</p>
+              <p className="text-white/60 text-sm">
+                {isStarted ? dictionary.game.endingGame : dictionary.game.startingGame}
+              </p>
             </div>
           )}
         </div>

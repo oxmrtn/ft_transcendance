@@ -65,13 +65,15 @@
     "roomIdPlaceholder": "ID de la partie"
   },
   "game": {
-    "title": "Partie",
-    "roomIdLabel": "ID de la partie",
-    "gameIdCopied": "ID copié dans le presse-papiers",
-    "leaveRoom": "Quitter la partie",
-    "startGame": "Lancer la partie",
-    "startingGame": "En attente du lancement de la partie...",
-    "roomKicked": "Vous avez été expulsé de la partie"
+    "title": "Room",
+    "roomIdLabel": "ID de la room",
+    "gameIdCopied": "ID de la room copié dans le presse-papiers",
+    "leaveRoom": "Quitter la room",
+    "startGame": "Lancer le battle",
+    "startingGame": "En attente du lancement du battle...",
+    "endingGame": "Battle en cours...",
+    "roomKicked": "Vous avez été expulsé de la room",
+    "abandonGame": "Abandonner le battle"
   },
   "history": {
     "title": "historique"
