@@ -134,19 +134,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		if (!currentGame)
 		{
-			this.errorMessage( client, `Room ${gameId} doesn\'t exist!`, 'room-not-found');
+			this.errorMessage( client, `Room ${gameId} doesn\'t exist!`);
 			return;
 		}
 
 		if (currentGame.roomPlayers.has(user.userId))
 		{
-			this.errorMessage(client, `${user.username} already join this room!`);
+			this.errorMessage(client, `You already join this room!`);
 			return;
 		}
 
 		if (this.clientToRoom.has(user.userId))
 		{
-			this.errorMessage(client, `${user.username} already join another Room!`);
+			this.errorMessage(client, `You already join another Room!`);
 			return;
 		}
 
@@ -156,14 +156,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 		
-		client.join(`game_${gameId}`);
-
-		if (currentGame.roomPlayers.size >= currentGame.playerNumber)
+		if (currentGame.roomPlayers.size + 1 >= currentGame.playerNumber)
 		{
 			this.errorMessage(client, `This room is already full!`);
 			return;
 		}
 
+		client.join(`game_${gameId}`);
 		currentGame.roomPlayers.add(user.userId);
 		this.clientToRoom.set(user.userId, gameId);
 
@@ -235,12 +234,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		if (currentGame.isStarted && currentGame.gamePlayers.has(userId))
-		{
-			this.errorMessage(client, `You are in the battle!`);
-			return;
-		}
-
 		client.leave(`game_${gameId}`);
 		client.emit('game-info', { event: 'room-left' });
 
@@ -259,7 +252,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	}
 
 	@SubscribeMessage('leave-game')
-	leaveGame(@ConnectedSocket() client: Socket)
+	async leaveGame(@ConnectedSocket() client: Socket)
 	{
 		const userId = client.data.user.userId;
 		const gameId = this.clientToRoom.get(userId);
@@ -283,7 +276,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			currentGame.gamePlayers.clear();
 		}
 
-		this.notifyGameStatus(currentGame);
+		await this.notifyGameStatus(currentGame);
+		client.emit('game-info', { event: 'game-left' });
 	}
 
 	@SubscribeMessage('start-game')
@@ -311,7 +305,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		currentGame.gamePlayers = currentGame.roomPlayers;
+		currentGame.gamePlayers = new Set(currentGame.roomPlayers);
 		currentGame.isStarted = true;
 		await this.notifyGameStatus(currentGame);
 		this.server.to(`game_${gameId}`).emit('game-info', { event: 'battle-started' });
@@ -353,10 +347,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		}
 	}
 
-	private errorMessage(@ConnectedSocket() client : Socket, msg : string, event?: string)
+	private errorMessage(@ConnectedSocket() client : Socket, msg : string)
 	{
 		client.emit('game-info', {
-			event: event || 'error',
+			event: 'error',
 			message: msg
 		});
 	}

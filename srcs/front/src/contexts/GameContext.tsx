@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useState,
   ReactNode,
+  useRef,
 } from "react";
 import { useSocket } from "./SocketContext";
 import { useRouter } from "next/navigation";
@@ -21,6 +22,8 @@ interface GameContextType {
   roomPlayers: UserType[];
   gamePlayers: UserType[];
   isStarted: boolean;
+  isInBattle: boolean;
+  hasLeftRoomRef: React.RefObject<boolean>;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -34,13 +37,16 @@ function GameProvider({ children }: { children: ReactNode }) {
   const [creatorUsername, setCreatorUsername] = useState<string | null>(null);
   const [isCreator, setIsCreator] = useState<boolean>(false);
   const [isStarted, setIsStarted] = useState<boolean>(false);
+  const [isInBattle, setIsInBattle] = useState<boolean>(false);
   const [roomPlayers, setRoomPlayers] = useState<UserType[]>([]);
   const [gamePlayers, setGamePlayers] = useState<UserType[]>([]);
+  const hasLeftRoomRef = useRef<boolean>(false);
 
   const resetGame = () => {
     setGameId(null);
     setCreatorUsername(null);
     setIsStarted(false);
+    setIsInBattle(false);
     setRoomPlayers([]);
     setGamePlayers([]);
     setIsCreator(false);
@@ -65,12 +71,6 @@ function GameProvider({ children }: { children: ReactNode }) {
         return
       }
 
-      if (payload.event === "room-not-found") {
-        router.push(`/${lang}/`);
-        toast.error(payload.message || dictionary.common.errorOccurred);
-        return;
-      }
-
       if (payload.event === "room-kicked") {
         resetGame();
         router.push(`/${lang}/`);
@@ -84,9 +84,15 @@ function GameProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      if (payload.event === "game-left") {
+        setIsInBattle(false);
+        return;
+      }
+
       if (payload.event === "room-created"
         || payload.event === "room-joined"
       ) {
+        hasLeftRoomRef.current = false;
         router.push(`/${lang}/game/${payload.gameId}`);
         return;
       }
@@ -98,6 +104,7 @@ function GameProvider({ children }: { children: ReactNode }) {
 
       if (payload.event === "battle-started") {
         setIsStarted(true);
+        setIsInBattle(true);
         return;
       }
     };
@@ -109,7 +116,7 @@ function GameProvider({ children }: { children: ReactNode }) {
   }, [socket, lang, router, dictionary]);
 
   return (
-    <GameContext.Provider value={ { gameId, creatorUsername, isCreator, roomPlayers, gamePlayers, isStarted } }>
+    <GameContext.Provider value={ { gameId, creatorUsername, isCreator, roomPlayers, gamePlayers, isStarted, isInBattle, hasLeftRoomRef } }>
       {children}
     </GameContext.Provider>
   );

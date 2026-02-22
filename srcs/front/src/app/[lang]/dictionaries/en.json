@@ -65,13 +65,15 @@
     "roomIdPlaceholder": "Room ID"
   },
   "game": {
-    "title": "Game",
+    "title": "Room",
     "roomIdLabel": "Room ID",
-    "gameIdCopied": "Game ID copied to clipboard",
+    "gameIdCopied": "Room ID copied to clipboard",
     "leaveRoom": "Leave room",
-    "startGame": "Start game",
-    "startingGame": "Waiting for game to start...",
-    "roomKicked": "You have been kicked from the room"
+    "startGame": "Start battle",
+    "startingGame": "Waiting for battle to start...",
+    "endingGame": "Battle in progress...",
+    "roomKicked": "You have been kicked from the room",
+    "abandonGame": "Abandon battle"
   },
   "history": {
     "title": "history"
