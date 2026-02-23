@@ -65,7 +65,9 @@
     "roomIdPlaceholder": "Room ID"
   },
   "game": {
-    "title": "Room",
+    "roomTitle": "Room",
+    "gameTitle": "Game",
+    "scoreboardTitle": "Scoreboard",
     "roomIdLabel": "Room ID",
     "gameIdCopied": "Room ID copied to clipboard",
     "leaveRoom": "Leave room",
@@ -79,6 +81,7 @@
     "subjectTab": "Subject",
     "codeTab": "Code",
     "traceTab": "Trace",
+    "scoreboardTab": "Scoreboard",
     "submitCode": "Submit code",
     "waitingForResult": "Waiting for result...",
     "retryInSeconds": "Retry in {{seconds}}s"

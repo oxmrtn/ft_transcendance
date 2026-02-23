@@ -14,7 +14,7 @@ import { useAuth } from "../../../../../../contexts/AuthContext";
 
 export default function Room() {
   const { username: myUsername } = useAuth();
-  const { gameId, creatorUsername, isCreator, players, isStarted, hasLeftRoomRef } = useGame();
+  const { gameId, creatorUsername, isCreator, players, hasLeftRoomRef } = useGame();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
 
@@ -68,7 +68,7 @@ export default function Room() {
   };
 
   return (
-    <ContentWrapper title={dictionary.game.title}>
+    <ContentWrapper title={`${dictionary.game.roomTitle} - ${shortenedGameId}`}>
       <div className="flex flex-col h-full">
         <div className="flex-wrap gap-2 flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
           <p className="flex items-center gap-1 text-sub-text font-mono text-sm">
@@ -104,23 +104,10 @@ export default function Room() {
                           <Crown className="size-4 text-yellow-500" fill="currentColor" />
                         )}
                       </div>
-                      {isCreator && !isStarted && player.username !== myUsername && (
+                      {isCreator && player.username !== myUsername && (
                         <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 absolute top-2 right-2">
                           <X className="size-5 text-destructive" onClick={() => kickPlayer(player.username)} />
                         </button>
-                      )}
-                      {isStarted && (
-                        <div className="w-full absolute bottom-0 py-1 gap-1 flex items-center items-center justify-center border-t border-px border-white/10 bg-white/5">
-                          <p className="text-muted-text text-sm">{player.isInBattle ? dictionary.game.inGame : dictionary.game.failedGame}</p>
-                          {player.isInBattle ? (
-                            <div className="pl-1 flex items-center gap-1">
-                              <p className="text-sm text-sub-text font-medium">{player.remainingTries}</p>
-                              <Heart className="size-4 text-pink-400" fill="currentColor" />
-                            </div>
-                          ) : (
-                            <Skull className="size-4.5 text-destructive/80" />
-                          )}
-                        </div>
                       )}
                     </>
                   ) : (
@@ -133,7 +120,7 @@ export default function Room() {
           })()}
         </div>
         <div className="px-4 py-2 border-t border-px border-white/10">
-          {isCreator && !isStarted ? (
+          {isCreator ? (
             <Button variant="primary" onClick={startGame} fullWidth={true}>
               {dictionary.game.startGame}
             </Button>
@@ -141,7 +128,7 @@ export default function Room() {
             <div className="flex justify-center items-center gap-2 py-2">
               <Loader2Icon className="size-5 animate-spin text-white/60" />
               <p className="text-white/60 text-sm">
-                {isStarted ? dictionary.game.endingGame : dictionary.game.startingGame}
+                {dictionary.game.startingGame}
               </p>
             </div>
           )}

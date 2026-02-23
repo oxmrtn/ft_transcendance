@@ -26,7 +26,6 @@ export default function Trace() {
                                     <ChevronDown className="size-4 transition-transform duration-200 group-data-panel-open/button:rotate-180" />
                                 </CollapsibleTrigger>
                             </div>
-
                             <CollapsibleContent className="py-2 px-4 bg-white/5 rounded-md">
                                 <p>{trace}</p>
                             </CollapsibleContent>

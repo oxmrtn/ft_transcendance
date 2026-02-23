@@ -5,9 +5,10 @@ import { useGame } from "../../../../../../contexts/GameContext";
 import { useSocket } from "../../../../../../contexts/SocketContext";
 import Room from "./room";
 import Battle from "./battle";
+import Scoreboard from "./scoreboard";
 
 export default function Game() {
-  const { isInBattle, hasLeftRoomRef } = useGame();
+  const { gameState, hasLeftRoomRef } = useGame();
   const { socket } = useSocket();
 
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function Game() {
 
   return (
     <>{
-      isInBattle ? <Battle /> : <Room />
+      gameState === "playing" ? <Battle /> : gameState === "finished" ? <Scoreboard /> : <Room />
     }</>
   );
 }

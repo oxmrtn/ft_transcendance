@@ -65,7 +65,9 @@
     "roomIdPlaceholder": "ID de la partie"
   },
   "game": {
-    "title": "Room",
+    "roomTitle": "Room",
+    "gameTitle": "Game",
+    "scoreboardTitle": "Scoreboard",
     "roomIdLabel": "ID de la room",
     "gameIdCopied": "ID de la room copié dans le presse-papiers",
     "leaveRoom": "Quitter la room",
@@ -79,6 +81,7 @@
     "subjectTab": "Sujet",
     "codeTab": "Code",
     "traceTab": "Trace",
+    "scoreboardTab": "Scoreboard",
     "submitCode": "Soumettre le code",
     "waitingForResult": "En attente du résultat...",
     "retryInSeconds": "Réessayer dans {{seconds}}s"

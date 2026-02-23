@@ -17,10 +17,11 @@ import { useAuth } from "./AuthContext";
 export interface GamePlayer {
   username: string;
   profilePictureUrl: string | null;
-  isInBattle: boolean;
+  passedChallenge: boolean | null;
   remainingTries: number;
 }
 
+export type GameState = "waiting" | "playing" | "finished";
 export type SubmitButtonState = "idle" | "waiting" | "timeout";
 
 export const BASE_SUBMIT_TIMEOUT_SECONDS = 15;
@@ -31,47 +32,47 @@ interface GameContextType {
   creatorUsername: string | null;
   players: GamePlayer[];
   isCreator: boolean;
-  isStarted: boolean;
-  isInBattle: boolean;
+  gameState: GameState;
   hasLeftRoomRef: React.RefObject<boolean>;
   submitState: SubmitButtonState;
   setSubmitState: (state: SubmitButtonState) => void;
   trace: { trace: string; result: boolean }[];
   setTrace: (trace: { trace: string; result: boolean }[]) => void;
+  result: boolean | null;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 function GameProvider({ children }: { children: ReactNode }) {
-  const { username } = useAuth();
+  const { username: myUsername } = useAuth();
   const { socket } = useSocket();
   const router = useRouter();
   const { lang, dictionary } = useLanguage();
   const [gameId, setGameId] = useState<string | null>(null);
   const [creatorUsername, setCreatorUsername] = useState<string | null>(null);
   const [isCreator, setIsCreator] = useState<boolean>(false);
-  const [isStarted, setIsStarted] = useState<boolean>(false);
-  const [isInBattle, setIsInBattle] = useState<boolean>(false);
+  const [gameState, setGameState] = useState<GameState>("waiting");
   const [players, setPlayers] = useState<GamePlayer[]>([]);
   const hasLeftRoomRef = useRef<boolean>(false);
   const [submitState, setSubmitState] = useState<SubmitButtonState>("idle");
   const [trace, setTrace] = useState<{ trace: string; result: boolean }[]>([]);
+  const [result, setResult] = useState<boolean | null>(null);
 
   const resetGame = () => {
     setGameId(null);
     setCreatorUsername(null);
-    setIsStarted(false);
-    setIsInBattle(false);
+    setGameState("waiting");
     setPlayers([]);
     setIsCreator(false);
     setSubmitState("idle");
+    setResult(null);
   }
 
   const setGame = (payload: any) => {
     setGameId(payload.gameId);
     setCreatorUsername(payload.creatorUsername);
     setPlayers(payload.players);
-    setIsCreator(payload.creatorUsername === username);
+    setIsCreator(payload.creatorUsername === myUsername);
   }
 
   useEffect(() => {
@@ -99,8 +100,8 @@ function GameProvider({ children }: { children: ReactNode }) {
       }
 
       if (payload.event === "game-left") {
-        setSubmitState("idle");
-        setIsInBattle(false);
+        setResult(false);
+        setGameState("finished");
         return;
       }
 
@@ -118,15 +119,19 @@ function GameProvider({ children }: { children: ReactNode }) {
       }
 
       if (payload.event === "battle-started") {
-        setIsStarted(true);
-        setIsInBattle(true);
+        setGameState("playing");
         return;
       }
 
       if (payload.event === "code-result") {
-        setSubmitState("timeout");
+        const me = players.find((player) => player.username === myUsername);
         setTrace(prev => [...prev, { trace: payload.trace, result: payload.result }]);
-        return;
+        if (payload.result || me.remainingTries <= 0) {
+          setResult(payload.result);
+          setGameState("finished");
+          return;
+        }
+        setSubmitState("timeout");
       }
     };
 
@@ -137,7 +142,7 @@ function GameProvider({ children }: { children: ReactNode }) {
   }, [socket, lang, router, dictionary]);
 
   return (
-    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, players, isStarted, isInBattle, hasLeftRoomRef, submitState, setSubmitState, trace, setTrace }}>
+    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, players, gameState, hasLeftRoomRef, submitState, setSubmitState, trace, setTrace, result }}>
       {children}
     </GameContext.Provider>
   );
