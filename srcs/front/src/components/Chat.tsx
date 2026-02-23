@@ -44,7 +44,7 @@ export function ChatModal({ target }: { target?: string }) {
                 content
             });
         } else {
-            socket?.emit('chat-message', message);
+            socket?.emit('chat-message', { content: cleanedMessage });
         }
     }
 

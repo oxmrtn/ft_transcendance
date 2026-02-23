@@ -23,7 +23,7 @@ export class ChatGateway
 	handleNewMaessage(@MessageBody() message: chatMessageDto, @ConnectedSocket() client: Socket)
 	{
 		this.server.emit('chat-message', {
-			content: message,
+			content: message.content,
 			sender: client.data.user.username,
 			destination: null,
 			isPrivate: false,

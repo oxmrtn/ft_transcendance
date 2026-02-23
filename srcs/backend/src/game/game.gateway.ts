@@ -18,6 +18,9 @@ import { connected } from "node:process";
 import { PrismaService } from "prisma/prisma.service";
 import { waitForDebugger } from "node:inspector";
 
+const BASE_SUBMIT_TIMEOUT_SECONDS = 15;
+const BASE_REMAINING_TRIES = 3;
+
 interface PlayerInfos {
 	isInBattle: boolean;
 	remainingTries: number;
@@ -83,7 +86,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 				winner: winnerId
 			});
 			currentGame.players.forEach((_, playerId) => {
-				currentGame.players.set(playerId, { isInBattle: false, remainingTries: 3, lastSubmitTime: null });
+				currentGame.players.set(playerId, { isInBattle: false, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 			});
 		}
 
@@ -111,7 +114,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const currentGame = this.gameSessions.get(gameId);
 		
 		currentGame.players = new Map();
-		currentGame.players.set(userId, { isInBattle: false, remainingTries: 3, lastSubmitTime: null });
+		currentGame.players.set(userId, { isInBattle: false, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 		this.clientToRoom.set(userId, gameId);
 		currentGame.creatorId = userId;
 		currentGame.isStarted = false;
@@ -160,7 +163,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		}
 
 		client.join(`game_${gameId}`);
-		currentGame.players.set(user.userId, { isInBattle: false, remainingTries: 3, lastSubmitTime: null });
+		currentGame.players.set(user.userId, { isInBattle: false, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 		this.clientToRoom.set(user.userId, gameId);
 
 		await this.notifyGameStatus(currentGame);
@@ -259,7 +262,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		currentGame.players.set(userId, { isInBattle: false, remainingTries: 0, lastSubmitTime: null });
+		currentGame.players.set(userId, { isInBattle: false, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 
 		// const inGameIds = this.getInGamePlayerIds(currentGame);
 		// if (inGameIds.length === 1 && currentGame.isStarted)
@@ -270,7 +273,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		// 		winner: winnerId
 		// 	});
 		// 	currentGame.players.forEach((_, playerId) => {
-		// 		currentGame.players.set(playerId, { isInBattle: false, remainingTries: 3 });
+		// 		currentGame.players.set(playerId, { isInBattle: false, remainingTries: BASE_REMAINING_TRIES });
 		// 	});
 		// }
 
@@ -310,7 +313,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		}
 
 		currentGame.players.forEach((_, playerId) => {
-			currentGame.players.set(playerId, { isInBattle: true, remainingTries: 3, lastSubmitTime: null });
+			currentGame.players.set(playerId, { isInBattle: true, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 		});
 		currentGame.isStarted = true;
 
@@ -344,22 +347,23 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
+		const now = new Date();
+		const timeSinceLastSubmit = now.getTime() - (playerInfo.lastSubmitTime?.getTime() ?? 0);
+		const penaltyMultiplier = BASE_REMAINING_TRIES - playerInfo.remainingTries;
+		const requiredTimeoutMs = BASE_SUBMIT_TIMEOUT_SECONDS * 1000 * penaltyMultiplier;
+		if (timeSinceLastSubmit < requiredTimeoutMs)
+		{
+			this.errorMessage(client, `You have to wait ${Math.ceil((requiredTimeoutMs - timeSinceLastSubmit) / 1000)}s before submitting again.`);
+			return;
+		}
+		playerInfo.lastSubmitTime = now;
 		playerInfo.remainingTries--;
 
 		// passer le code a l'api de tests
 
-		const now = new Date();
-		const timeSinceLastSubmit = now.getTime() - (playerInfo.lastSubmitTime?.getTime() ?? 0);
-		if (timeSinceLastSubmit < 3000)
-		{
-			this.errorMessage(client, `You have to wait ${Math.ceil((3000 - timeSinceLastSubmit) / 1000)}s before submitting again.`);
-			return;
-		}
-		playerInfo.lastSubmitTime = now;
-
 		setTimeout(() => {
 			client.emit('game-info', { event: 'code-result', result: 'failed' });
-		}, 3000);
+		}, 1000);
 		this.notifyGameStatus(currentGame);
 	}
 
