@@ -12,7 +12,12 @@ import {
 import ProfilePicture from './ProfilePicture';
 import { useModal } from '../contexts/ModalContext';
 import { ChatModal } from './Chat';
-import type { UserType } from '../types';
+
+export interface UserType {
+    username: string;
+    profilePictureUrl: string | null;
+    online: boolean | null;
+}
 
 export default function UserProfile({
     user,

@@ -61,7 +61,7 @@ export default function Header() {
 
   return (
     <header className={cn(
-      "z-30 h-[64px] flex justify-between items-center gap-4 bg-modal-bg backdrop-blur-xl w-full px-8",
+      "relative z-30 h-[64px] flex justify-between items-center gap-4 bg-modal-bg backdrop-blur-xl w-full px-8",
       "md:border-b md:border-white/10 md:shadow-[0_0_30px] md:shadow-black/70",
       showShadow && "shadow-[0_0_30px] shadow-black/70"
     )} ref={headerRef}>
@@ -71,7 +71,7 @@ export default function Header() {
 
       <div className={cn(
         "z-20 absolute top-[64px] overflow-hidden left-0 w-full transition-[max-height] duration-400 ease-in-out border-b border-white/10 shadow-[0_20px_20px] shadow-black/30",
-        "md:relative md:top-0 md:w-fit md:h-full md:max-h-full md:transition-none md:border-0 md:shadow-none",
+        "md:left-1/2 md:-translate-x-1/2 md:top-0 md:w-fit md:h-full md:max-h-full md:transition-none md:border-0 md:shadow-none",
         isMenuOpen ? "max-h-96" : "max-h-0",
       )}>
         <Nav tabs={[

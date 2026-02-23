@@ -16,13 +16,18 @@ import { gameIdDto } from "src/dto/game-id.dto";
 import { KickPlayerDto } from "src/dto/kick-player.dto";
 import { connected } from "node:process";
 import { PrismaService } from "prisma/prisma.service";
+import { waitForDebugger } from "node:inspector";
+
+interface PlayerInfos {
+	isInBattle: boolean;
+	remainingTries: number;
+	lastSubmitTime: Date | null;
+}
 
 class GameSession {
 	public playerNumber : number;
 	public gameId : string;
-	public roomPlayers: Set<number>;
-	public gamePlayers: Set<number>;
-	public playerSubmitMap: Map<number, number>;
+	public players: Map<number, PlayerInfos>;
 	public isStarted: boolean;
 	public creatorId: number;
 	
@@ -66,32 +71,26 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (this.clientToRoom.has(userId))
 			this.clientToRoom.delete(userId);
 
-		if (currentGame.gamePlayers.has(userId))
-			currentGame.gamePlayers.delete(userId);
+		if (currentGame.players.has(userId))
+			currentGame.players.delete(userId);
 
-		if (currentGame.gamePlayers.size === 1 && currentGame.isStarted)
+		const inGameIds = this.getInGamePlayerIds(currentGame);
+		if (inGameIds.length === 1 && currentGame.isStarted)
 		{
-			const winnerId = Array.from(currentGame.gamePlayers)[0];
+			const winnerId = inGameIds[0];
 			this.server.to(`game_${gameId}`).emit('game-info', {
 				event: 'results',
 				winner: winnerId
 			});
-			currentGame.gamePlayers.clear();
+			currentGame.players.forEach((_, playerId) => {
+				currentGame.players.set(playerId, { isInBattle: false, remainingTries: 3, lastSubmitTime: null });
+			});
 		}
 
-		if (currentGame.roomPlayers.has(userId))
-			currentGame.roomPlayers.delete(userId);
-
-		if (!currentGame.roomPlayers.size)
+		if (!currentGame.players.size)
 			this.gameSessions.delete(gameId);
 
-		this.server.to(`game_${gameId}`).emit('game-info', {
-			event: 'room-status',
-			roomPlayers: Array.from(currentGame.roomPlayers),
-			gamePlayers: Array.from(currentGame.gamePlayers),
-			playerNumber: currentGame.playerNumber,
-			gameId: currentGame.gameId
-		});
+		this.notifyGameStatus(currentGame);
 	}
 
 	@SubscribeMessage('create-room')
@@ -111,13 +110,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		const currentGame = this.gameSessions.get(gameId);
 		
-		currentGame.roomPlayers = new Set();
-		currentGame.roomPlayers.add(userId);
-		currentGame.gamePlayers = new Set();
+		currentGame.players = new Map();
+		currentGame.players.set(userId, { isInBattle: false, remainingTries: 3, lastSubmitTime: null });
 		this.clientToRoom.set(userId, gameId);
 		currentGame.creatorId = userId;
 		currentGame.isStarted = false;
-		currentGame.playerSubmitMap = new Map();
 
 		client.join(`game_${gameId}`);
 
@@ -138,7 +135,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		if (currentGame.roomPlayers.has(user.userId))
+		if (currentGame.players.has(user.userId))
 		{
 			this.errorMessage(client, `You already join this room!`);
 			return;
@@ -156,14 +153,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 		
-		if (currentGame.roomPlayers.size + 1 >= currentGame.playerNumber)
+		if (currentGame.players.size + 1 >= currentGame.playerNumber)
 		{
 			this.errorMessage(client, `This room is already full!`);
 			return;
 		}
 
 		client.join(`game_${gameId}`);
-		currentGame.roomPlayers.add(user.userId);
+		currentGame.players.set(user.userId, { isInBattle: false, remainingTries: 3, lastSubmitTime: null });
 		this.clientToRoom.set(user.userId, gameId);
 
 		await this.notifyGameStatus(currentGame);
@@ -190,7 +187,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		if (!currentGame.roomPlayers.has(userId) || userId !== currentGame.creatorId)
+		if (!currentGame.players.has(userId) || userId !== currentGame.creatorId)
 		{
 			this.errorMessage(client, `You are not allowed to kick players!`);
 			return;
@@ -202,7 +199,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		if (!currentGame.roomPlayers.has(targetUser.id))
+		if (!currentGame.players.has(targetUser.id))
 		{
 			this.errorMessage(client, `User ${targetUsername} is not in this room!`);
 			return;
@@ -214,7 +211,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		currentGame.roomPlayers.delete(targetUser.id);
+		currentGame.players.delete(targetUser.id);
 		this.clientToRoom.delete(targetUser.id);
 
 		await this.notifyGameStatus(currentGame);
@@ -230,23 +227,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		if (!currentGame)
 		{
-			this.errorMessage(client, `${gameId} room doesn\'t exist!`);
+			this.errorMessage(client, `Room doesn\'t exist!`);
 			return;
 		}
 
 		client.leave(`game_${gameId}`);
 		client.emit('game-info', { event: 'room-left' });
 
-		currentGame.roomPlayers.delete(userId);
+		currentGame.players.delete(userId);
 		this.clientToRoom.delete(userId);
 
-		if(currentGame.gamePlayers.has(userId))
-			currentGame.gamePlayers.delete(userId);
-		if (!currentGame.roomPlayers.size)
+		if (!currentGame.players.size)
 			this.gameSessions.delete(gameId);
 		else {
 			if (userId === currentGame.creatorId)
-				currentGame.creatorId = Array.from(currentGame.roomPlayers)[0];
+				currentGame.creatorId = Array.from(currentGame.players.keys())[0];
 			this.notifyGameStatus(currentGame);
 		}
 	}
@@ -256,25 +251,28 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	{
 		const userId = client.data.user.userId;
 		const gameId = this.clientToRoom.get(userId);
-		const currentGame = this.gameSessions.get(gameId);
+		const currentGame = gameId !== undefined ? this.gameSessions.get(gameId) : undefined;
 
 		if (!currentGame)
 		{
-			this.errorMessage(client, `You are not in a Battle!`)
+			this.errorMessage(client, `You are not in a battle!`);
 			return;
 		}
 
-		currentGame.gamePlayers.delete(userId);
-		
-		if (currentGame.gamePlayers.size === 1 && currentGame.isStarted)
-		{
-			const winnerId = Array.from(currentGame.gamePlayers)[0];
-			this.server.to(`game_${gameId}`).emit('game-info', {
-				event: 'results',
-				winner: winnerId
-			});
-			currentGame.gamePlayers.clear();
-		}
+		currentGame.players.set(userId, { isInBattle: false, remainingTries: 0, lastSubmitTime: null });
+
+		// const inGameIds = this.getInGamePlayerIds(currentGame);
+		// if (inGameIds.length === 1 && currentGame.isStarted)
+		// {
+		// 	const winnerId = inGameIds[0];
+		// 	this.server.to(`game_${gameId}`).emit('game-info', {
+		// 		event: 'results',
+		// 		winner: winnerId
+		// 	});
+		// 	currentGame.players.forEach((_, playerId) => {
+		// 		currentGame.players.set(playerId, { isInBattle: false, remainingTries: 3 });
+		// 	});
+		// }
 
 		await this.notifyGameStatus(currentGame);
 		client.emit('game-info', { event: 'game-left' });
@@ -287,13 +285,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const gameId = this.clientToRoom.get(userId);
 		const currentGame = this.gameSessions.get(gameId);
 
+		if (!currentGame)
+		{
+			this.errorMessage(client, `You are not in a room!`);
+			return;
+		}
+
 		if (userId !== currentGame.creatorId)
 		{
 			this.errorMessage(client, `You can't start the battle!`)
 			return;
 		}
 
-		if (currentGame.roomPlayers.size < 2)
+		if (currentGame.players.size < 2)
 		{
 			this.errorMessage(client, `The battle need at least two players!`);
 			return;
@@ -305,8 +309,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		currentGame.gamePlayers = new Set(currentGame.roomPlayers);
+		currentGame.players.forEach((_, playerId) => {
+			currentGame.players.set(playerId, { isInBattle: true, remainingTries: 3, lastSubmitTime: null });
+		});
 		currentGame.isStarted = true;
+
 		await this.notifyGameStatus(currentGame);
 		this.server.to(`game_${gameId}`).emit('game-info', { event: 'battle-started' });
 	}
@@ -314,8 +321,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	@SubscribeMessage('code-submit')
 	async handleCodeSubmit(@ConnectedSocket() client: Socket, @MessageBody() payload: codeSubmitDto)
 	{
-		const gameId = payload.gameId;
-		const user = client.data.user;
+		const userId = client.data.user.userId;
+		const gameId = this.clientToRoom.get(userId);
 		const currentGame = this.gameSessions.get(gameId);
 
 		if (!currentGame)
@@ -324,27 +331,36 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 		
-		if (!currentGame.gamePlayers.has(user.userId))
+		const playerInfo = currentGame.players.get(userId);
+		if (!playerInfo || !playerInfo.isInBattle)
 		{
-			this.errorMessage(client, `There is no user ${user.username} in this Battle!`)
+			this.errorMessage(client, `You are not in this Battle!`);
 			return;
 		}
 
-		++currentGame.playerSubmitMap[user.userId];
+		if (playerInfo.remainingTries <= 0)
+		{
+			this.errorMessage(client, `You can't submit code anymore!`);
+			return;
+		}
 
-		if (currentGame.playerSubmitMap[user.userId] > 3)
+		playerInfo.remainingTries--;
+
+		// passer le code a l'api de tests
+
+		const now = new Date();
+		const timeSinceLastSubmit = now.getTime() - (playerInfo.lastSubmitTime?.getTime() ?? 0);
+		if (timeSinceLastSubmit < 3000)
 		{
-			this.errorMessage(client, `${user.username} can't submit code anymore!`)
-			currentGame.gamePlayers.delete(user.userID);
+			this.errorMessage(client, `You have to wait ${Math.ceil((3000 - timeSinceLastSubmit) / 1000)}s before submitting again.`);
+			return;
 		}
-		else
-		{
-			client.to(`game_${gameId}`).emit('game-info', {
-				event: 'code-submit',
-				player: user.username
-			});
-			//passer le code a l'api de tests
-		}
+		playerInfo.lastSubmitTime = now;
+
+		setTimeout(() => {
+			client.emit('game-info', { event: 'code-result', result: 'failed' });
+		}, 3000);
+		this.notifyGameStatus(currentGame);
 	}
 
 	private errorMessage(@ConnectedSocket() client : Socket, msg : string)
@@ -355,26 +371,42 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		});
 	}
 
+	private getInGamePlayerIds(game: GameSession): number[]
+	{
+		return Array.from(game.players.entries())
+			.filter(([, info]) => info.isInBattle)
+			.map(([id]) => id);
+	}
+
 	private async notifyGameStatus(game: GameSession)
 	{
 		if (!game)
 			return;
 
-		const roomPlayerArray = Array.from(game.roomPlayers);		
-		const roomPlayerByName = await this.prismaService.user.findMany({ where: { id: { in: roomPlayerArray } }, select: { username : true, profilePictureUrl : true } });
+		const playerIds = Array.from(game.players.keys());
+		const users = await this.prismaService.user.findMany({
+			where: { id: { in: playerIds } },
+			select: { id: true, username: true, profilePictureUrl: true },
+		});
 
-		const gamePlayerArray = Array.from(game.gamePlayers);
-		const gamePlayerByName = await this.prismaService.user.findMany({ where: { id: { in: gamePlayerArray } }, select: { username : true } });
-		const gamePlayerArrayByName = gamePlayerByName.map(user => user.username);
+		const players = playerIds.map((id) => {
+			const user = users.find((u) => u.id === id);
+			const info = game.players.get(id);
+			return {
+				username: user.username,
+				profilePictureUrl: user.profilePictureUrl,
+				isInBattle: info.isInBattle,
+				remainingTries: info.remainingTries,
+			};
+		});
 
-		const creatorUsername = await this.prismaService.user.findUnique({ where: { id: game.creatorId }, select: { username : true } });
+		const creatorUsername = await this.prismaService.user.findUnique({ where: { id: game.creatorId }, select: { username: true } });
 
 		this.server.to(`game_${game.gameId}`).emit('game-info', {
 			event: 'room-update',
-			roomPlayers: roomPlayerByName,
-			gamePlayers: gamePlayerArrayByName,
+			players,
 			gameId: game.gameId,
-			creatorUsername: creatorUsername?.username
+			creatorUsername: creatorUsername.username,
 		});
 	}
 }

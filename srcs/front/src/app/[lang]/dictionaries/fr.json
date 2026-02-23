@@ -73,7 +73,14 @@
     "startingGame": "En attente du lancement du battle...",
     "endingGame": "Battle en cours...",
     "roomKicked": "Vous avez été expulsé de la room",
-    "abandonGame": "Abandonner le battle"
+    "abandonGame": "Abandonner le battle",
+    "inGame": "En jeu",
+    "failedGame": "A échoué",
+    "subjectTab": "Sujet",
+    "codeTab": "Code",
+    "submitCode": "Soumettre le code",
+    "waitingForResult": "En attente du résultat...",
+    "retryInSeconds": "Réessayer dans {{seconds}}s"
   },
   "history": {
     "title": "historique"
