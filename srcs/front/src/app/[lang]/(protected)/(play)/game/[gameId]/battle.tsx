@@ -3,15 +3,13 @@ import ContentWrapper from "../../../../../../components/ContentWrapper";
 import { Heart, Loader2Icon, Skull } from "lucide-react";
 import Button from "../../../../../../components/ui/Button";
 import { useLanguage } from "../../../../../../contexts/LanguageContext";
-import { useGame } from "../../../../../../contexts/GameContext";
+import { BASE_REMAINING_TRIES, BASE_SUBMIT_TIMEOUT_SECONDS, useGame } from "../../../../../../contexts/GameContext";
 import { useSocket } from "../../../../../../contexts/SocketContext";
 import { Editor } from "@monaco-editor/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../../../components/ui/tabs";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
 import { useAuth } from "../../../../../../contexts/AuthContext";
-
-const BASE_SUBMIT_TIMEOUT_SECONDS = 15;
-const BASE_REMAINING_TRIES = 3;
+import Trace from "./trace";
 
 export default function Battle() {
   const { username } = useAuth();
@@ -20,6 +18,7 @@ export default function Battle() {
   const { dictionary } = useLanguage();
   const [code, setCode] = useState("");
   const [timeoutSeconds, setTimeoutSeconds] = useState(0);
+  const [activeTab, setActiveTab] = useState("code");
 
   const leaveGame = () => {
     if (!socket || !gameId)
@@ -59,14 +58,17 @@ export default function Battle() {
 
   return (
     <ContentWrapper title={dictionary.game.title}>
-      <Tabs defaultValue="subject" className="h-full w-full flex flex-col">
+      <Tabs defaultValue="code" className="h-full w-full flex flex-col">
         <div className="flex-wrap gap-2 flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
           <TabsList className="flex gap-2">
-              <TabsTrigger value="subject">
+              <TabsTrigger value="code" onClick={() => setActiveTab("code")}>
+                {dictionary.game.codeTab}
+              </TabsTrigger>
+              <TabsTrigger value="subject" onClick={() => setActiveTab("subject")}>
                 {dictionary.game.subjectTab}
               </TabsTrigger>
-              <TabsTrigger value="code">
-                {dictionary.game.codeTab}
+              <TabsTrigger value="trace" onClick={() => setActiveTab("trace")}>
+                {dictionary.game.traceTab}
               </TabsTrigger>
             </TabsList>
           <Button variant="danger" onClick={leaveGame}>
@@ -92,6 +94,9 @@ export default function Battle() {
           <TabsContent value="subject" className="h-full w-full">
             ...
           </TabsContent>
+          <TabsContent value="trace" className="h-full w-full">
+            <Trace />
+          </TabsContent>
         </div>
 
         <div className="flex gap-4 px-4 py-2 border-t border-px border-white/10">
@@ -99,31 +104,31 @@ export default function Battle() {
             const cards = [];
             for (const player of players) {
               cards.push(
-                <div key={player.username} className="flex items-center justify-center bg-black/50 border border-px border-white/10 rounded-md p-2 gap-2 h-full">
+                <div key={player.username} className="flex items-center justify-center bg-black/50 border border-px border-white/10 rounded-md p-2 gap-1">
                   <div className="flex items-center gap-2">
                     <ProfilePicture profilePictureUrl={player.profilePictureUrl} size={7} />
                     <p className="text-sub-text font-medium">{player.username}</p>
                   </div>
-                  <div className="flex items-center gap-1">
-                  {player.remainingTries > 0 ? (
+                  <div className="pl-1 flex items-center gap-1">
+                  {player.isInBattle && player.remainingTries > 0 ? (
                     <>
                       <p className="text-white font-medium font-mono">{player.remainingTries}</p>
-                      <Heart className="size-5 text-pink-400" />
+                      <Heart className="size-5 text-pink-400" fill="currentColor" />
                     </>
                   ) : (
-                    <Skull className="size-5 text-destructive/80" />
+                    <Skull className="size-4.5 text-destructive/80" />
                   )}
                   </div>
                 </div>
               );
             }
-            return <div className="flex items-center gap-2 h-full">{cards}</div>;
+            return <div className="flex items-center gap-2">{cards}</div>;
           })()}
           <Button
             variant="primary" 
             fullWidth={true}
             onClick={submitState === "idle" ? submitCode : (() => {})}
-            disabled={submitState !== "idle" || !code || code.trim() === ""}
+            disabled={submitState !== "idle" || !code || code.trim() === "" || activeTab !== "code"}
           >
             {submitState !== "idle" && (
               <Loader2Icon className="size-4 animate-spin" />

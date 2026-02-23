@@ -78,6 +78,7 @@
     "failedGame": "Failed",
     "subjectTab": "Subject",
     "codeTab": "Code",
+    "traceTab": "Trace",
     "submitCode": "Submit code",
     "waitingForResult": "Waiting for result...",
     "retryInSeconds": "Retry in {{seconds}}s"
