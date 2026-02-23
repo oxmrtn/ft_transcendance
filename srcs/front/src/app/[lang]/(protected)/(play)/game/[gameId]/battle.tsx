@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ContentWrapper from "../../../../../../components/ContentWrapper";
 import { Check, Heart, Loader2Icon, Skull } from "lucide-react";
 import Button from "../../../../../../components/ui/Button";
@@ -21,6 +21,7 @@ export default function Battle() {
   const [timeoutSeconds, setTimeoutSeconds] = useState(0);
   const [activeTab, setActiveTab] = useState("code");
   const [traceNotification, setTraceNotification] = useState(false);
+  const prevLengthRef = useRef(trace.length);
 
   const shortenedGameId = `${gameId.slice(0, 4)}...${gameId.slice(-4)}`;
 
@@ -61,8 +62,10 @@ export default function Battle() {
   }, [submitState, setSubmitState]);
 
   useEffect(() => {
-    setTraceNotification(true);
-  }, [trace]);
+    if (trace.length > prevLengthRef.current)
+      setTraceNotification(true);
+    prevLengthRef.current = trace.length;
+  }, [trace.length]);
 
   return (
     <ContentWrapper title={`${dictionary.game.gameTitle} - ${shortenedGameId}`}>
@@ -80,7 +83,7 @@ export default function Battle() {
                 {traceNotification &&
                   <div className="absolute top-[-4px] right-[-4px] h-2.5 w-2.5 rounded-full flex items-center justify-center bg-primary/20">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
-                </div>
+                  </div>
                 }
               </TabsTrigger>
             </TabsList>
@@ -123,16 +126,17 @@ export default function Battle() {
                     <p className="text-sub-text font-medium">{player.username}</p>
                   </div>
                   <div className="pl-1 flex items-center gap-1">
-                  {!player.passedChallenge && player.remainingTries > 0 ? (
-                    <>
-                      <p className="text-white font-medium font-mono">{player.remainingTries}</p>
-                      <Heart className="size-5 text-pink-400" fill="currentColor" />
-                    </>
-                  ) : player.passedChallenge === false ? (
-                    <Skull className="size-4.5 text-destructive/80" />
-                  ) : (
-                    <Check className="size-4.5 text-green" />
-                  )}
+                  {player.passedChallenge === null && player.remainingTries > 0 ? (
+                      <>
+                        <p className="text-white font-medium font-mono">{player.remainingTries}</p>
+                        <Heart className="size-5 text-pink-400" fill="currentColor" />
+                      </>
+                    ) : player.passedChallenge === false ? (
+                      <Skull className="size-4.5 text-destructive/80" />
+                    ) : (
+                      <Check className="size-4.5 text-green" />
+                    )
+                  }
                   </div>
                 </div>
               );

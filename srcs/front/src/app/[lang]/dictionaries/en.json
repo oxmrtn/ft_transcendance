@@ -79,13 +79,19 @@
     "abandonGame": "Abandon battle",
     "inGame": "In game",
     "failedGame": "Failed",
+    "successGame": "Success",
+    "youWon": "You succeeded",
+    "youFailed": "You failed",
+    "tryNumber": "Try {{number}}",
+    "noTraceAvailable": "No trace available",
     "subjectTab": "Subject",
     "codeTab": "Code",
     "traceTab": "Trace",
     "scoreboardTab": "Scoreboard",
     "submitCode": "Submit code",
     "waitingForResult": "Waiting for result...",
-    "retryInSeconds": "Retry in {{seconds}}s"
+    "retryInSeconds": "Retry in {{seconds}}s",
+    "gameEnded": "Game ended"
   },
   "history": {
     "title": "history"

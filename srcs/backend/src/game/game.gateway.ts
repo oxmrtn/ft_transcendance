@@ -260,7 +260,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		currentGame.players.set(userId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
+		currentGame.players.set(userId, { passedChallenge: false, remainingTries: 0, lastSubmitTime: null });
 
 		const inGameIds = this.getInGamePlayerIds(currentGame);
 		if (inGameIds.length === 0 && currentGame.gameState === "playing")
@@ -373,9 +373,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		}
 
 		this.notifyGameStatus(currentGame);
-		setTimeout(() => {
-			client.emit('game-info', { event: 'code-result', result: codeResult.result, trace: codeResult.trace, remainingTries: playerInfo.remainingTries });
-		}, 1000);
+		client.emit('game-info', { event: 'code-result', result: codeResult.result, trace: codeResult.trace, remainingTries: playerInfo.remainingTries });
 	}
 
 	private errorMessage(@ConnectedSocket() client : Socket, msg : string)

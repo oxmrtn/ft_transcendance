@@ -96,23 +96,24 @@ export default function Room() {
                   className="bg-black/50 border border-px border-white/10 rounded-md p-2 flex flex-col items-center justify-center gap-2 min-h-[140px] h-full relative"
                 >
                   {player ? (
-                    <>
-                      <ProfilePicture profilePictureUrl={player.profilePictureUrl} size={12} />
-                      <div className="flex items-center gap-2">
-                        <p className="text-white font-medium">{player.username || "?"}</p>
-                        {creatorUsername === player.username && (
-                          <Crown className="size-4 text-yellow-500" fill="currentColor" />
+                      <>
+                        <ProfilePicture profilePictureUrl={player.profilePictureUrl} size={12} />
+                        <div className="flex items-center gap-2">
+                          <p className="text-white font-medium">{player.username || "?"}</p>
+                          {creatorUsername === player.username && (
+                            <Crown className="size-4 text-yellow-500" fill="currentColor" />
+                          )}
+                        </div>
+                        {isCreator && player.username !== myUsername && (
+                          <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 absolute top-2 right-2">
+                            <X className="size-5 text-destructive" onClick={() => kickPlayer(player.username)} />
+                          </button>
                         )}
-                      </div>
-                      {isCreator && player.username !== myUsername && (
-                        <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 absolute top-2 right-2">
-                          <X className="size-5 text-destructive" onClick={() => kickPlayer(player.username)} />
-                        </button>
-                      )}
-                    </>
-                  ) : (
-                    <p className="text-white/60">...</p>
-                  )}
+                      </>
+                    ) : (
+                      <p className="text-white/60">...</p>
+                    )
+                  }
                 </div>
               );
             }
