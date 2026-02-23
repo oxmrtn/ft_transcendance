@@ -101,7 +101,7 @@ export default function Room() {
                       <div className="flex items-center gap-2">
                         <p className="text-white font-medium">{player.username || "?"}</p>
                         {creatorUsername === player.username && (
-                          <Crown className="size-4 text-yellow-500" />
+                          <Crown className="size-4 text-yellow-500" fill="currentColor" />
                         )}
                       </div>
                       {isCreator && !isStarted && player.username !== myUsername && (
@@ -110,15 +110,15 @@ export default function Room() {
                         </button>
                       )}
                       {isStarted && (
-                        <div className="w-full absolute bottom-0 py-1 gap-2 flex items-center items-center justify-center border-t border-px border-white/10 bg-white/5">
+                        <div className="w-full absolute bottom-0 py-1 gap-1 flex items-center items-center justify-center border-t border-px border-white/10 bg-white/5">
                           <p className="text-muted-text text-sm">{player.isInBattle ? dictionary.game.inGame : dictionary.game.failedGame}</p>
                           {player.isInBattle ? (
-                            <div className="flex items-center gap-1">
+                            <div className="pl-1 flex items-center gap-1">
                               <p className="text-sm text-sub-text font-medium">{player.remainingTries}</p>
-                              <Heart className="size-4 text-pink-400" />
+                              <Heart className="size-4 text-pink-400" fill="currentColor" />
                             </div>
                           ) : (
-                            <Skull className="size-4 text-destructive/80" />
+                            <Skull className="size-4.5 text-destructive/80" />
                           )}
                         </div>
                       )}

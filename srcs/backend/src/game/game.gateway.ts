@@ -362,7 +362,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		// passer le code a l'api de tests
 
 		setTimeout(() => {
-			client.emit('game-info', { event: 'code-result', result: 'failed' });
+			client.emit('game-info', { event: 'code-result', result: false, trace: 'trace description' });
 		}, 1000);
 		this.notifyGameStatus(currentGame);
 	}

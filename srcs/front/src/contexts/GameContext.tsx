@@ -23,6 +23,9 @@ export interface GamePlayer {
 
 export type SubmitButtonState = "idle" | "waiting" | "timeout";
 
+export const BASE_SUBMIT_TIMEOUT_SECONDS = 15;
+export const BASE_REMAINING_TRIES = 3;
+
 interface GameContextType {
   gameId: string | null;
   creatorUsername: string | null;
@@ -33,6 +36,8 @@ interface GameContextType {
   hasLeftRoomRef: React.RefObject<boolean>;
   submitState: SubmitButtonState;
   setSubmitState: (state: SubmitButtonState) => void;
+  trace: { trace: string; result: boolean }[];
+  setTrace: (trace: { trace: string; result: boolean }[]) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -50,6 +55,7 @@ function GameProvider({ children }: { children: ReactNode }) {
   const [players, setPlayers] = useState<GamePlayer[]>([]);
   const hasLeftRoomRef = useRef<boolean>(false);
   const [submitState, setSubmitState] = useState<SubmitButtonState>("idle");
+  const [trace, setTrace] = useState<{ trace: string; result: boolean }[]>([]);
 
   const resetGame = () => {
     setGameId(null);
@@ -119,6 +125,7 @@ function GameProvider({ children }: { children: ReactNode }) {
 
       if (payload.event === "code-result") {
         setSubmitState("timeout");
+        setTrace(prev => [...prev, { trace: payload.trace, result: payload.result }]);
         return;
       }
     };
@@ -130,7 +137,7 @@ function GameProvider({ children }: { children: ReactNode }) {
   }, [socket, lang, router, dictionary]);
 
   return (
-    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, players, isStarted, isInBattle, hasLeftRoomRef, submitState, setSubmitState }}>
+    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, players, isStarted, isInBattle, hasLeftRoomRef, submitState, setSubmitState, trace, setTrace }}>
       {children}
     </GameContext.Provider>
   );
