@@ -2,12 +2,14 @@
 
 import { ScrollArea } from "../../../../../../components/ui/scroll-area";
 import { useGame } from "../../../../../../contexts/GameContext";
+import { useLanguage } from "../../../../../../contexts/LanguageContext";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "../../../../../../components/ui/collapsible";
 import { ChevronDown, FileText } from "lucide-react";
 import { cn } from "../../../../../../lib/utils";
 
 export default function Trace() {
     const { trace } = useGame();
+    const { dictionary } = useLanguage();
 
     return (
         <div className="h-full w-full">
@@ -18,9 +20,9 @@ export default function Trace() {
                             <Collapsible key={index} className="w-full flex flex-col gap-2 bg-black/50 py-2 px-4 rounded-md border border-px border-white/10">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-4">
-                                        <p className="text-sm text-white font-medium font-mono">Try {index + 1}</p>
+                                        <p className="text-sm text-white font-medium font-mono">{dictionary.game.tryNumber.replace("{{number}}", String(index + 1))}</p>
                                         <p className={cn("text-sm font-medium font-mono", result ? "text-green" : "text-destructive")}>
-                                            {result ? "Success" : "Failed"}
+                                            {result ? dictionary.game.successGame : dictionary.game.failedGame}
                                         </p>
                                     </div>
                                     <CollapsibleTrigger className="group/button p-0 cursor-pointer hover:bg-white/10 rounded-md p-2 transition-all duration-200">
@@ -35,7 +37,7 @@ export default function Trace() {
                     ) : (
                         <div className="h-full w-full flex items-center justify-center flex flex-col gap-2 w-fit w-fit">
                             <FileText size={50} />
-                            <p className="text-sub-text">No trace available</p>
+                            <p className="text-sub-text">{dictionary.game.noTraceAvailable}</p>
                         </div>
                     )}
                 </div>

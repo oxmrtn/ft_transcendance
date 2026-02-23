@@ -79,13 +79,19 @@
     "abandonGame": "Abandonner le battle",
     "inGame": "En jeu",
     "failedGame": "A échoué",
+    "successGame": "Réussi",
+    "youWon": "Vous avez réussi",
+    "youFailed": "Vous avez échoué",
+    "tryNumber": "Tentative {{number}}",
+    "noTraceAvailable": "Aucune trace disponible",
     "subjectTab": "Sujet",
     "codeTab": "Code",
     "traceTab": "Trace",
     "scoreboardTab": "Scoreboard",
     "submitCode": "Soumettre le code",
     "waitingForResult": "En attente du résultat...",
-    "retryInSeconds": "Réessayer dans {{seconds}}s"
+    "retryInSeconds": "Réessayer dans {{seconds}}s",
+    "gameEnded": "Partie terminée"
   },
   "history": {
     "title": "historique"

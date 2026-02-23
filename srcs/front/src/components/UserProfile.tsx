@@ -48,7 +48,7 @@ export default function UserProfile({
         <div className={cn(
             "w-full flex items-center justify-between py-2 px-4 gap-4 transition-colors duration-200 hover:bg-white/5",
         )}>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-4">
                 <ProfilePicture profilePictureUrl={user.profilePictureUrl} size={12} />
                 <div className="flex flex-col justify-evenly">
                     <p className="font-mono text-semibold">{user.username}</p>
