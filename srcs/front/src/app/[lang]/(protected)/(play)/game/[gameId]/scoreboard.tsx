@@ -4,8 +4,9 @@ import Button from "../../../../../../components/ui/Button";
 import ContentWrapper from "../../../../../../components/ContentWrapper";
 import { useGame } from "../../../../../../contexts/GameContext";
 import { useLanguage } from "../../../../../../contexts/LanguageContext";
-import { Tabs, TabsList, TabsTrigger } from "../../../../../../components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../../../components/ui/tabs";
 import { useSocket } from "../../../../../../contexts/SocketContext";
+import Trace from "./trace";
 
 export default function Scoreboard() {
     const { result, gameId, hasLeftRoomRef } = useGame();
@@ -34,8 +35,16 @@ export default function Scoreboard() {
                         </TabsTrigger>
                     </TabsList>
                     <Button variant="danger" onClick={leaveRoom}>
-                        {dictionary.game.abandonGame}
+                        {dictionary.game.leaveGame}
                     </Button>
+                </div>
+                <div className="flex-1 p-4">
+                    <TabsContent value="scoreboard" className="h-full w-full">
+                        
+                    </TabsContent>
+                    <TabsContent value="trace" className="h-full w-full">
+                        <Trace />
+                    </TabsContent>
                 </div>
             </Tabs>
         </ContentWrapper>

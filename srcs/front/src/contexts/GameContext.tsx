@@ -66,6 +66,7 @@ function GameProvider({ children }: { children: ReactNode }) {
     setIsCreator(false);
     setSubmitState("idle");
     setResult(null);
+    setTrace([]);
   }
 
   const setGame = (payload: any) => {
@@ -73,6 +74,7 @@ function GameProvider({ children }: { children: ReactNode }) {
     setCreatorUsername(payload.creatorUsername);
     setPlayers(payload.players);
     setIsCreator(payload.creatorUsername === myUsername);
+    setGameState(payload.gameState);
   }
 
   useEffect(() => {
@@ -101,7 +103,6 @@ function GameProvider({ children }: { children: ReactNode }) {
 
       if (payload.event === "game-left") {
         setResult(false);
-        setGameState("finished");
         return;
       }
 
@@ -118,17 +119,10 @@ function GameProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      if (payload.event === "battle-started") {
-        setGameState("playing");
-        return;
-      }
-
       if (payload.event === "code-result") {
-        const me = players.find((player) => player.username === myUsername);
         setTrace(prev => [...prev, { trace: payload.trace, result: payload.result }]);
-        if (payload.result || me.remainingTries <= 0) {
+        if (payload.result || payload.remainingTries <= 0) {
           setResult(payload.result);
-          setGameState("finished");
           return;
         }
         setSubmitState("timeout");

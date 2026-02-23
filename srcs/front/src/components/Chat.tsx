@@ -100,7 +100,7 @@ export default function Chat() {
             <div className="relative">
                 {unreadMessagesCount > 0 && (
                     <>
-                        <div className="absolute top-0 right-0 bg-destructive size-4 flex items-center justify-center rounded-full"></div>
+                        <div className="animate-pulse absolute top-0 right-0 bg-destructive size-4 flex items-center justify-center rounded-full"></div>
                         <div className="z-10 absolute top-0 right-0 bg-destructive size-4 flex items-center justify-center rounded-full">
                             <p className="text-white text-xs font-mono">
                                 {unreadMessagesCount}

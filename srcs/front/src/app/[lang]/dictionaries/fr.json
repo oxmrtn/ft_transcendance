@@ -71,6 +71,7 @@
     "roomIdLabel": "ID de la room",
     "gameIdCopied": "ID de la room copié dans le presse-papiers",
     "leaveRoom": "Quitter la room",
+    "leaveGame": "Quitter la partie",
     "startGame": "Lancer le battle",
     "startingGame": "En attente du lancement du battle...",
     "endingGame": "Battle en cours...",
