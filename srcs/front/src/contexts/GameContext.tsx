@@ -12,18 +12,27 @@ import { useSocket } from "./SocketContext";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "./LanguageContext";
 import { toast } from "sonner";
-import type { UserType } from "../types";
 import { useAuth } from "./AuthContext";
+
+export interface GamePlayer {
+  username: string;
+  profilePictureUrl: string | null;
+  isInBattle: boolean;
+  remainingTries: number;
+}
+
+export type SubmitButtonState = "idle" | "waiting" | "timeout";
 
 interface GameContextType {
   gameId: string | null;
   creatorUsername: string | null;
+  players: GamePlayer[];
   isCreator: boolean;
-  roomPlayers: UserType[];
-  gamePlayers: UserType[];
   isStarted: boolean;
   isInBattle: boolean;
   hasLeftRoomRef: React.RefObject<boolean>;
+  submitState: SubmitButtonState;
+  setSubmitState: (state: SubmitButtonState) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -38,25 +47,24 @@ function GameProvider({ children }: { children: ReactNode }) {
   const [isCreator, setIsCreator] = useState<boolean>(false);
   const [isStarted, setIsStarted] = useState<boolean>(false);
   const [isInBattle, setIsInBattle] = useState<boolean>(false);
-  const [roomPlayers, setRoomPlayers] = useState<UserType[]>([]);
-  const [gamePlayers, setGamePlayers] = useState<UserType[]>([]);
+  const [players, setPlayers] = useState<GamePlayer[]>([]);
   const hasLeftRoomRef = useRef<boolean>(false);
+  const [submitState, setSubmitState] = useState<SubmitButtonState>("idle");
 
   const resetGame = () => {
     setGameId(null);
     setCreatorUsername(null);
     setIsStarted(false);
     setIsInBattle(false);
-    setRoomPlayers([]);
-    setGamePlayers([]);
+    setPlayers([]);
     setIsCreator(false);
+    setSubmitState("idle");
   }
 
   const setGame = (payload: any) => {
     setGameId(payload.gameId);
     setCreatorUsername(payload.creatorUsername);
-    setRoomPlayers(payload.roomPlayers);
-    setGamePlayers(payload.gamePlayers);
+    setPlayers(payload.players);
     setIsCreator(payload.creatorUsername === username);
   }
 
@@ -65,13 +73,13 @@ function GameProvider({ children }: { children: ReactNode }) {
       return;
 
     const onGameInfo = (payload: any) => {
-      console.log(payload);
       if (payload.event === "error") {
         toast.error(payload.message || dictionary.common.errorOccurred);
         return
       }
 
       if (payload.event === "room-kicked") {
+        hasLeftRoomRef.current = true;
         resetGame();
         router.push(`/${lang}/`);
         toast.error(dictionary.game.roomKicked);
@@ -85,6 +93,7 @@ function GameProvider({ children }: { children: ReactNode }) {
       }
 
       if (payload.event === "game-left") {
+        setSubmitState("idle");
         setIsInBattle(false);
         return;
       }
@@ -107,6 +116,11 @@ function GameProvider({ children }: { children: ReactNode }) {
         setIsInBattle(true);
         return;
       }
+
+      if (payload.event === "code-result") {
+        setSubmitState("timeout");
+        return;
+      }
     };
 
     socket.on("game-info", onGameInfo);
@@ -116,7 +130,7 @@ function GameProvider({ children }: { children: ReactNode }) {
   }, [socket, lang, router, dictionary]);
 
   return (
-    <GameContext.Provider value={ { gameId, creatorUsername, isCreator, roomPlayers, gamePlayers, isStarted, isInBattle, hasLeftRoomRef } }>
+    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, players, isStarted, isInBattle, hasLeftRoomRef, submitState, setSubmitState }}>
       {children}
     </GameContext.Provider>
   );

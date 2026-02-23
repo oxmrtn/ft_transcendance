@@ -11,10 +11,9 @@ import { TextInput } from '../../../../components/ui/Input';
 import Button from '../../../../components/ui/Button';
 import { FriendsSkeleton } from '../../../../components/ui/skeleton';
 import Pagination from '../../../../components/ui/pagination';
-import UserProfile from '../../../../components/UserProfile';
+import UserProfile, { UserType } from '../../../../components/UserProfile';
 import { toast } from 'sonner';
 import { API_URL } from '../../../../lib/utils';
-import type { UserType } from '../../../../types';
 
 export default function Page() {
   const { token } = useAuth();
@@ -219,7 +218,7 @@ export default function Page() {
 
   return (
     <ContentWrapper title={dictionary.friends.title}>
-      <Tabs defaultValue="friends" className="h-full w-full flex">
+      <Tabs defaultValue="friends" className="h-full w-full flex flex-col">
 
         <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
           <TabsList className="flex gap-2">

@@ -5,7 +5,7 @@ import ContentWrapper from "../../../../../../components/ContentWrapper";
 import { useGame } from "../../../../../../contexts/GameContext";
 import Button from "../../../../../../components/ui/Button";
 import { toast } from "sonner";
-import { Copy, Crown, Loader2Icon, X } from "lucide-react";
+import { Copy, Crown, Heart, Loader2Icon, Skull, X } from "lucide-react";
 import { useSocket } from "../../../../../../contexts/SocketContext";
 import { useLanguage } from "../../../../../../contexts/LanguageContext";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
@@ -14,7 +14,7 @@ import { useAuth } from "../../../../../../contexts/AuthContext";
 
 export default function Room() {
   const { username: myUsername } = useAuth();
-  const { gameId, creatorUsername, isCreator, roomPlayers, isStarted, hasLeftRoomRef } = useGame();
+  const { gameId, creatorUsername, isCreator, players, isStarted, hasLeftRoomRef } = useGame();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
 
@@ -89,11 +89,11 @@ export default function Room() {
           {(() => {
             const cards = [];
             for (let i = 0; i < 4; i++) {
-              const player = roomPlayers[i];
+              const player = players[i];
               cards.push(
                 <div
                   key={i}
-                  className="bg-black/70 border border-px border-white/10 rounded-md p-2 flex flex-col items-center justify-center gap-2 min-h-[140px] h-full relative"
+                  className="bg-black/50 border border-px border-white/10 rounded-md p-2 flex flex-col items-center justify-center gap-2 min-h-[140px] h-full relative"
                 >
                   {player ? (
                     <>
@@ -108,6 +108,19 @@ export default function Room() {
                         <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 absolute top-2 right-2">
                           <X className="size-5 text-destructive" onClick={() => kickPlayer(player.username)} />
                         </button>
+                      )}
+                      {isStarted && (
+                        <div className="w-full absolute bottom-0 py-1 gap-2 flex items-center items-center justify-center border-t border-px border-white/10 bg-white/5">
+                          <p className="text-muted-text text-sm">{player.isInBattle ? dictionary.game.inGame : dictionary.game.failedGame}</p>
+                          {player.isInBattle ? (
+                            <div className="flex items-center gap-1">
+                              <p className="text-sm text-sub-text font-medium">{player.remainingTries}</p>
+                              <Heart className="size-4 text-pink-400" />
+                            </div>
+                          ) : (
+                            <Skull className="size-4 text-destructive/80" />
+                          )}
+                        </div>
                       )}
                     </>
                   ) : (
