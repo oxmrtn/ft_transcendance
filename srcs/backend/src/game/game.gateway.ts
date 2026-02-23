@@ -32,11 +32,13 @@ interface CodeResult {
 	result: boolean;
 }
 
+type GameState = "waiting" | "playing" | "finished";
+
 class GameSession {
 	public playerNumber : number;
 	public gameId : string;
 	public players: Map<number, PlayerInfos>;
-	public isStarted: boolean;
+	public gameState: GameState;
 	public creatorId: number;
 	
 	constructor (gameId: string, playerNumber: number)
@@ -82,21 +84,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (currentGame.players.has(userId))
 			currentGame.players.delete(userId);
 
-		// const inGameIds = this.getInGamePlayerIds(currentGame);
-		// if (inGameIds.length === 1 && currentGame.isStarted)
-		// {
-		// 	const winnerId = inGameIds[0];
-		// 	this.server.to(`game_${gameId}`).emit('game-info', {
-		// 		event: 'results',
-		// 		winner: winnerId
-		// 	});
-		// 	currentGame.players.forEach((_, playerId) => {
-		// 		currentGame.players.set(playerId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
-		// 	});
-		// }
-
 		if (!currentGame.players.size)
 			this.gameSessions.delete(gameId);
+
+		const inGameIds = this.getInGamePlayerIds(currentGame);
+		if (inGameIds.length === 0 && currentGame.gameState === "playing")
+			currentGame.gameState = "finished";
 
 		this.notifyGameStatus(currentGame);
 	}
@@ -122,7 +115,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		currentGame.players.set(userId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 		this.clientToRoom.set(userId, gameId);
 		currentGame.creatorId = userId;
-		currentGame.isStarted = false;
+		currentGame.gameState = "waiting";
 
 		client.join(`game_${gameId}`);
 
@@ -155,7 +148,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		if (currentGame.isStarted)
+		if (currentGame.gameState !== "waiting")
 		{
 			this.errorMessage(client, `This game has already started!`);
 			return;
@@ -189,7 +182,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		if (currentGame.isStarted)
+		if (currentGame.gameState !== "waiting")
 		{
 			this.errorMessage(client, `This game has already started!`);
 			return;
@@ -269,18 +262,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		currentGame.players.set(userId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 
-		// const inGameIds = this.getInGamePlayerIds(currentGame);
-		// if (inGameIds.length === 1 && currentGame.isStarted)
-		// {
-		// 	const winnerId = inGameIds[0];
-		// 	this.server.to(`game_${gameId}`).emit('game-info', {
-		// 		event: 'results',
-		// 		winner: winnerId
-		// 	});
-		// 	currentGame.players.forEach((_, playerId) => {
-		// 		currentGame.players.set(playerId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES });
-		// 	});
-		// }
+		const inGameIds = this.getInGamePlayerIds(currentGame);
+		if (inGameIds.length === 0 && currentGame.gameState === "playing")
+			currentGame.gameState = "finished";
 
 		await this.notifyGameStatus(currentGame);
 		client.emit('game-info', { event: 'game-left' });
@@ -311,7 +295,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		if (currentGame.isStarted)
+		if (currentGame.gameState !== "waiting")
 		{
 			this.errorMessage(client, `The battle has already started!`);
 			return;
@@ -320,10 +304,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		currentGame.players.forEach((_, playerId) => {
 			currentGame.players.set(playerId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 		});
-		currentGame.isStarted = true;
+		currentGame.gameState = "playing";
 
 		await this.notifyGameStatus(currentGame);
-		this.server.to(`game_${gameId}`).emit('game-info', { event: 'battle-started' });
 	}
 
 	@SubscribeMessage('code-submit')
@@ -339,9 +322,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 		
-		if (!currentGame.isStarted)
+		if (currentGame.gameState === "waiting")
 		{
-			this.errorMessage(client, `The battle hasn't started yet!`);
+			this.errorMessage(client, `The battle has not started yet!`);
+			return;
+		}
+
+		if (currentGame.gameState === "finished")
+		{
+			this.errorMessage(client, `The battle has already finished!`);
 			return;
 		}
 
@@ -377,9 +366,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		else if (codeResult.result)
 			playerInfo.passedChallenge = true;
 
+		if (playerInfo.passedChallenge !== null) {
+			const inGameIds = this.getInGamePlayerIds(currentGame);
+			if (inGameIds.length === 0 && currentGame.gameState === "playing")
+				currentGame.gameState = "finished";
+		}
+
 		this.notifyGameStatus(currentGame);
 		setTimeout(() => {
-			client.emit('game-info', { event: 'code-result', result: codeResult.result, trace: codeResult.trace });
+			client.emit('game-info', { event: 'code-result', result: codeResult.result, trace: codeResult.trace, remainingTries: playerInfo.remainingTries });
 		}, 1000);
 	}
 
@@ -427,6 +422,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			players,
 			gameId: game.gameId,
 			creatorUsername: creatorUsername.username,
+			gameState: game.gameState,
 		});
 	}
 }

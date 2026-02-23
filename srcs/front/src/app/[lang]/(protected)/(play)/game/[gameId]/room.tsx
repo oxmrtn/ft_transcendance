@@ -33,7 +33,7 @@ export default function Room() {
 
   if (!gameId) {
     return (
-      <ContentWrapper title={dictionary.game.title}>
+      <ContentWrapper title={dictionary.game.roomTitle}>
         <GameSkeleton />
       </ContentWrapper>
     );
@@ -121,7 +121,7 @@ export default function Room() {
         </div>
         <div className="px-4 py-2 border-t border-px border-white/10">
           {isCreator ? (
-            <Button variant="primary" onClick={startGame} fullWidth={true}>
+            <Button variant="primary" onClick={startGame} fullWidth={true} disabled={players.length < 2}>
               {dictionary.game.startGame}
             </Button>
           ) : (

@@ -8,7 +8,7 @@ import Battle from "./battle";
 import Scoreboard from "./scoreboard";
 
 export default function Game() {
-  const { gameState, hasLeftRoomRef } = useGame();
+  const { result, gameState, hasLeftRoomRef } = useGame();
   const { socket } = useSocket();
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function Game() {
 
   return (
     <>{
-      gameState === "playing" ? <Battle /> : gameState === "finished" ? <Scoreboard /> : <Room />
+      result !== null ? <Scoreboard /> : gameState === "playing" ? <Battle /> : <Room />
     }</>
   );
 }

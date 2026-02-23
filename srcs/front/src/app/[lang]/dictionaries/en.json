@@ -71,6 +71,7 @@
     "roomIdLabel": "Room ID",
     "gameIdCopied": "Room ID copied to clipboard",
     "leaveRoom": "Leave room",
+    "leaveGame": "Leave game",
     "startGame": "Start battle",
     "startingGame": "Waiting for battle to start...",
     "endingGame": "Battle in progress...",

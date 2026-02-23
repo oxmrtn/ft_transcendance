@@ -10,15 +10,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../../../comp
 import ProfilePicture from "../../../../../../components/ProfilePicture";
 import { useAuth } from "../../../../../../contexts/AuthContext";
 import Trace from "./trace";
+import { cn } from "../../../../../../lib/utils";
 
 export default function Battle() {
   const { username } = useAuth();
-  const { gameId, players, submitState, setSubmitState } = useGame();
+  const { trace, gameId, players, submitState, setSubmitState } = useGame();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
   const [code, setCode] = useState("");
   const [timeoutSeconds, setTimeoutSeconds] = useState(0);
   const [activeTab, setActiveTab] = useState("code");
+  const [traceNotification, setTraceNotification] = useState(false);
 
   const shortenedGameId = `${gameId.slice(0, 4)}...${gameId.slice(-4)}`;
 
@@ -58,6 +60,10 @@ export default function Battle() {
     };
   }, [submitState, setSubmitState]);
 
+  useEffect(() => {
+    setTraceNotification(true);
+  }, [trace]);
+
   return (
     <ContentWrapper title={`${dictionary.game.gameTitle} - ${shortenedGameId}`}>
       <Tabs defaultValue="code" className="h-full w-full flex flex-col">
@@ -69,8 +75,13 @@ export default function Battle() {
               <TabsTrigger value="subject" onClick={() => setActiveTab("subject")}>
                 {dictionary.game.subjectTab}
               </TabsTrigger>
-              <TabsTrigger value="trace" onClick={() => setActiveTab("trace")}>
+              <TabsTrigger className={cn("!relative", traceNotification ?  "animate-pulse bg-primary/20" : "")} value="trace" onClick={() => { setActiveTab("trace"); setTraceNotification(false); }}>
                 {dictionary.game.traceTab}
+                {traceNotification &&
+                  <div className="absolute top-[-4px] right-[-4px] h-2.5 w-2.5 rounded-full flex items-center justify-center bg-primary/20">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
+                </div>
+                }
               </TabsTrigger>
             </TabsList>
           <Button variant="danger" onClick={leaveGame}>
@@ -94,7 +105,7 @@ export default function Battle() {
             />
           </TabsContent>
           <TabsContent value="subject" className="h-full w-full">
-            ...
+            
           </TabsContent>
           <TabsContent value="trace" className="h-full w-full">
             <Trace />
