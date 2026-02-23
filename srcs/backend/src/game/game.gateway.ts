@@ -27,6 +27,11 @@ interface PlayerInfos {
 	lastSubmitTime: Date | null;
 }
 
+interface CodeResult {
+	trace: string;
+	result: boolean;
+}
+
 class GameSession {
 	public playerNumber : number;
 	public gameId : string;
@@ -365,11 +370,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		playerInfo.lastSubmitTime = now;
 		playerInfo.remainingTries--;
 
-		// passer le code a l'api de tests
+		const codeResult: CodeResult = { trace: 'trace description', result: false }; // remplacer par appel api de test
+
+		if (playerInfo.remainingTries <= 0 && !codeResult.result)
+			playerInfo.passedChallenge = false;
+		else if (codeResult.result)
+			playerInfo.passedChallenge = true;
 
 		this.notifyGameStatus(currentGame);
 		setTimeout(() => {
-			client.emit('game-info', { event: 'code-result', result: false, trace: 'trace description' });
+			client.emit('game-info', { event: 'code-result', result: codeResult.result, trace: codeResult.trace });
 		}, 1000);
 	}
 
