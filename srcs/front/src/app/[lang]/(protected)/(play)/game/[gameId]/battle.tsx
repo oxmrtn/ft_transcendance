@@ -8,10 +8,13 @@ import { useSocket } from "../../../../../../contexts/SocketContext";
 import { Editor } from "@monaco-editor/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../../../components/ui/tabs";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
+import { useAuth } from "../../../../../../contexts/AuthContext";
 
-const SUBMIT_TIMEOUT_SECONDS = 30;
+const BASE_SUBMIT_TIMEOUT_SECONDS = 15;
+const BASE_REMAINING_TRIES = 3;
 
 export default function Battle() {
+  const { username } = useAuth();
   const { gameId, players, submitState, setSubmitState } = useGame();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
@@ -35,11 +38,14 @@ export default function Battle() {
     if (submitState !== "timeout")
       return;
   
-    setTimeoutSeconds(SUBMIT_TIMEOUT_SECONDS);
+    const penaltyMultiplier = BASE_REMAINING_TRIES - (players.find((player) => player.username === username).remainingTries);
+    const timeout = BASE_SUBMIT_TIMEOUT_SECONDS * penaltyMultiplier;
+
+    setTimeoutSeconds(timeout);
     const id = setInterval(() => {
       setTimeoutSeconds((prev) => {
         if (prev <= 1) {
-          setSubmitState("idle");
+          queueMicrotask(() => setSubmitState("idle"));
           return 0;
         }
         return prev - 1;
