@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 
 export default function Room() {
   const { username: myUsername } = useAuth();
-  const { gameId, creatorUsername, isCreator, players, hasLeftRoomRef, availableChallenges } = useGame();
+  const { gameId, creatorUsername, isCreator, roomPlayers, hasLeftRoomRef, availableChallenges } = useGame();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
   const [selectedChallenge, setSelectedChallenge] = useState<string | null | undefined>(undefined);
@@ -92,7 +92,7 @@ export default function Room() {
           {(() => {
             const cards = [];
             for (let i = 0; i < 4; i++) {
-              const player = players[i];
+              const player = roomPlayers[i];
               cards.push(
                 <div
                   key={i}
@@ -140,7 +140,7 @@ export default function Room() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <Button variant="primary" onClick={startGame} fullWidth={true} disabled={players.length < 2 || selectedChallenge === undefined}>
+              <Button variant="primary" onClick={startGame} fullWidth={true} disabled={roomPlayers.length < 2 || selectedChallenge === undefined}>
                 {dictionary.game.startGame}
               </Button>
             </div>

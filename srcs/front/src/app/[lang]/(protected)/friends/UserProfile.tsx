@@ -1,17 +1,18 @@
 
 
-import { cn } from '../lib/utils';
+import { cn } from '../../../../lib/utils';
 import { X, User, EllipsisVertical, MessageCircleMore, Check } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '../../../../contexts/LanguageContext';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "./ui/dropdown-menu"
-import ProfilePicture from './ProfilePicture';
-import { useModal } from '../contexts/ModalContext';
-import { ChatModal } from './Chat';
+} from "../../../../components/ui/dropdown-menu"
+import ProfilePicture from '../../../../components/ProfilePicture';
+import { useModal } from '../../../../contexts/ModalContext';
+import { ChatModal } from '../../../../components/Chat';
+import StatusPastille from '../../../../components/StatusPastille';
 
 export interface UserType {
     username: string;
@@ -46,7 +47,7 @@ export default function UserProfile({
 
     return (
         <div className={cn(
-            "w-full flex items-center justify-between py-2 px-4 gap-4 transition-colors duration-200 hover:bg-white/5",
+            "w-full flex items-center justify-between py-3 px-4 gap-4 transition-colors duration-200 hover:bg-white/5",
         )}>
             <div className="flex items-center gap-4">
                 <ProfilePicture profilePictureUrl={user.profilePictureUrl} size={12} />
@@ -54,18 +55,8 @@ export default function UserProfile({
                     <p className="font-mono text-semibold">{user.username}</p>
                     {user.online !== null && (
                         <div className="flex gap-2 items-center">
-                            <div className={cn(
-                                "h-2.5 w-2.5 rounded-full flex items-center justify-center",
-                                user.online ? "bg-green/20" : "bg-destructive/30"
-                            )}>
-                                <div className={cn(
-                                    "h-1.5 w-1.5 rounded-full",
-                                    user.online ? "bg-green" : "bg-destructive"
-                                )}></div>
-                            </div>
-                            <p className={cn(
-                                "text-sm text-muted-text"
-                            )}>
+                            <StatusPastille variant={user.online ? "success" : "fail"} />
+                            <p className="text-sm text-muted-text">
                                 {user.online ? dictionary.friends.online : dictionary.friends.offline}
                             </p>
                         </div>

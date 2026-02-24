@@ -18,7 +18,6 @@ export interface GamePlayer {
   username: string;
   profilePictureUrl: string | null;
   passedChallenge: boolean | null;
-  remainingTries: number;
 }
 
 export type GameState = "waiting" | "playing" | "finished";
@@ -30,7 +29,8 @@ export const BASE_REMAINING_TRIES = 3;
 interface GameContextType {
   gameId: string | null;
   creatorUsername: string | null;
-  players: GamePlayer[];
+  roomPlayers: GamePlayer[];
+  gamePlayers: GamePlayer[];
   isCreator: boolean;
   gameState: GameState;
   hasLeftRoomRef: React.RefObject<boolean>;
@@ -41,6 +41,7 @@ interface GameContextType {
   result: boolean | null;
   availableChallenges: string[];
   selectedChallenge: { name: string; description: string } | null;
+  remainingTries: number;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -54,33 +55,57 @@ function GameProvider({ children }: { children: ReactNode }) {
   const [creatorUsername, setCreatorUsername] = useState<string | null>(null);
   const [isCreator, setIsCreator] = useState<boolean>(false);
   const [gameState, setGameState] = useState<GameState>("waiting");
-  const [players, setPlayers] = useState<GamePlayer[]>([]);
+  const [roomPlayers, setRoomPlayers] = useState<GamePlayer[]>([]);
+  const [gamePlayers, setGamePlayers] = useState<GamePlayer[]>([]);
   const hasLeftRoomRef = useRef<boolean>(false);
+  const prevGameStateRef = useRef<GameState>("waiting");
   const [submitState, setSubmitState] = useState<SubmitButtonState>("idle");
   const [trace, setTrace] = useState<{ trace: string; result: boolean }[]>([]);
   const [result, setResult] = useState<boolean | null>(null);
   const [availableChallenges, setAvailableChallenges] = useState<string[]>([]);
   const [selectedChallenge, setSelectedChallenge] = useState<{ name: string; description: string } | null>(null);
+  const [remainingTries, setRemainingTries] = useState<number>(0);
 
   const resetGame = () => {
     setGameId(null);
     setCreatorUsername(null);
     setGameState("waiting");
-    setPlayers([]);
+    setRoomPlayers([]);
+    setGamePlayers([]);
+    prevGameStateRef.current = "waiting";
     setIsCreator(false);
     setSubmitState("idle");
     setResult(null);
     setTrace([]);
     setAvailableChallenges([]);
     setSelectedChallenge(null);
+    setRemainingTries(0);
   }
 
   const setGame = (payload: any) => {
+    const nextState = payload.gameState as GameState;
+    const wasWaiting = prevGameStateRef.current === "waiting";
+    const isPlaying = nextState === "playing";
+    const isFinished = nextState === "finished";
+
+    if (isPlaying && wasWaiting) {
+      setGamePlayers(payload.players ?? []);
+    } else if ((isPlaying || isFinished) && prevGameStateRef.current === "playing") {
+      setGamePlayers((prev) =>
+        prev.map((gp) => {
+          const inPayload = (payload.players ?? []).find((p: GamePlayer) => p.username === gp.username);
+          if (inPayload) return inPayload;
+          return { ...gp, passedChallenge: false };
+        })
+      );
+    }
+
+    prevGameStateRef.current = nextState;
     setGameId(payload.gameId);
     setCreatorUsername(payload.creatorUsername);
-    setPlayers(payload.players);
+    setRoomPlayers(payload.players);
     setIsCreator(payload.creatorUsername === myUsername);
-    setGameState(payload.gameState);
+    setGameState(nextState);
     setSelectedChallenge(payload.selectedChallenge);
   }
 
@@ -119,6 +144,7 @@ function GameProvider({ children }: { children: ReactNode }) {
         setAvailableChallenges(payload.availableChallenges);
         hasLeftRoomRef.current = false;
         router.push(`/${lang}/game/${payload.gameId}`);
+        setRemainingTries(BASE_REMAINING_TRIES);
         return;
       }
 
@@ -134,6 +160,7 @@ function GameProvider({ children }: { children: ReactNode }) {
           return;
         }
         setSubmitState("timeout");
+        setRemainingTries(payload.remainingTries);
       }
     };
 
@@ -144,7 +171,7 @@ function GameProvider({ children }: { children: ReactNode }) {
   }, [socket, lang, router, dictionary]);
 
   return (
-    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, players, gameState, hasLeftRoomRef, submitState, setSubmitState, trace, setTrace, result, availableChallenges, selectedChallenge }}>
+    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, roomPlayers, gamePlayers, gameState, hasLeftRoomRef, submitState, setSubmitState, trace, setTrace, result, availableChallenges, selectedChallenge, remainingTries }}>
       {children}
     </GameContext.Provider>
   );
