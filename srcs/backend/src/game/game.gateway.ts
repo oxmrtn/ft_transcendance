@@ -18,6 +18,7 @@ import { connected } from "node:process";
 import { PrismaService } from "prisma/prisma.service";
 import { waitForDebugger } from "node:inspector";
 import { StartGameDto } from "src/dto/start-game.dto";
+import { submitCode } from "src/submission/submitCode";
 
 interface Challenge {
 	name: string;
@@ -30,7 +31,7 @@ interface PlayerInfos {
 	lastSubmitTime: Date | null;
 }
 
-interface CodeResult {
+export interface CodeResult {
 	trace: string;
 	result: boolean;
 }
@@ -455,9 +456,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		playerInfo.lastSubmitTime = now;
 		playerInfo.remainingTries--;
 
-		const codeResult: CodeResult = { trace: 'trace description', result: false }; // remplacer par appel api de test
+		const codeResult = await submitCode(currentGame.selectedChallenge.name, userId, payload.code);
 
-		if (playerInfo.remainingTries <= 0 && !codeResult.result)
+		if (playerInfo.remainingTries <= 0 || !codeResult.result)
 			playerInfo.passedChallenge = false;
 		else if (codeResult.result)
 			playerInfo.passedChallenge = true;
