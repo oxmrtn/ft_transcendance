@@ -132,7 +132,7 @@ export default function Room() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>{dictionary.game.challengeSelectorLabel}</SelectLabel>
+                    <SelectLabel>{dictionary.game.selectChallenge}</SelectLabel>
                     {availableChallenges.map((challenge) => (
                       <SelectItem key={challenge} value={challenge}>{challenge}</SelectItem>
                     ))}
