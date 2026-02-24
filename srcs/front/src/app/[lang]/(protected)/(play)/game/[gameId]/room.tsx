@@ -5,7 +5,7 @@ import ContentWrapper from "../../../../../../components/ContentWrapper";
 import { useGame } from "../../../../../../contexts/GameContext";
 import Button from "../../../../../../components/ui/Button";
 import { toast } from "sonner";
-import { Copy, Crown, Heart, Loader2Icon, Skull, X } from "lucide-react";
+import { Copy, Crown, Heart, Loader2Icon, Shuffle, Skull, X } from "lucide-react";
 import { useSocket } from "../../../../../../contexts/SocketContext";
 import { useLanguage } from "../../../../../../contexts/LanguageContext";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
@@ -136,7 +136,10 @@ export default function Room() {
                     {availableChallenges.map((challenge) => (
                       <SelectItem key={challenge} value={challenge}>{challenge}</SelectItem>
                     ))}
-                    <SelectItem value={null}>{dictionary.game.randomChallenge}</SelectItem>
+                    <SelectItem value={null}>
+                    <Shuffle className="size-4" />
+                      {dictionary.game.randomChallenge}
+                    </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
