@@ -39,6 +39,8 @@ interface GameContextType {
   trace: { trace: string; result: boolean }[];
   setTrace: (trace: { trace: string; result: boolean }[]) => void;
   result: boolean | null;
+  availableChallenges: string[];
+  selectedChallenge: { name: string; description: string } | null;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -57,6 +59,8 @@ function GameProvider({ children }: { children: ReactNode }) {
   const [submitState, setSubmitState] = useState<SubmitButtonState>("idle");
   const [trace, setTrace] = useState<{ trace: string; result: boolean }[]>([]);
   const [result, setResult] = useState<boolean | null>(null);
+  const [availableChallenges, setAvailableChallenges] = useState<string[]>([]);
+  const [selectedChallenge, setSelectedChallenge] = useState<{ name: string; description: string } | null>(null);
 
   const resetGame = () => {
     setGameId(null);
@@ -67,6 +71,8 @@ function GameProvider({ children }: { children: ReactNode }) {
     setSubmitState("idle");
     setResult(null);
     setTrace([]);
+    setAvailableChallenges([]);
+    setSelectedChallenge(null);
   }
 
   const setGame = (payload: any) => {
@@ -75,6 +81,7 @@ function GameProvider({ children }: { children: ReactNode }) {
     setPlayers(payload.players);
     setIsCreator(payload.creatorUsername === myUsername);
     setGameState(payload.gameState);
+    setSelectedChallenge(payload.selectedChallenge);
   }
 
   useEffect(() => {
@@ -109,6 +116,7 @@ function GameProvider({ children }: { children: ReactNode }) {
       if (payload.event === "room-created"
         || payload.event === "room-joined"
       ) {
+        setAvailableChallenges(payload.availableChallenges);
         hasLeftRoomRef.current = false;
         router.push(`/${lang}/game/${payload.gameId}`);
         return;
@@ -136,7 +144,7 @@ function GameProvider({ children }: { children: ReactNode }) {
   }, [socket, lang, router, dictionary]);
 
   return (
-    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, players, gameState, hasLeftRoomRef, submitState, setSubmitState, trace, setTrace, result }}>
+    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, players, gameState, hasLeftRoomRef, submitState, setSubmitState, trace, setTrace, result, availableChallenges, selectedChallenge }}>
       {children}
     </GameContext.Provider>
   );

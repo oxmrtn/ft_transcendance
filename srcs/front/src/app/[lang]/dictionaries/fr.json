@@ -78,8 +78,8 @@
     "roomKicked": "Vous avez été expulsé de la room",
     "abandonGame": "Abandonner le battle",
     "inGame": "En jeu",
-    "failedGame": "A échoué",
-    "successGame": "Réussi",
+    "failedGame": "Echec",
+    "successGame": "Succès",
     "youWon": "Vous avez réussi",
     "youFailed": "Vous avez échoué",
     "tryNumber": "Tentative {{number}}",
@@ -91,7 +91,10 @@
     "submitCode": "Soumettre le code",
     "waitingForResult": "En attente du résultat...",
     "retryInSeconds": "Réessayer dans {{seconds}}s",
-    "gameEnded": "Partie terminée"
+    "gameEnded": "Partie terminée",
+    "selectChallenge": "Choisir un défi",
+    "challengeSelectorLabel": "Sélectionnez un défi",
+    "randomChallenge": "Aléatoire"
   },
   "history": {
     "title": "historique"
