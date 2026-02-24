@@ -36,11 +36,11 @@
     }
 
     html {
-        @apply w-full scroll-smooth;
+        @apply w-full h-full scroll-smooth;
     }
 
     body {
-        @apply flex text-white flex-col min-h-screen w-full;
+        @apply flex text-white flex-col min-h-screen h-screen max-h-screen w-full overflow-hidden;
         background-color: #00050f;
         background-image:
             url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='.15'/%3E%3C/svg%3E"),
@@ -53,7 +53,7 @@
     }
 
     main {
-        @apply min-h-[730px] flex-1 flex w-full items-center justify-center p-4 md:min-h-[762px] md:py-8 md:px-16;
+        @apply flex-1 flex min-h-0 w-full items-center justify-center overflow-hidden p-4 md:py-8 md:px-16;
     }
 
     .grid-gradient {

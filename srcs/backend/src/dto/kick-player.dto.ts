@@ -1,9 +1,8 @@
 import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
 
-export class chatMessageDto
-{
+export class KickPlayerDto {
 	@IsString()
 	@IsNotEmpty()
-	@MaxLength(1600)
-	content: string;
+	@MaxLength(100)
+	targetUsername: string;
 }

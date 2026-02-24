@@ -66,7 +66,7 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	private async handleOnlineUser(user : any)
 	{
-		const friends = await this.socialService.getFriendsId(user.userId, 'ACCEPT');
+		const friends = await this.socialService.getFriendsId(user.userId);
 
 		friends.forEach(friend =>
 		{
@@ -79,7 +79,7 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	private async handleOfflineUser(user : any)
 	{
-		const friends = await this.socialService.getFriendsId(user.userId, 'ACCEPT');
+		const friends = await this.socialService.getFriendsId(user.userId);
 		
 		friends.forEach(friend =>
 		{
@@ -92,7 +92,7 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	public async sendOnlineFriendStatus(userId : number)
 	{
-		const friends = await this.socialService.getFriendsId(userId, 'ACCEPT');
+		const friends = await this.socialService.getFriendsId(userId);
 
 		const friendStatus = friends.map(friend => {
 			const isOnline = this.onlineUsers.has(friend.id);
