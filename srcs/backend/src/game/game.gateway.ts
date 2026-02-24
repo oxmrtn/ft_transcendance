@@ -44,7 +44,6 @@ const CHALLENGES : Challenge[] = [
 	{
 		name: "strlen",
 		description: `Assignment name  : ft_strlen
-Expected files   : ft_strlen.c
 Allowed functions: none
 -------------------------------------------------------------------------------
 
@@ -61,14 +60,16 @@ int ft_strlen(char *str);`
 	{
 		name: "pyramyd",
 		description: `Assignment name  : pyramyd
-Expected files   : pyramyd.c
 Allowed functions: write
 -------------------------------------------------------------------------------
+
 Write a function named pyramid that takes an integer 'size' as a parameter and
 displays a left-aligned half-pyramid of '*' characters on the standard output.
 The 'size' parameter represents the number of rows of the pyramid.
 Your function must be declared as follows:
 void pyramid(int size);
+-------------------------------------------------------------------------------
+
 Examples:
 If size is 2, the expected output is:
 *
@@ -83,7 +84,19 @@ If size is 5, the expected output is:
 	{
 		name: "min_range",
 		description: `Assignment name  : min_range
-Expected files   : min_range.c
+Allowed functions: none
+-------------------------------------------------------------------------------
+
+Write a function named min_range that takes an array of integers and its length
+as parameters, and returns the minimum absolute difference between any two
+elements in the array.
+
+If the array's length is less than 2, the function must return 0.
+
+Your function must be declared as follows:
+
+unsigned int min_range(int *arr, unsigned int len);
+-------------------------------------------------------------------------------
 Allowed functions: none
 -------------------------------------------------------------------------------
 
@@ -492,7 +505,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 				username: user.username,
 				profilePictureUrl: user.profilePictureUrl,
 				passedChallenge: info.passedChallenge,
-				remainingTries: info.remainingTries,
 			};
 		});
 

@@ -7,12 +7,13 @@ import { useLanguage } from "../../../../../../contexts/LanguageContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../../../components/ui/tabs";
 import { useSocket } from "../../../../../../contexts/SocketContext";
 import Trace from "./trace";
-import { cn } from "../../../../../../lib/utils";
-import { Check, Heart, Loader2Icon, Skull } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
+import StatusPastille, { type StatusPastilleVariant } from "../../../../../../components/StatusPastille";
+import { cn } from "../../../../../../lib/utils";
 
 export default function Scoreboard() {
-    const { result, gameId, hasLeftRoomRef, players, gameState } = useGame();
+    const { result, gameId, hasLeftRoomRef, gamePlayers, gameState } = useGame();
     const { dictionary } = useLanguage();
     const { socket } = useSocket();
 
@@ -44,21 +45,18 @@ export default function Scoreboard() {
                 <div className="flex-1">
                     <TabsContent value="scoreboard" className="h-full w-full flex flex-col">
                         <div className="p-4">
-                            <div className={cn("w-full flex items-center justify-center bg-white p-6 gap-2 rounded-md border border-px", result === true ? "bg-green/20 border-green/20" : "bg-destructive/20 border-destructive/20")}>
-                                {result ? <Check className="size-4.5 text-green" />
-                                    : <Skull className="size-7 text-destructive" />
-                                }
+                            <div className={cn("w-full flex items-center justify-center gap-3 py-6 rounded-md border border-px", result ? "bg-green/10 border-green/30" : "bg-destructive/10 border-destructive/30")}>
                                 <p className="text-xl text-white font-medium font-mono">{result ? dictionary.game.youWon : dictionary.game.youFailed}</p>
                             </div>
                         </div>
-                        <div className="flex flex-1 flex-col divide-y divide-white/10">
+                        <div className="flex flex-1 flex-col">
                             {(() => {
                                 const rows = [];
-                                const sortedPlayers = [...players].sort((a, b) => {
+                                const sortedPlayers = [...gamePlayers].sort((a, b) => {
                                     const rank = (p: typeof a) => {
                                         if (p.passedChallenge)
                                             return 0;
-                                        if (p.passedChallenge === null && p.remainingTries > 0)
+                                        if (p.passedChallenge === null)
                                             return 1;
                                         return 2;
                                     };
@@ -66,8 +64,13 @@ export default function Scoreboard() {
                                 });
 
                                 for (const [index, player] of sortedPlayers.entries()) {
+                                    const status: { variant: StatusPastilleVariant; label: string } = player.passedChallenge === true
+                                        ? { variant: "success", label: dictionary.game.successGame }
+                                        : player.passedChallenge === null
+                                        ? { variant: "inGame", label: dictionary.game.inGame }
+                                        : { variant: "fail", label: dictionary.game.failedGame };
                                     rows.push(
-                                        <div key={player.username} className="flex items-center justify-between py-2 px-4">
+                                        <div key={player.username} className="flex items-center justify-between py-4 px-4 hover:bg-white/5 transition-colors duration-200">
                                             <div className="flex items-center gap-8">
                                                 <span className="text-sub-text font-mono">
                                                     {index + 1}.
@@ -77,34 +80,9 @@ export default function Scoreboard() {
                                                     <p className="font-mono text-semibold">{player.username}</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                {player.passedChallenge === true ? (
-                                                    <>
-                                                        <Check className="size-6 text-green" />
-                                                        <span className="text-sub-text">
-                                                            {dictionary.game.successGame}
-                                                        </span>
-                                                    </>
-                                                ) : player.passedChallenge === null && player.remainingTries > 0 ? (
-                                                    <>
-                                                        <div className="flex items-center gap-1">
-                                                            <span className="text-white font-mono">
-                                                                {player.remainingTries}
-                                                            </span>
-                                                            <Heart className="size-6 text-pink-400" fill="currentColor" />
-                                                        </div>
-                                                        <span className="text-sub-text">
-                                                            {dictionary.game.inGame}
-                                                        </span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Skull className="size-6 text-destructive/80" />
-                                                        <span className="text-sub-text">
-                                                            {dictionary.game.failedGame}
-                                                        </span>
-                                                    </>
-                                                )}
+                                            <div className="flex gap-2 items-center">
+                                                <StatusPastille variant={status.variant} />
+                                                <span className="text-sm text-muted-text">{status.label}</span>
                                             </div>
                                         </div>
                                     );

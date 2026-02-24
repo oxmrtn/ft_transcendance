@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import ContentWrapper from "../../../../../../components/ContentWrapper";
-import { Check, Heart, Loader2Icon, Skull } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import Button from "../../../../../../components/ui/Button";
 import { useLanguage } from "../../../../../../contexts/LanguageContext";
 import { BASE_REMAINING_TRIES, BASE_SUBMIT_TIMEOUT_SECONDS, useGame } from "../../../../../../contexts/GameContext";
@@ -8,14 +8,13 @@ import { useSocket } from "../../../../../../contexts/SocketContext";
 import { Editor } from "@monaco-editor/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../../../components/ui/tabs";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
-import { useAuth } from "../../../../../../contexts/AuthContext";
 import Trace from "./trace";
 import { cn } from "../../../../../../lib/utils";
 import { ScrollArea } from "../../../../../../components/ui/scroll-area";
+import StatusPastille from "../../../../../../components/StatusPastille";
 
 export default function Battle() {
-  const { username } = useAuth();
-  const { trace, gameId, players, submitState, setSubmitState, selectedChallenge } = useGame();
+  const { trace, gameId, gamePlayers, submitState, setSubmitState, selectedChallenge, remainingTries } = useGame();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
   const [code, setCode] = useState("");
@@ -43,7 +42,7 @@ export default function Battle() {
     if (submitState !== "timeout")
       return;
   
-    const penaltyMultiplier = BASE_REMAINING_TRIES - (players.find((player) => player.username === username).remainingTries);
+    const penaltyMultiplier = BASE_REMAINING_TRIES - remainingTries;
     const timeout = BASE_SUBMIT_TIMEOUT_SECONDS * penaltyMultiplier;
 
     setTimeoutSeconds(timeout);
@@ -93,8 +92,8 @@ export default function Battle() {
           </Button>
         </div>
 
-        <div className="flex-1 p-4">
-          <TabsContent value="code" className="h-full w-full">
+        <div className="flex-1 min-h-0 p-4 flex">
+          <TabsContent value="code" className="flex-1 w-full">
             <Editor
               height="100%"
               width="100%"
@@ -108,15 +107,17 @@ export default function Battle() {
               }}
             />
           </TabsContent>
-          <TabsContent value="subject" className="h-full w-full flex flex-col border border-px border-white/10 rounded-md overflow-hidden">
+          <TabsContent value="subject" className="flex-1 min-h-0 w-full flex flex-col border border-px border-white/10 rounded-md overflow-hidden">
               <div className="w-full flex flex-col gap-2 bg-black/50 py-4 px-6 border-b border-px border-white/10">
                 <p className="text-sm text-white font-medium font-mono">{selectedChallenge.name}</p>
               </div>
-              <ScrollArea className="w-full h-full py-3 px-4 bg-white/5">
-                <p className="text-sm text-sub-text font-medium font-mono">{selectedChallenge.description}</p>
+              <ScrollArea className="flex-1 min-h-0 w-full overflow-hidden bg-white/5">
+                <div className="py-3 px-4 text-sm text-sub-text font-medium font-mono whitespace-pre-wrap">
+                  {selectedChallenge.description}
+                </div>
               </ScrollArea>
           </TabsContent>
-          <TabsContent value="trace" className="h-full w-full">
+          <TabsContent value="trace" className="flex-1 w-full">
             <Trace />
           </TabsContent>
         </div>
@@ -124,23 +125,20 @@ export default function Battle() {
         <div className="flex gap-4 px-4 py-2 border-t border-px border-white/10">
           {(() => {
             const cards = [];
-            for (const player of players) {
+            for (const player of gamePlayers) {
               cards.push(
-                <div key={player.username} className="flex items-center justify-center bg-black/50 border border-px border-white/10 rounded-md p-2 gap-1">
+                <div key={player.username} className="flex items-center justify-center bg-black/30 border border-px border-white/10 rounded-md p-2 gap-1">
                   <div className="flex items-center gap-2">
                     <ProfilePicture profilePictureUrl={player.profilePictureUrl} size={7} />
                     <p className="text-sub-text font-medium">{player.username}</p>
                   </div>
-                  <div className="pl-1 flex items-center gap-1">
-                  {player.passedChallenge === null && player.remainingTries > 0 ? (
-                      <>
-                        <p className="text-white font-medium font-mono">{player.remainingTries}</p>
-                        <Heart className="size-5 text-pink-400" fill="currentColor" />
-                      </>
+                  <div className="pl-1 flex items-center gap-1.5">
+                  {player.passedChallenge === null ? (
+                      <StatusPastille variant="inGame" />
                     ) : player.passedChallenge === false ? (
-                      <Skull className="size-4.5 text-destructive/80" />
+                      <StatusPastille variant="fail" />
                     ) : (
-                      <Check className="size-4.5 text-green" />
+                      <StatusPastille variant="success" />
                     )
                   }
                   </div>
