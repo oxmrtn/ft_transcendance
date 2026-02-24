@@ -458,7 +458,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		const codeResult = await submitCode(currentGame.selectedChallenge.name, userId, payload.code);
 
-		if (playerInfo.remainingTries <= 0 || !codeResult.result)
+		if (playerInfo.remainingTries <= 0 && !codeResult.result)
 			playerInfo.passedChallenge = false;
 		else if (codeResult.result)
 			playerInfo.passedChallenge = true;
