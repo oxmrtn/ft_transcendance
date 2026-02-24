@@ -14,11 +14,11 @@ export default function Trace() {
     return (
         <div className="h-full w-full">
             <ScrollArea className="w-full h-full">
-                <div className="flex flex-col gap-2 h-full">
+                <div className="flex flex-col gap-4 h-full">
                     {trace.length > 0 ? (
                         trace.map(({ trace, result }, index) => (
-                            <Collapsible key={index} className="w-full flex flex-col gap-2 bg-black/50 py-2 px-4 rounded-md border border-px border-white/10">
-                                <div className="flex items-center justify-between">
+                            <Collapsible key={index} className="w-full flex flex-col rounded-md border border-px border-white/10 overflow-hidden">
+                                <div className="flex items-center justify-between py-2 px-4 bg-black/50">
                                     <div className="flex items-center gap-4">
                                         <p className="text-sm text-white font-medium font-mono">{dictionary.game.tryNumber.replace("{{number}}", String(index + 1))}</p>
                                         <p className={cn("text-sm font-medium font-mono", result ? "text-green" : "text-destructive")}>
@@ -29,8 +29,8 @@ export default function Trace() {
                                         <ChevronDown className="size-4 transition-transform duration-200 group-data-panel-open/button:rotate-180" />
                                     </CollapsibleTrigger>
                                 </div>
-                                <CollapsibleContent className="py-2 px-4 bg-white/5 rounded-md">
-                                    <p>{trace}</p>
+                                <CollapsibleContent className="py-3 px-4 bg-white/5 border-t border-px border-white/10">
+                                    <p className="text-sm text-sub-text font-medium font-mono">{trace}</p>
                                 </CollapsibleContent>
                             </Collapsible>
                         ))

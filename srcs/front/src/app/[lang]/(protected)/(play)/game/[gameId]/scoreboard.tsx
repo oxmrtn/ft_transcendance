@@ -130,7 +130,7 @@ export default function Scoreboard() {
                             )}
                         </div>
                     </TabsContent>
-                    <TabsContent value="trace" className="h-full w-full">
+                    <TabsContent value="trace" className="h-full w-full p-4">
                         <Trace />
                     </TabsContent>
                 </div>

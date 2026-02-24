@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ContentWrapper from "../../../../../../components/ContentWrapper";
 import { useGame } from "../../../../../../contexts/GameContext";
 import Button from "../../../../../../components/ui/Button";
@@ -11,12 +11,14 @@ import { useLanguage } from "../../../../../../contexts/LanguageContext";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
 import { GameSkeleton } from "../../../../../../components/ui/skeleton";
 import { useAuth } from "../../../../../../contexts/AuthContext";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../../../../../../components/ui/Select";
 
 export default function Room() {
   const { username: myUsername } = useAuth();
-  const { gameId, creatorUsername, isCreator, players, hasLeftRoomRef } = useGame();
+  const { gameId, creatorUsername, isCreator, players, hasLeftRoomRef, availableChallenges } = useGame();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
+  const [selectedChallenge, setSelectedChallenge] = useState<string | null | undefined>(undefined);
 
   useEffect(() => {
     if (!socket || gameId)
@@ -58,7 +60,8 @@ export default function Room() {
   const startGame = () => {
     if (!socket || !gameId)
       return;
-    socket.emit("start-game");
+    console.log(selectedChallenge);
+    socket.emit("start-game", { challengeName: selectedChallenge || "" });
   };
 
   const kickPlayer = (targetUsername: string) => {
@@ -121,10 +124,26 @@ export default function Room() {
           })()}
         </div>
         <div className="px-4 py-2 border-t border-px border-white/10">
-          {isCreator ? (
-            <Button variant="primary" onClick={startGame} fullWidth={true} disabled={players.length < 2}>
-              {dictionary.game.startGame}
-            </Button>
+          {isCreator && availableChallenges && availableChallenges.length > 0 ? (
+            <div className="flex gap-4">
+              <Select onValueChange={setSelectedChallenge} required={true}>
+                <SelectTrigger className="!h-full">
+                  <SelectValue placeholder={dictionary.game.selectChallenge} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>{dictionary.game.challengeSelectorLabel}</SelectLabel>
+                    {availableChallenges.map((challenge) => (
+                      <SelectItem key={challenge} value={challenge}>{challenge}</SelectItem>
+                    ))}
+                    <SelectItem value={null}>{dictionary.game.randomChallenge}</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Button variant="primary" onClick={startGame} fullWidth={true} disabled={players.length < 2 || selectedChallenge === undefined}>
+                {dictionary.game.startGame}
+              </Button>
+            </div>
           ) : (
             <div className="flex justify-center items-center gap-2 py-2">
               <Loader2Icon className="size-5 animate-spin text-white/60" />

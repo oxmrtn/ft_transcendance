@@ -17,9 +17,12 @@ import { KickPlayerDto } from "src/dto/kick-player.dto";
 import { connected } from "node:process";
 import { PrismaService } from "prisma/prisma.service";
 import { waitForDebugger } from "node:inspector";
+import { StartGameDto } from "src/dto/start-game.dto";
 
-const BASE_SUBMIT_TIMEOUT_SECONDS = 15;
-const BASE_REMAINING_TRIES = 3;
+interface Challenge {
+	name: string;
+	description: string;
+}
 
 interface PlayerInfos {
 	passedChallenge: boolean | null;
@@ -34,12 +37,81 @@ interface CodeResult {
 
 type GameState = "waiting" | "playing" | "finished";
 
+const BASE_SUBMIT_TIMEOUT_SECONDS = 15;
+const BASE_REMAINING_TRIES = 3;
+
+const CHALLENGES : Challenge[] = [
+	{
+		name: "strlen",
+		description: `Assignment name  : ft_strlen
+Expected files   : ft_strlen.c
+Allowed functions: none
+-------------------------------------------------------------------------------
+
+Write a function named ft_strlen that takes a string as a parameter and returns
+its length.
+
+The length of a string is the number of characters that precede the terminating
+NUL character.
+
+Your function must be declared as follows:
+
+int ft_strlen(char *str);`
+	},
+	{
+		name: "pyramyd",
+		description: `Assignment name  : pyramyd
+Expected files   : pyramyd.c
+Allowed functions: write
+-------------------------------------------------------------------------------
+Write a function named pyramid that takes an integer 'size' as a parameter and
+displays a left-aligned half-pyramid of '*' characters on the standard output.
+The 'size' parameter represents the number of rows of the pyramid.
+Your function must be declared as follows:
+void pyramid(int size);
+Examples:
+If size is 2, the expected output is:
+*
+**
+If size is 5, the expected output is:
+*
+**
+***
+****
+*****`
+	},
+	{
+		name: "min_range",
+		description: `Assignment name  : min_range
+Expected files   : min_range.c
+Allowed functions: none
+-------------------------------------------------------------------------------
+
+Write a function named min_range that takes an array of integers and its length
+as parameters, and returns the minimum absolute difference between any two
+elements in the array.
+
+If the array's length is less than 2, the function must return 0.
+
+Your function must be declared as follows:
+
+unsigned int min_range(int *arr, unsigned int len);
+-------------------------------------------------------------------------------
+Examples:
+If arr is {1, 5, 12, 18, 9} and len is 5, the expected output is 4
+(because the absolute difference between 5 and 9 is 4, which is the minimum).
+
+If arr is {3} and len is 1, the expected output is 0.`
+	}
+];
+
 class GameSession {
 	public playerNumber : number;
 	public gameId : string;
 	public players: Map<number, PlayerInfos>;
 	public gameState: GameState;
 	public creatorId: number;
+	public selectedChallenge: Challenge;
 	
 	constructor (gameId: string, playerNumber: number)
 	{
@@ -120,7 +192,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		client.join(`game_${gameId}`);
 
 		await this.notifyGameStatus(currentGame);
-		client.emit('game-info', { event: 'room-created', gameId: gameId });
+		client.emit('game-info', { event: 'room-created', gameId: gameId, availableChallenges: CHALLENGES.map((c) => c.name) });
 	}
 
 	@SubscribeMessage('join-room')
@@ -271,7 +343,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	}
 
 	@SubscribeMessage('start-game')
-	async startGame(@ConnectedSocket() client: Socket)
+	async startGame(@ConnectedSocket() client: Socket, @MessageBody() payload: StartGameDto)
 	{
 		const userId = client.data.user.userId;
 		const gameId = this.clientToRoom.get(userId);
@@ -301,6 +373,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
+		const challengeName = payload.challengeName.trim() ?? null;
+		const challenge = !challengeName ? CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)]
+			: CHALLENGES.find((c) => c.name === challengeName);
+		
+		if (!challenge)
+		{
+			this.errorMessage(client, `Challenge "${challengeName}" not found!`);
+			return;
+		}
+
+		currentGame.selectedChallenge = challenge;
 		currentGame.players.forEach((_, playerId) => {
 			currentGame.players.set(playerId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 		});
@@ -421,6 +504,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			gameId: game.gameId,
 			creatorUsername: creatorUsername.username,
 			gameState: game.gameState,
+			selectedChallenge: game.selectedChallenge,
 		});
 	}
 }

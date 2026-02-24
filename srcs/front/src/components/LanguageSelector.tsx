@@ -18,11 +18,10 @@ export default function LanguageSelector() {
     
     return (
         <Select onValueChange={changeLanguage} defaultValue={lang}>
-        <SelectTrigger className="bg-white/5 border border-white/10 w-[164px] transition-colors duration-200 cursor-pointer
-        hover:bg-white/10">
+        <SelectTrigger className="w-[164px]">
             <SelectValue placeholder="" />
         </SelectTrigger>
-        <SelectContent className="bg-white/5 backdrop-blur-xl border border-white/10">
+        <SelectContent>
             <SelectGroup>
             <SelectLabel>{dictionary.footer.languageSelector}</SelectLabel>
             <SelectItem value="en">English</SelectItem>

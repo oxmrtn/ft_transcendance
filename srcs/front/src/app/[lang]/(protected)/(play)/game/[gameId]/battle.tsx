@@ -11,10 +11,11 @@ import ProfilePicture from "../../../../../../components/ProfilePicture";
 import { useAuth } from "../../../../../../contexts/AuthContext";
 import Trace from "./trace";
 import { cn } from "../../../../../../lib/utils";
+import { ScrollArea } from "../../../../../../components/ui/scroll-area";
 
 export default function Battle() {
   const { username } = useAuth();
-  const { trace, gameId, players, submitState, setSubmitState } = useGame();
+  const { trace, gameId, players, submitState, setSubmitState, selectedChallenge } = useGame();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
   const [code, setCode] = useState("");
@@ -107,8 +108,13 @@ export default function Battle() {
               }}
             />
           </TabsContent>
-          <TabsContent value="subject" className="h-full w-full">
-            
+          <TabsContent value="subject" className="h-full w-full flex flex-col border border-px border-white/10 rounded-md overflow-hidden">
+              <div className="w-full flex flex-col gap-2 bg-black/50 py-4 px-6 border-b border-px border-white/10">
+                <p className="text-sm text-white font-medium font-mono">{selectedChallenge.name}</p>
+              </div>
+              <ScrollArea className="w-full h-full py-3 px-4 bg-white/5">
+                <p className="text-sm text-sub-text font-medium font-mono">{selectedChallenge.description}</p>
+              </ScrollArea>
           </TabsContent>
           <TabsContent value="trace" className="h-full w-full">
             <Trace />
