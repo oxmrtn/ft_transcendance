@@ -1,87 +1,26 @@
 "use client";
 
-import React from "react";
-import ContentWrapper from "../../../../../../components/ContentWrapper";
+import React, { useEffect } from "react";
 import { useGame } from "../../../../../../contexts/GameContext";
-import Button from "../../../../../../components/ui/Button";
-import { toast } from "sonner";
-import { Copy } from "lucide-react";
 import { useSocket } from "../../../../../../contexts/SocketContext";
-import { useLanguage } from "../../../../../../contexts/LanguageContext";
-import ProfilePicture from "../../../../../../components/ProfilePicture";
+import Room from "./room";
+import Battle from "./battle";
+import Scoreboard from "./scoreboard";
 
-export default function GamePage() {
-  const { gameId, players } = useGame();
+export default function Game() {
+  const { result, gameState, hasLeftRoomRef } = useGame();
   const { socket } = useSocket();
-  const { dictionary } = useLanguage();
 
-  const shortenedGameId = `${gameId.slice(0, 4)}...${gameId.slice(-4)}`;
-
-  const copyGameId = () => {
-    navigator.clipboard.writeText(gameId);
-    toast.success(dictionary.game.gameIdCopied);
-  };
-
-  const leaveGame = () => {
-    if (!socket)
-      return;
-    socket.emit("leave-game", { gameId: gameId });
-  };
-
-  const startGame = () => {
-    if (!socket)
-      return;
-    socket.emit("start-game", { gameId: gameId });
-  };
+  useEffect(() => {
+    return () => {
+      if (socket && !hasLeftRoomRef.current)
+        socket.emit("leave-room");
+    };
+  }, [socket]);
 
   return (
-    <ContentWrapper title={dictionary.game.title}>
-      <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
-          <p className="flex items-center gap-1 text-sub-text font-mono text-sm">
-            {dictionary.game.roomIdLabel}:{" "}
-            <button
-              onClick={copyGameId}
-              className="flex items-center gap-2 text-white py-1 px-2 hover:bg-white/10 rounded-md cursor-pointer transition-colors duration-200"
-            >
-              {shortenedGameId}
-              <Copy className="size-3 text-white cursor-pointer transition-colors duration-200" />
-            </button>
-          </p>
-          <Button variant="danger" onClick={leaveGame}>
-            {dictionary.game.leaveRoom}
-          </Button>
-        </div>
-        <div className="flex-1 grid grid-cols-2 gap-5 p-5">
-          {(() => {
-            const cards = [];
-            for (let i = 0; i < 4; i++) {
-              const player = players[i];
-              cards.push(
-                <div
-                  key={i}
-                  className="bg-black/70 border border-px border-white/10 rounded-md p-2 flex flex-col items-center justify-center gap-2 min-h-[140px] h-full"
-                >
-                  {player ? (
-                    <>
-                      <ProfilePicture profilePictureUrl={player.profilePictureUrl} size={12} />
-                      <p className="text-white font-medium">{player.username || "?"}</p>
-                    </>
-                  ) : (
-                    <p className="text-white/60">...</p>
-                  )}
-                </div>
-              );
-            }
-            return cards;
-          })()}
-        </div>
-        <div className="flex justify-center p-2 border-t border-px border-white/10">
-          <Button variant="primary" onClick={startGame} fullWidth={true}>
-            {dictionary.game.startGame}
-          </Button>
-        </div>
-      </div>
-    </ContentWrapper>
+    <>{
+      result !== null ? <Scoreboard /> : gameState === "playing" ? <Battle /> : <Room />
+    }</>
   );
 }

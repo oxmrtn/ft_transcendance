@@ -36,14 +36,14 @@ export class SocialService
 		});
 	}
 
-	async getFriendsId(userId: number, status: string)
+	async getFriendsId(userId: number)
 	{
 		await this.checkUser(userId);
 
 		const friendships = await this.prisma.friendship.findMany({
 			where: {
 				OR: [{userId1: userId }, { userId2: userId}],
-				status: status,
+				status: 'ACCEPT',
 			},
 			select: {
 				userId1: true,
@@ -67,14 +67,51 @@ export class SocialService
 		return friendships.map((f) => (f.userId1 === userId ? f.user2 : f.user1));
 	}
 
-	async getFriends(userId: number, status: string)
+	async getFriends(userId: number)
 	{
 		await this.checkUser(userId);
 
 		const friendships = await this.prisma.friendship.findMany({
 			where: {
 				OR: [{userId1: userId }, { userId2: userId}],
-				status: status,
+				status: 'ACCEPT',
+			},
+			select: {
+				userId1: true,
+				user1: {
+					select: {
+						id: true,
+						username: true,
+						profilePictureUrl: true,
+					},
+				},
+				user2: {
+					select: {
+						id: true,
+						username: true,
+						profilePictureUrl: true,
+					},
+				},
+			 },
+		});
+
+		const userFriends = friendships.map((f) => (f.userId1 === userId ? f.user2 : f.user1));
+
+		return userFriends.map(friend => {
+			const isOnline = this.socialGateway.getOnlineUsers().has(friend.id);
+			return { username: friend.username, profilePictureUrl: friend.profilePictureUrl, status : isOnline ? true : false};
+		});
+	}
+
+		async getFriendsRequests(userId: number)
+	{
+		await this.checkUser(userId);
+
+		const friendships = await this.prisma.friendship.findMany({
+			where: {
+				OR: [{userId1: userId }, { userId2: userId}],
+				status: 'PENDING',
+				sender: { not: userId }
 			},
 			select: {
 				userId1: true,
@@ -98,10 +135,7 @@ export class SocialService
 		const userFriends = friendships.map((f) => (f.userId1 === userId ? f.user2 : f.user1));
 
 		const friendwithStatus = userFriends.map(friend => {
-			const isOnline = status === 'ACCEPT' ? this.socialGateway.getOnlineUsers().has(friend.id) : null;
-			if (isOnline === null)
-				return { username: friend.username, profilePictureUrl: friend.profilePictureUrl, status : null }
-			return { username: friend.username, profilePictureUrl: friend.profilePictureUrl, status : isOnline ? true : false};
+			return { username: friend.username, profilePictureUrl: friend.profilePictureUrl, status : null }
 		});
 
 		return friendwithStatus;
