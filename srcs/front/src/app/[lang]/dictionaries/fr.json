@@ -92,8 +92,7 @@
     "waitingForResult": "En attente du résultat...",
     "retryInSeconds": "Réessayer dans {{seconds}}s",
     "gameEnded": "Partie terminée",
-    "selectChallenge": "Choisir un défi",
-    "challengeSelectorLabel": "Sélectionnez un défi",
+    "selectChallenge": "Choisir un challenge",
     "randomChallenge": "Aléatoire"
   },
   "history": {

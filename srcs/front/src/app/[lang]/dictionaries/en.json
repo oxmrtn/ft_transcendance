@@ -93,7 +93,6 @@
     "retryInSeconds": "Retry in {{seconds}}s",
     "gameEnded": "Game ended",
     "selectChallenge": "Choose a challenge",
-    "challengeSelectorLabel": "Select a challenge",
     "randomChallenge": "Random"
   },
   "history": {
