@@ -134,6 +134,7 @@
   },
   "profile": {
     "title": "Profile",
+    "viewProfile": "View profile",
     "memberSince": "Member since",
     "registeredSince": "Registered since",
     "friendStatus": "Friendship status",

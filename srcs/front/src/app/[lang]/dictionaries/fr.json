@@ -134,6 +134,7 @@
   },
   "profile": {
     "title": "Profil",
+    "viewProfile": "Voir le profil",
     "memberSince": "Membre depuis",
     "registeredSince": "Inscrit depuis",
     "friendStatus": "Statut d'amitié",

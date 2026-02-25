@@ -5,19 +5,29 @@ import ContentWrapper from "../../../../../../components/ContentWrapper";
 import { useGame } from "../../../../../../contexts/GameContext";
 import Button from "../../../../../../components/ui/Button";
 import { toast } from "sonner";
-import { Copy, Crown, Heart, Loader2Icon, Shuffle, Skull, X } from "lucide-react";
+import { Copy, Crown, EllipsisVertical, Loader2Icon, Shuffle, User, MessageCircleMore, X } from "lucide-react";
 import { useSocket } from "../../../../../../contexts/SocketContext";
 import { useLanguage } from "../../../../../../contexts/LanguageContext";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
 import { GameSkeleton } from "../../../../../../components/ui/skeleton";
 import { useAuth } from "../../../../../../contexts/AuthContext";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../../../../../../components/ui/Select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../../../../../components/ui/dropdown-menu";
+import { useModal } from "../../../../../../contexts/ModalContext";
+import { ChatModal } from "../../../../../../components/Chat";
+import ProfileModal from "../../../../../../components/ProfileModal";
 
 export default function Room() {
   const { username: myUsername } = useAuth();
   const { gameId, creatorUsername, isCreator, roomPlayers, hasLeftRoomRef, availableChallenges } = useGame();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
+  const { openModal } = useModal();
   const [selectedChallenge, setSelectedChallenge] = useState<string | null | undefined>(undefined);
 
   if (!gameId) {
@@ -93,10 +103,35 @@ export default function Room() {
                             <Crown className="size-4 text-yellow-500" fill="currentColor" />
                           )}
                         </div>
-                        {isCreator && player.username !== myUsername && (
-                          <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 absolute top-2 right-2">
-                            <X className="size-5 text-destructive" onClick={() => kickPlayer(player.username)} />
-                          </button>
+                        {player.username !== myUsername && (
+                          <div className="absolute top-2 right-2 flex items-center gap-1">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer transition-colors duration-200">
+                                <EllipsisVertical className="size-5 text-white" />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()} className="mr-2 bg-white/5 backdrop-blur-xl border border-white/10">
+                                <DropdownMenuItem className="hover:bg-white/10 gap-2.5" onClick={() => openModal(<ProfileModal username={player.username} />)}>
+                                  <User className="h-4 w-4" />
+                                  <span className="text-sm">{dictionary.profile.viewProfile}</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="hover:bg-white/10 gap-2.5"
+                                  onClick={() => openModal(
+                                    <ChatModal target={player.username} triggerId={Date.now()} />,
+                                    { variant: 'chat', preventClose: true }
+                                  )}
+                                >
+                                  <MessageCircleMore className="h-4 w-4" />
+                                  <span className="text-sm">{dictionary.profile.sendMessage}</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                            {isCreator && (
+                              <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200">
+                                <X className="size-5 text-destructive" onClick={() => kickPlayer(player.username)} />
+                              </button>
+                            )}
+                          </div>
                         )}
                       </>
                     ) : (

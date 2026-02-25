@@ -134,6 +134,7 @@
   },
   "profile": {
     "title": "Profil",
+    "viewProfile": "Visa profil",
     "memberSince": "Medlem sedan",
     "registeredSince": "Registrerad sedan",
     "friendStatus": "Vänstatus",
