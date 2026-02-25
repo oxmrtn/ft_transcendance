@@ -93,8 +93,10 @@ function GameProvider({ children }: { children: ReactNode }) {
     } else if ((isPlaying || isFinished) && prevGameStateRef.current === "playing") {
       setGamePlayers((prev) =>
         prev.map((gp) => {
-          const inPayload = (payload.players ?? []).find((p: GamePlayer) => p.username === gp.username);
-          if (inPayload) return inPayload;
+          const inPayload = (payload.players ?? [])
+            .find((p: GamePlayer) => p.username === gp.username);
+          if (inPayload)
+            return inPayload;
           return { ...gp, passedChallenge: false };
         })
       );

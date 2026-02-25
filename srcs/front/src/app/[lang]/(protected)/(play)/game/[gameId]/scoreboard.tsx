@@ -9,7 +9,7 @@ import { useSocket } from "../../../../../../contexts/SocketContext";
 import Trace from "./trace";
 import { Loader2Icon } from "lucide-react";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
-import StatusPastille, { type StatusPastilleVariant } from "../../../../../../components/StatusPastille";
+import StatusDot, { type StatusDotVariant } from "../../../../../../components/StatusDot";
 import { cn } from "../../../../../../lib/utils";
 
 export default function Scoreboard() {
@@ -64,7 +64,7 @@ export default function Scoreboard() {
                                 });
 
                                 for (const [index, player] of sortedPlayers.entries()) {
-                                    const status: { variant: StatusPastilleVariant; label: string } = player.passedChallenge === true
+                                    const status: { variant: StatusDotVariant; label: string } = player.passedChallenge === true
                                         ? { variant: "success", label: dictionary.game.successGame }
                                         : player.passedChallenge === null
                                         ? { variant: "inGame", label: dictionary.game.inGame }
@@ -81,7 +81,7 @@ export default function Scoreboard() {
                                                 </div>
                                             </div>
                                             <div className="flex gap-2 items-center">
-                                                <StatusPastille variant={status.variant} />
+                                                <StatusDot variant={status.variant} />
                                                 <span className="text-sm text-muted-text">{status.label}</span>
                                             </div>
                                         </div>

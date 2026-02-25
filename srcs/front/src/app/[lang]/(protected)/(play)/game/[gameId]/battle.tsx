@@ -11,7 +11,7 @@ import ProfilePicture from "../../../../../../components/ProfilePicture";
 import Trace from "./trace";
 import { cn } from "../../../../../../lib/utils";
 import { ScrollArea } from "../../../../../../components/ui/scroll-area";
-import StatusPastille from "../../../../../../components/StatusPastille";
+import StatusDot from "../../../../../../components/StatusDot";
 
 export default function Battle() {
   const { trace, gameId, gamePlayers, submitState, setSubmitState, selectedChallenge, remainingTries } = useGame();
@@ -134,11 +134,11 @@ export default function Battle() {
                   </div>
                   <div className="pl-1 flex items-center gap-1.5">
                   {player.passedChallenge === null ? (
-                      <StatusPastille variant="inGame" />
+                      <StatusDot variant="inGame" />
                     ) : player.passedChallenge === false ? (
-                      <StatusPastille variant="fail" />
+                      <StatusDot variant="fail" />
                     ) : (
-                      <StatusPastille variant="success" />
+                      <StatusDot variant="success" />
                     )
                   }
                   </div>

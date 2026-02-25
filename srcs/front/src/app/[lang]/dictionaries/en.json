@@ -121,6 +121,7 @@
     "from": "from"
   },
   "common": {
-    "errorOccurred": "An error occurred"
+    "errorOccurred": "An error occurred",
+    "sessionExpired": "Your session has expired. Please log in again."
   }
 }

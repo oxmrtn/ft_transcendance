@@ -15,7 +15,7 @@ export class WsJwtGuard implements CanActivate
 		const client: Socket = context.switchToWs().getClient();
 		
 		if (!client.data.user)
-			throw new WsException('Unauthorized access');
+			throw new WsException('session-expired');
 
 		return true;
     }

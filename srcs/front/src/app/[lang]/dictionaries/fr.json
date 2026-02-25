@@ -121,6 +121,7 @@
     "from": "de"
   },
   "common": {
-    "errorOccurred": "Une erreur est survenue"
+    "errorOccurred": "Une erreur est survenue",
+    "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter."
   }
 }

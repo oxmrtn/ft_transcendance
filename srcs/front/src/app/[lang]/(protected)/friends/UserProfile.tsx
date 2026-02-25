@@ -12,7 +12,7 @@ import {
 import ProfilePicture from '../../../../components/ProfilePicture';
 import { useModal } from '../../../../contexts/ModalContext';
 import { ChatModal } from '../../../../components/Chat';
-import StatusPastille from '../../../../components/StatusPastille';
+import StatusDot from '../../../../components/StatusDot';
 
 export interface UserType {
     username: string;
@@ -55,7 +55,7 @@ export default function UserProfile({
                     <p className="font-mono text-semibold">{user.username}</p>
                     {user.online !== null && (
                         <div className="flex gap-2 items-center">
-                            <StatusPastille variant={user.online ? "success" : "fail"} />
+                            <StatusDot variant={user.online ? "success" : "fail"} />
                             <p className="text-sm text-muted-text">
                                 {user.online ? dictionary.friends.online : dictionary.friends.offline}
                             </p>

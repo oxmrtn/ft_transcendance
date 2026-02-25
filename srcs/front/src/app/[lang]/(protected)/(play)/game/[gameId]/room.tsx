@@ -20,19 +20,6 @@ export default function Room() {
   const { dictionary } = useLanguage();
   const [selectedChallenge, setSelectedChallenge] = useState<string | null | undefined>(undefined);
 
-  useEffect(() => {
-    if (!socket || gameId)
-      return;
-    
-    if (!window.location.pathname.includes("/game/"))
-      return;
-    
-    const gameIdFromUrl = window.location.pathname.split("/game/").pop();
-    if (gameIdFromUrl) {
-      socket.emit("get-game-info", { gameId: gameIdFromUrl });
-    }
-  }, [socket, gameId]);
-
   if (!gameId) {
     return (
       <ContentWrapper title={dictionary.game.roomTitle}>

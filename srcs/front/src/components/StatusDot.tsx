@@ -2,10 +2,10 @@
 
 import { cn } from "../lib/utils";
 
-export type StatusPastilleVariant = "success" | "fail" | "inGame";
+export type StatusDotVariant = "success" | "fail" | "inGame";
 
 const variantStyles: Record<
-  StatusPastilleVariant,
+  StatusDotVariant,
   { ring: string; dot: string; pulse?: boolean }
 > = {
   success: { ring: "bg-green/20", dot: "bg-green" },
@@ -13,12 +13,12 @@ const variantStyles: Record<
   inGame: { ring: "bg-primary/20", dot: "bg-primary", pulse: true },
 };
 
-interface StatusPastilleProps {
-  variant: StatusPastilleVariant;
+interface StatusDotProps {
+  variant: StatusDotVariant;
   className?: string;
 }
 
-export default function StatusPastille({ variant, className }: StatusPastilleProps) {
+export default function StatusDot({ variant, className }: StatusDotProps) {
   const { ring, dot, pulse } = variantStyles[variant];
   return (
     <div
