@@ -36,7 +36,7 @@ export default function Nav({ tabs }: NavProps) {
       {tabs.map((tab, i) => (
         <Link
           key={i}
-          href={tab.href}
+          href={`/${lang}${tab.href === '/' ? '' : tab.href}`}
           className={cn(
           `w-full flex items-center justify-center py-4 px-6 cursor-pointer transition-colors duration-200 uppercase font-semibold
           border-l-2
