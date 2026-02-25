@@ -161,9 +161,6 @@ export default function SettingsModal() {
               value={password}
               onChange={e => setPassword(e.target.value)}
             />
-            <p className="mt-1 text-xs text-muted-text">
-              {dictionary.settings.unexpectedError && "" /* reserved for future hint text */}
-            </p>
           </div>
         </div>
         <Button fullWidth={true} disabled={isLoading} type="submit" variant="primary" >

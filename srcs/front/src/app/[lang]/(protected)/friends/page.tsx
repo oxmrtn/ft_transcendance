@@ -240,7 +240,7 @@ export default function Page() {
     <ContentWrapper title={dictionary.friends.title}>
       <Tabs defaultValue="friends" className="h-full w-full flex flex-col">
 
-        <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
+        <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10 gap-2 flex-wrap">
           <TabsList className="flex gap-2">
             <TabsTrigger value="friends" onClick={() => { fetchFriends() }}>
               {dictionary.friends.friendsTab}
