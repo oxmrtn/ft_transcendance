@@ -168,7 +168,7 @@ export default function ProfileModal({ username }: { username: string }) {
   }, []);
 
   return (
-    <div className="w-[380px] sm:w-[420px] md:w-[460px] modal-surface rounded-xl border border-white/10 shadow-[0_0_40px] shadow-black/80 overflow-hidden">
+    <div className="w-[380px] sm:w-[420px] md:w-[460px] gradient-background rounded-xl border border-white/10 shadow-[0_0_40px] shadow-black/80 overflow-hidden">
       <div className="bg-black/40 flex items-center justify-between px-5 py-3 relative border-b border-white/10">
         <h1>{dictionary.profile.title}</h1>
         <button

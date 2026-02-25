@@ -71,7 +71,17 @@ export default function Battle() {
 
   return (
     <ContentWrapper title={`${dictionary.game.gameTitle} - ${shortenedGameId}`}>
-      <Tabs defaultValue="code" className="h-full w-full flex flex-col" value={activeTab} onValueChange={(v) => setActiveTab(v as BattleTab)}>
+      <Tabs
+        defaultValue="code"
+        className="h-full w-full flex flex-col"
+        value={activeTab}
+        onValueChange={(v) => {
+          const newTab = v as BattleTab;
+          setActiveTab(newTab);
+          if (newTab === "trace")
+            setTraceNotification(false);
+        }}
+      >
         <div className="flex-wrap gap-2 flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
           <TabsList className="flex gap-2">
               <TabsTrigger value="code">
@@ -94,8 +104,8 @@ export default function Battle() {
           </Button>
         </div>
 
-        <div className="flex-1 min-h-0 p-4 flex">
-          <TabsContent value="code" className="flex-1 w-full">
+        <div className="flex-1 min-h-0 flex">
+          <TabsContent value="code" className="flex-1 w-full p-4">
             <Editor
               height="100%"
               width="100%"
@@ -109,7 +119,7 @@ export default function Battle() {
               }}
             />
           </TabsContent>
-          <TabsContent value="subject" className="flex-1 min-h-0 w-full flex flex-col border border-px border-white/10 rounded-md overflow-hidden">
+          <TabsContent value="subject" className="flex-1 min-h-0 w-full flex flex-col border border-px border-white/10 rounded-md overflow-hidden p-4">
               <div className="w-full flex flex-col gap-2 bg-black/50 py-4 px-6 border-b border-px border-white/10">
                 <p className="text-sm text-white font-medium font-mono">{selectedChallenge.name}</p>
               </div>
@@ -119,7 +129,7 @@ export default function Battle() {
                 </div>
               </ScrollArea>
           </TabsContent>
-          <TabsContent value="trace" className="flex-1 min-h-0 w-full flex flex-col overflow-hidden">
+          <TabsContent value="trace" className="flex-1 min-h-0 w-full overflow-hidden">
             <Trace />
           </TabsContent>
         </div>

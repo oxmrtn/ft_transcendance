@@ -25,17 +25,6 @@ export class SocialService
 			throw new NotFoundException(`User ${userId} not found`);
 	}
 
-
-	async searchUsers(query: string)
-	{
-		if (!query || query.length < 2)
-			return [];
-		return this.prisma.user.findMany({
-			where: { username: { contains: query, mode: 'insensitive' }, },
-			select: { id: true, username: true, profilePictureUrl: true },
-		});
-	}
-
 	async getFriendsId(userId: number)
 	{
 		await this.checkUser(userId);

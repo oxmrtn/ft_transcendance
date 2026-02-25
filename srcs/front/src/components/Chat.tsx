@@ -10,6 +10,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 import { cn } from '../lib/utils';
 import { useEffect, useState, useRef } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 type ChatTab = 'all' | 'global' | 'private';
 
@@ -20,6 +21,7 @@ interface ChatModalProps {
 
 export function ChatModal({ target, triggerId }: ChatModalProps) {
     const { socket, messages, setUnreadMessagesCount, setIsChatOpen } = useSocket();
+    const { username } = useAuth();
     const { closeModal } = useModal();
     const { dictionary } = useLanguage();
     const [message, setMessage] = useState("");
@@ -77,13 +79,11 @@ export function ChatModal({ target, triggerId }: ChatModalProps) {
         }
 
         if (lastMessage.isPrivate) {
-            if (!lastMessage.isSender && activeTab !== 'private') {
+            if (!lastMessage.isSender && activeTab !== 'private')
                 setPrivateTabNotification(true);
-            }
         } else {
-            if (activeTab !== 'global') {
+            if (lastMessage.sender !== username && activeTab !== 'global')
                 setGlobalTabNotification(true);
-            }
         }
 
         prevMessagesLengthRef.current = messages.length;
@@ -196,8 +196,9 @@ export function ChatModal({ target, triggerId }: ChatModalProps) {
 export default function Chat() {
     const { unreadMessagesCount } = useSocket();
     const { openModal, isOpen } = useModal();
+    const { isAuthenticated } = useAuth();
 
-    if (isOpen)
+    if (!isAuthenticated || isOpen)
         return null;
 
     return createPortal(

@@ -41,6 +41,12 @@
     "privacyPolicy": "Politique de confidentialité",
     "termsOfService": "Conditions d'utilisation"
   },
+  "privacy": {
+    "title": "Politique de confidentialité"
+  },
+  "conditions": {
+    "title": "Conditions d'utilisation"
+  },
   "friends": {
     "title": "amis",
     "friendsTab": "amis",

@@ -56,8 +56,15 @@ export default function Header() {
     }
   }, [isMenuOpen]);
 
-  if (!isAuthenticated || !dictionary)
-    return null;
+  if (!isAuthenticated) {
+    return (
+      <header className="h-[64px] flex items-center w-full px-8">
+        <Link href={`/${lang}`} className="md:z-auto z-50">
+          <img className="h-6" src="/logo.png" />
+        </Link>
+      </header>
+    );
+  }
 
   return (
     <header className={cn(

@@ -110,7 +110,7 @@ export default function SettingsModal() {
   }, [previewUrl]);
 
   return (
-    <div className="w-[400px] sm:w-[440px] md:w-[520px] modal-surface rounded-xl border border-white/10 shadow-[0_0_40px] shadow-black/80 overflow-hidden">
+    <div className="w-[400px] sm:w-[440px] md:w-[520px] gradient-background rounded-xl border border-white/10 shadow-[0_0_40px] shadow-black/80 overflow-hidden">
       <div className="bg-black/40 flex items-center justify-between px-5 py-3 relative border-b border-white/10">
         <h1>{dictionary.settings.title}</h1>
         <button className="p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer transition-colors duration-200" onClick={closeModal}>

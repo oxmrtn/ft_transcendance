@@ -51,12 +51,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfile(null);
   }
 
-  const fetchProfile = async (jwt: string) => {
+  const fetchProfile = async (token: string) => {
     try {
       const response = await fetch(`${API_URL}/profile/me`, {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${jwt}`,
+          "Authorization": `Bearer ${token}`,
         },
       });
 
