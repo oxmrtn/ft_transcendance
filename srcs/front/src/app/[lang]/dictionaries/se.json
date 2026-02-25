@@ -121,7 +121,8 @@
     "from": "från"
   },
   "common": {
-    "errorOccurred": "Ett fel har inträffat"
+    "errorOccurred": "Ett fel har inträffat",
+    "sessionExpired": "Din session har gått ut. Logga in igen."
   }
 }
 

@@ -12,7 +12,7 @@ import Button from './ui/Button';
 import { toast } from 'sonner';
 
 export default function SettingsModal() {
-  const { username: actualUsername, email: actualEmail, profilePictureUrl: actualProfilePictureUrl, token, setProfile } = useAuth();
+  const { username: actualUsername, email: actualEmail, profilePictureUrl: actualProfilePictureUrl, token, setProfile, logout } = useAuth();
   const { dictionary } = useLanguage();
   const { closeModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +60,13 @@ export default function SettingsModal() {
         },
         body: formData,
       });
+
+      if (response.status === 401) {
+        setIsLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired);
+        return;
+      }
 
       if (!response.ok) {
         throw new Error(response.statusText || dictionary.settings.unexpectedError);

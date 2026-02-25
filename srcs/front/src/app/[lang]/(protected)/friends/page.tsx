@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { API_URL } from '../../../../lib/utils';
 
 export default function Page() {
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
   const [isLoading, setLoading] = useState(false);
@@ -35,6 +35,13 @@ export default function Page() {
           "Authorization": `Bearer ${token}`
         }
       });
+
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired);
+        return;
+      }
 
       const data = await response.json();
       if (!response.ok) {
@@ -68,6 +75,13 @@ export default function Page() {
         }
       });
 
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired);
+        return;
+      }
+
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || dictionary.common.errorOccurred);
@@ -98,6 +112,13 @@ export default function Page() {
         }
       });
 
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired, { id: toastId });
+        return;
+      }
+
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || dictionary.common.errorOccurred);
@@ -126,6 +147,13 @@ export default function Page() {
           "Authorization": `Bearer ${token}`
         }
       });
+
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired, { id: toastId });
+        return;
+      }
 
       const data = await response.json();
       if (!response.ok) {
@@ -159,6 +187,13 @@ export default function Page() {
           "Authorization": `Bearer ${token}`
         }
       });
+
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired, { id: toastId });
+        return;
+      }
 
       const data = await response.json();
       if (!response.ok) {
