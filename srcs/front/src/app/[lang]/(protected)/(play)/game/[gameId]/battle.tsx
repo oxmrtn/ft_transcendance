@@ -117,7 +117,7 @@ export default function Battle() {
                 </div>
               </ScrollArea>
           </TabsContent>
-          <TabsContent value="trace" className="flex-1 w-full">
+          <TabsContent value="trace" className="flex-1 min-h-0 w-full flex flex-col overflow-hidden">
             <Trace />
           </TabsContent>
         </div>

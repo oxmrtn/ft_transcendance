@@ -42,8 +42,8 @@ export default function Scoreboard() {
                         {dictionary.game.leaveGame}
                     </Button>
                 </div>
-                <div className="flex-1">
-                    <TabsContent value="scoreboard" className="h-full w-full flex flex-col">
+                <div className="flex-1 min-h-0 flex flex-col">
+                    <TabsContent value="scoreboard" className="flex-1 min-h-0 w-full flex flex-col">
                         <div className="p-4">
                             <div className={cn("w-full flex items-center justify-center gap-3 py-6 rounded-md border border-px", result ? "bg-green/10 border-green/30" : "bg-destructive/10 border-destructive/30")}>
                                 <p className="text-xl text-white font-medium font-mono">{result ? dictionary.game.youWon : dictionary.game.youFailed}</p>
@@ -108,8 +108,10 @@ export default function Scoreboard() {
                             )}
                         </div>
                     </TabsContent>
-                    <TabsContent value="trace" className="h-full w-full p-4">
-                        <Trace />
+                    <TabsContent value="trace" className="flex-1 min-h-0 w-full flex flex-col overflow-hidden">
+                        <div className="flex-1 min-h-0 flex flex-col overflow-hidden p-4">
+                            <Trace />
+                        </div>
                     </TabsContent>
                 </div>
             </Tabs>
