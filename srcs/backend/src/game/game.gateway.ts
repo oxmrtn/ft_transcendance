@@ -368,19 +368,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		if (userId !== currentGame.creatorId)
 		{
-			this.errorMessage(client, `You can't start the battle!`)
+			this.errorMessage(client, `You can't start the game!`)
 			return;
 		}
 
 		if (currentGame.players.size < 2)
 		{
-			this.errorMessage(client, `The battle need at least two players!`);
+			this.errorMessage(client, `The game need at least two players!`);
 			return;
 		}
 
 		if (currentGame.gameState !== "waiting")
 		{
-			this.errorMessage(client, `The battle has already started!`);
+			this.errorMessage(client, `The game has already started!`);
 			return;
 		}
 
@@ -419,32 +419,32 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		if (!currentGame.selectedChallenge)
 		{
-			this.errorMessage(client, `No challenge selected for this battle yet!`);
+			this.errorMessage(client, `No challenge selected for this game yet!`);
 			return;
 		}
 		
 		if (currentGame.gameState === "waiting")
 		{
-			this.errorMessage(client, `The battle has not started yet!`);
+			this.errorMessage(client, `The game has not started yet!`);
 			return;
 		}
 
 		if (currentGame.gameState === "finished")
 		{
-			this.errorMessage(client, `The battle has already finished!`);
+			this.errorMessage(client, `The game has already finished!`);
 			return;
 		}
 
 		const playerInfo = currentGame.players.get(userId);
 		if (!playerInfo)
 		{
-			this.errorMessage(client, `You are not in this Battle!`);
+			this.errorMessage(client, `You are not in this game!`);
 			return;
 		}
 
 		if (playerInfo.passedChallenge !== null)
 		{
-			this.errorMessage(client, `You have already finished this battle!`);
+			this.errorMessage(client, `You have already finished this game!`);
 			return;
 		}
 
