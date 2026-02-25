@@ -76,7 +76,7 @@ export default function UserProfile({
                         <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()} className="mr-2 bg-white/5 backdrop-blur-xl border border-white/10">
                             <DropdownMenuItem className="hover:bg-white/10 gap-2.5" onClick={() => openModal(<ProfileModal username={user.username} />)}>
                                 <User className="h-4 w-4" />
-                                <span className="text-sm">View Profile</span>
+                                <span className="text-sm">{dictionary.profile.viewProfile}</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 className="hover:bg-white/10 gap-2.5"
@@ -86,7 +86,7 @@ export default function UserProfile({
                                 )}
                             >
                                 <MessageCircleMore className="h-4 w-4" />
-                                <span className="text-sm">Send Message</span>
+                                <span className="text-sm">{dictionary.profile.sendMessage}</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
