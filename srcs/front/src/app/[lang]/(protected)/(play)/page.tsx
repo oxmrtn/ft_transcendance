@@ -39,7 +39,7 @@ export default function Page() {
             }}
           >
             <TextInput
-              customWidth="w-[191px]"
+              customWidth="w-[129px]"
               placeholder={dictionary.play.roomIdPlaceholder}
               id="room-id"
               onChange={(e) => setRoomId(e.target.value)}
