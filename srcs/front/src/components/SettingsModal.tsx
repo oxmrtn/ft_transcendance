@@ -11,6 +11,8 @@ import { API_URL } from '../lib/utils';
 import Button from './ui/Button';
 import { toast } from 'sonner';
 
+const MAX_SIZE_BYTES = 10 * 1024 * 1024;
+
 export default function SettingsModal() {
   const { username: actualUsername, email: actualEmail, profilePictureUrl: actualProfilePictureUrl, token, setProfile, logout } = useAuth();
   const { dictionary } = useLanguage();
@@ -26,6 +28,16 @@ export default function SettingsModal() {
     const file = e.target.files?.[0];
     
     if (file) {
+      if (file.size > MAX_SIZE_BYTES) {
+        toast.error(dictionary.settings.pictureSizeError);
+        return;
+      }
+
+      if (file.type !== "image/jpeg" && file.type !== "image/png") {
+        toast.error(dictionary.settings.pictureFormatError);
+        return;
+      }
+
       setProfilePicture(file);
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
@@ -68,9 +80,9 @@ export default function SettingsModal() {
         return;
       }
 
-      if (!response.ok) {
-        throw new Error(response.statusText || dictionary.settings.unexpectedError);
-      }
+      if (!response.ok)
+        toast.error(response.statusText || dictionary.common.errorOccurred);
+
       const data = await response.json();
       setProfile({
         username: data.username,
