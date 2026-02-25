@@ -108,10 +108,8 @@ export default function Scoreboard() {
                             )}
                         </div>
                     </TabsContent>
-                    <TabsContent value="trace" className="flex-1 min-h-0 w-full flex flex-col overflow-hidden">
-                        <div className="flex-1 min-h-0 flex flex-col overflow-hidden p-4">
-                            <Trace />
-                        </div>
+                    <TabsContent value="trace" className="flex-1 min-h-0 w-full overflow-hidden">
+                        <Trace />
                     </TabsContent>
                 </div>
             </Tabs>

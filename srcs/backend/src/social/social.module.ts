@@ -14,6 +14,6 @@ import { SocialGateway } from './social.gateway';
 		SocialGateway
 	],
 	controllers: [SocialController],
-	exports: [SocialService, SocialGateway],
+	exports: [SocialService],
 })
 export class SocialModule {}

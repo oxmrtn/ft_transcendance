@@ -41,6 +41,12 @@
     "privacyPolicy": "Privacy policy",
     "termsOfService": "Terms of service"
   },
+  "privacy": {
+    "title": "Integritetspolicy"
+  },
+  "conditions": {
+    "title": "Användarvillkor"
+  },
   "friends": {
     "title": "vänner",
     "friendsTab": "vänner",
