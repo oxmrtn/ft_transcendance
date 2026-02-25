@@ -113,7 +113,9 @@
     "password": "Lösenord",
     "newPasswordPlaceholder": "Nytt lösenord",
     "loading": "Laddar...",
-    "update": "Uppdatera"
+    "update": "Uppdatera",
+    "pictureSizeError": "Bilden måste vara mindre än 10MB.",
+    "pictureFormatError": "Bilden måste vara i JPEG eller PNG-format."
   },
   "chat": {
     "messagePlaceholder": "Meddelande",

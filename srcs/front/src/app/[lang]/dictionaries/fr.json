@@ -113,7 +113,9 @@
     "password": "Mot de passe",
     "newPasswordPlaceholder": "Nouveau mot de passe",
     "loading": "Chargement...",
-    "update": "Mettre à jour"
+    "update": "Mettre à jour",
+    "pictureSizeError": "La photo doit être inférieure à 10MB.",
+    "pictureFormatError": "La photo doit être au format JPEG ou PNG."
   },
   "chat": {
     "messagePlaceholder": "Message",

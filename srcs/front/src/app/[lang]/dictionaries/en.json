@@ -113,7 +113,9 @@
     "password": "Password",
     "newPasswordPlaceholder": "New password",
     "loading": "Loading...",
-    "update": "Update"
+    "update": "Update",
+    "pictureSizeError": "The picture must be less than 10MB.",
+    "pictureFormatError": "The picture must be in JPEG or PNG format."
   },
   "chat": {
     "messagePlaceholder": "Message",
