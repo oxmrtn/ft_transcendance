@@ -65,9 +65,6 @@ export default function UserProfile({
                 </div>
             </div>
             <div className="flex gap-2">
-                <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 ">
-                    <X className="size-5 text-destructive" onClick={onRemove} />
-                </button>
                 {display === "friendsList" && (
                     <DropdownMenu>
                         <DropdownMenuTrigger className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer transition-colors duration-200">
@@ -96,6 +93,9 @@ export default function UserProfile({
                         <Check className="size-5 text-green" onClick={onAccept} />
                     </button>
                 )}
+                <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 ">
+                    <X className="size-5 text-destructive" onClick={onRemove} />
+                </button>
             </div>
         </div>
     );
