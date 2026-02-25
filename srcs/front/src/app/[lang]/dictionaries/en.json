@@ -118,9 +118,13 @@
   "chat": {
     "messagePlaceholder": "Message",
     "to": "to",
-    "from": "from"
+    "from": "from",
+    "tabAll": "All",
+    "tabGlobal": "Global",
+    "tabPrivate": "Private"
   },
   "profile": {
+    "title": "Profile",
     "memberSince": "Member since",
     "registeredSince": "Registered since",
     "friendStatus": "Friendship status",

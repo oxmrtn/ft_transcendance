@@ -118,9 +118,13 @@
   "chat": {
     "messagePlaceholder": "Meddelande",
     "to": "till",
-    "from": "från"
+    "from": "från",
+    "tabAll": "Allt",
+    "tabGlobal": "Global",
+    "tabPrivate": "Privat"
   },
   "profile": {
+    "title": "Profil",
     "memberSince": "Medlem sedan",
     "registeredSince": "Registrerad sedan",
     "friendStatus": "Vänstatus",

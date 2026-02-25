@@ -170,7 +170,7 @@ export default function ProfileModal({ username }: { username: string }) {
   return (
     <div className="w-[380px] sm:w-[420px] md:w-[460px] modal-surface rounded-xl border border-white/10 shadow-[0_0_40px] shadow-black/80 overflow-hidden">
       <div className="bg-black/40 flex items-center justify-between px-5 py-3 relative border-b border-white/10">
-        <h1>{profile?.username || username}</h1>
+        <h1>{dictionary.profile.title}</h1>
         <button
           className="p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer transition-colors duration-200"
           onClick={closeModal}
@@ -255,7 +255,10 @@ export default function ProfileModal({ username }: { username: string }) {
               variant="secondary"
               fullWidth
               onClick={() => {
-                openModal(<ChatModal target={profile.username} />, { variant: "chat", preventClose: true });
+                openModal(
+                  <ChatModal target={profile.username} triggerId={Date.now()} />,
+                  { variant: "chat", preventClose: true }
+                );
               }}
             >
               <MessageCircleMore className="size-4" />
