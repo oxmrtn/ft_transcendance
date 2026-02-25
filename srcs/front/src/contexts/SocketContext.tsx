@@ -62,7 +62,7 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
             setUnreadMessagesCount(unreadMessagesCountRef.current + 1);
         setMessages((prevMessages) => {
             const updatedMessages = [...prevMessages, newMessage];
-            return updatedMessages.slice(-20); 
+            return updatedMessages.slice(-100);
         });
     };
 

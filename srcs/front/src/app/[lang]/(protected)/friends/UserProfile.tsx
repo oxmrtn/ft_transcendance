@@ -78,7 +78,13 @@ export default function UserProfile({
                                 <User className="h-4 w-4" />
                                 <span className="text-sm">View Profile</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5" onClick={() => openModal(<ChatModal target={user.username} />, { variant: 'chat', preventClose: true })}>
+                            <DropdownMenuItem
+                                className="hover:bg-white/10 gap-2.5"
+                                onClick={() => openModal(
+                                    <ChatModal target={user.username} triggerId={Date.now()} />,
+                                    { variant: 'chat', preventClose: true }
+                                )}
+                            >
                                 <MessageCircleMore className="h-4 w-4" />
                                 <span className="text-sm">Send Message</span>
                             </DropdownMenuItem>
