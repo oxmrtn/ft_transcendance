@@ -251,7 +251,7 @@ export default function Page() {
           </TabsList>
           <form className="flex gap-2" onSubmit={e => { e.preventDefault(); sendFriendRequest(searchFriend) }}>
             <TextInput
-              customWidth="w-[191px]"
+              customWidth="w-[135px]"
               placeholder={dictionary.friends.searchPlaceholder}
               id="search-friend"
               onChange={e => setSearchFriend(e.target.value)}
