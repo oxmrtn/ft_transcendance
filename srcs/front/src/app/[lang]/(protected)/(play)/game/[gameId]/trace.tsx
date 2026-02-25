@@ -12,9 +12,9 @@ export default function Trace() {
     const { dictionary } = useLanguage();
 
     return (
-        <div className="h-full w-full">
-            <ScrollArea className="w-full h-full">
-                <div className="flex flex-col gap-4 h-full">
+        <div className="h-full w-full flex flex-col min-h-0">
+            <ScrollArea className="flex-1 min-h-0 w-full overflow-hidden">
+                <div className="flex flex-col gap-4 py-2">
                     {trace.length > 0 ? (
                         trace.map(({ trace, result }, index) => (
                             <Collapsible key={index} className="w-full flex flex-col rounded-md border border-px border-white/10 overflow-hidden">
