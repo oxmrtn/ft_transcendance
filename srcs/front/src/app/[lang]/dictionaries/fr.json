@@ -102,7 +102,8 @@
     "retryInSeconds": "Réessayer dans {{seconds}}s",
     "gameEnded": "Partie terminée",
     "selectChallenge": "Choisir un challenge",
-    "randomChallenge": "Aléatoire"
+    "randomChallenge": "Aléatoire",
+    "gameDisconnected": "Vous avez été déconnecté de la partie"
   },
   "history": {
     "title": "historique"

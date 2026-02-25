@@ -64,7 +64,7 @@ export default function Battle() {
   }, [submitState, setSubmitState]);
 
   useEffect(() => {
-    if (trace.length > prevLengthRef.current)
+    if (trace.length > prevLengthRef.current && activeTab !== "trace")
       setTraceNotification(true);
     prevLengthRef.current = trace.length;
   }, [trace.length]);
@@ -129,7 +129,7 @@ export default function Battle() {
                 </div>
               </ScrollArea>
           </TabsContent>
-          <TabsContent value="trace" className="flex-1 min-h-0 w-full overflow-hidden">
+          <TabsContent value="trace" className="flex-1 min-h-0 h-full w-full overflow-hidden">
             <Trace />
           </TabsContent>
         </div>
