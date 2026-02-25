@@ -120,6 +120,18 @@
     "to": "à",
     "from": "de"
   },
+  "profile": {
+    "memberSince": "Membre depuis",
+    "registeredSince": "Inscrit depuis",
+    "friendStatus": "Statut d'amitié",
+    "friend": "Ami",
+    "pending": "Demande d'ami en attente",
+    "notFriend": "Pas encore ami",
+    "sendMessage": "Envoyer un message privé",
+    "addFriendButton": "Ajouter en ami",
+    "removeFriendButton": "Retirer des amis",
+    "requestAlreadySent": "Demande envoyée"
+  },
   "common": {
     "errorOccurred": "Une erreur est survenue",
     "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter."
