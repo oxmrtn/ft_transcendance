@@ -35,6 +35,9 @@
   },
   "footer": {
     "languageSelector": "Selectionnez une langue",
+    "languageEnglish": "Anglais",
+    "languageFrench": "Français",
+    "languageSwedish": "Suédois",
     "privacyPolicy": "Politique de confidentialité",
     "termsOfService": "Conditions d'utilisation"
   },
