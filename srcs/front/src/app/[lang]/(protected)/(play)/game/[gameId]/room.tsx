@@ -47,7 +47,6 @@ export default function Room() {
   const startGame = () => {
     if (!socket || !gameId)
       return;
-    console.log(selectedChallenge);
     socket.emit("start-game", { challengeName: selectedChallenge || "" });
   };
 

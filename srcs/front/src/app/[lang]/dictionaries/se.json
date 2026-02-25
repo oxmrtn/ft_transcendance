@@ -102,7 +102,8 @@
     "retryInSeconds": "Försök igen om {{seconds}}s",
     "gameEnded": "Spelet är slut",
     "selectChallenge": "Välj en utmaning",
-    "randomChallenge": "Slumpmässig"
+    "randomChallenge": "Slumpmässig",
+    "gameDisconnected": "Du har blivit utsparkad från spelet"
   },
   "history": {
     "title": "historik"
