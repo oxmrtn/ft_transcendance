@@ -13,6 +13,7 @@ import ProfilePicture from '../../../../components/ProfilePicture';
 import { useModal } from '../../../../contexts/ModalContext';
 import { ChatModal } from '../../../../components/Chat';
 import StatusDot from '../../../../components/StatusDot';
+import ProfileModal from '../../../../components/ProfileModal';
 
 export interface UserType {
     username: string;
@@ -73,7 +74,7 @@ export default function UserProfile({
                             <EllipsisVertical className="size-5 text-white" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()} className="mr-2 bg-white/5 backdrop-blur-xl border border-white/10">
-                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5">
+                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5" onClick={() => openModal(<ProfileModal username={user.username} />)}>
                                 <User className="h-4 w-4" />
                                 <span className="text-sm">View Profile</span>
                             </DropdownMenuItem>

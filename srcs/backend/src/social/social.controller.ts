@@ -73,9 +73,9 @@ export class SocialController
 	}
 
 	@Get('profile/:username')
-	getUserProfile(@Param('username') username: string)
+	getUserProfile(@Req() req, @Param('username') username: string)
 	{
-		return this.socialService.getUserProfile(username);
+		return this.socialService.getUserProfile(username, req.user.userId);
 	}
 }
 

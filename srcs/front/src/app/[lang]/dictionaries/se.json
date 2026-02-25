@@ -120,6 +120,18 @@
     "to": "till",
     "from": "från"
   },
+  "profile": {
+    "memberSince": "Medlem sedan",
+    "registeredSince": "Registrerad sedan",
+    "friendStatus": "Vänstatus",
+    "friend": "Vän",
+    "pending": "Vänförfrågan väntar",
+    "notFriend": "Inte vän ännu",
+    "sendMessage": "Skicka privat meddelande",
+    "addFriendButton": "Lägg till som vän",
+    "removeFriendButton": "Ta bort vän",
+    "requestAlreadySent": "Förfrågan skickad"
+  },
   "common": {
     "errorOccurred": "Ett fel har inträffat",
     "sessionExpired": "Din session har gått ut. Logga in igen."
