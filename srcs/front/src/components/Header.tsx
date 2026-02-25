@@ -20,7 +20,7 @@ import ProfilePicture from './ProfilePicture';
 
 export default function Header() {
   const { logout, username, profilePictureUrl, isAuthenticated } = useAuth();
-  const { dictionary } = useLanguage();
+  const { lang, dictionary } = useLanguage();
   const { openModal } = useModal();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showShadow, setShowShadow] = useState(true);
@@ -65,7 +65,7 @@ export default function Header() {
       "md:border-b md:border-white/10 md:shadow-[0_0_30px] md:shadow-black/70",
       showShadow && "shadow-[0_0_30px] shadow-black/70"
     )} ref={headerRef}>
-      <Link href="/" className="md:z-auto z-50">
+      <Link href={`/${lang}`} className="md:z-auto z-50">
         <img className="h-6" src="/logo.png" />
       </Link>
 

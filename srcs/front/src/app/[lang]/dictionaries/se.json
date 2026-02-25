@@ -1,37 +1,37 @@
 {
   "metadata": {
     "title": "VersuS Code",
-    "description": "SV desc"
+    "description": "Svensk beskrivning"
   },
   "home": {
-    "welcome": "Welcome!"
+    "welcome": "Välkommen!"
   },
   "login": {
-    "dividerText": "Login",
-    "emailPlaceholder": "E-mail",
-    "passwordPlaceholder": "Password",
-    "loginButton": "Login",
-    "loadingButton": "Loading ...",
-    "noAccountText": "No account ?",
-    "registerLink": "Register"
+    "dividerText": "Logga in",
+    "emailPlaceholder": "E-post",
+    "passwordPlaceholder": "Lösenord",
+    "loginButton": "Logga in",
+    "loadingButton": "Laddar ...",
+    "noAccountText": "Inget konto?",
+    "registerLink": "Registrera dig"
   },
   "register": {
-    "dividerText": "Register",
-    "avatarUploadTitle": "Add a profile picture",
-    "avatarUploadText": "The image must be in JPEG or PNG format and must not exceed 10 MB.",
-    "usernamePlaceholder": "Username",
-    "emailPlaceholder": "E-mail",
-    "passwordPlaceholder": "Password",
-    "registerButton": "Register",
-    "loadingButton": "Loading ...",
-    "avatarSizeError": "File is too large"
+    "dividerText": "Registrera dig",
+    "avatarUploadTitle": "Lägg till en profilbild",
+    "avatarUploadText": "Bilden måste vara i JPEG- eller PNG-format och får inte överstiga 10 MB.",
+    "usernamePlaceholder": "Användarnamn",
+    "emailPlaceholder": "E-post",
+    "passwordPlaceholder": "Lösenord",
+    "registerButton": "Registrera dig",
+    "loadingButton": "Laddar ...",
+    "avatarSizeError": "Filen är för stor"
   },
   "header": {
-    "friendsTab": "friends",
-    "playTab": "play",
-    "historyTab": "history",
-    "settings": "Settings",
-    "logout": "Log out"
+    "friendsTab": "vänner",
+    "playTab": "spela",
+    "historyTab": "historik",
+    "settings": "Inställningar",
+    "logout": "Logga ut"
   },
   "footer": {
     "languageSelector": "Välj språk",
@@ -42,86 +42,86 @@
     "termsOfService": "Terms of service"
   },
   "friends": {
-    "title": "friends",
-    "friendsTab": "friends",
-    "pendingTab": "pending",
-    "noFriends": "No friends added yet",
-    "noPending": "No pending requests",
-    "searchPlaceholder": "Search for a player",
-    "addButton": "add",
-    "sendingRequest": "Sending friend request to",
-    "requestSent": "Friend request sent to",
-    "removingFriend": "Removing",
-    "friendRemoved": "has been removed from your friends",
-    "accepting": "Accepting",
-    "rejecting": "Rejecting",
-    "accepted": "has been accepted",
-    "rejected": "has been rejected",
-    "error": "Error",
+    "title": "vänner",
+    "friendsTab": "vänner",
+    "pendingTab": "väntande",
+    "noFriends": "Inga vänner tillagda ännu",
+    "noPending": "Inga väntande förfrågningar",
+    "searchPlaceholder": "Sök efter en spelare",
+    "addButton": "lägg till",
+    "sendingRequest": "Skickar vänförfrågan till",
+    "requestSent": "Vänförfrågan skickad till",
+    "removingFriend": "Tar bort",
+    "friendRemoved": "har tagits bort från dina vänner",
+    "accepting": "Accepterar",
+    "rejecting": "Avvisar",
+    "accepted": "har accepterats",
+    "rejected": "har avvisats",
+    "error": "Fel",
     "online": "Online",
     "offline": "Offline"
   },
   "play": {
-    "title": "play",
-    "createRoom": "Create room",
-    "joinRoom": "Join room",
-    "roomIdPlaceholder": "Room ID"
+    "title": "spela",
+    "createRoom": "Skapa rum",
+    "joinRoom": "Gå med i rum",
+    "roomIdPlaceholder": "Rums-ID"
   },
   "game": {
-    "roomTitle": "Room",
-    "gameTitle": "Game",
-    "scoreboardTitle": "Scoreboard",
-    "roomIdLabel": "Room ID",
-    "gameIdCopied": "Room ID copied to clipboard",
-    "leaveRoom": "Leave room",
-    "leaveGame": "Leave game",
-    "startGame": "Start battle",
-    "startingGame": "Waiting for battle to start...",
-    "endingGame": "Battle in progress...",
-    "roomKicked": "You have been kicked from the room",
-    "abandonGame": "Abandon battle",
-    "inGame": "In game",
-    "failedGame": "Failed",
-    "successGame": "Success",
-    "youWon": "You succeeded",
-    "youFailed": "You failed",
-    "tryNumber": "Try {{number}}",
-    "noTraceAvailable": "No trace available",
-    "subjectTab": "Subject",
-    "codeTab": "Code",
+    "roomTitle": "Rum",
+    "gameTitle": "Spel",
+    "scoreboardTitle": "Resultattavla",
+    "roomIdLabel": "Rums-ID",
+    "gameIdCopied": "Rums-ID kopierat till urklipp",
+    "leaveRoom": "Lämna rummet",
+    "leaveGame": "Lämna spelet",
+    "startGame": "Starta battle",
+    "startingGame": "Väntar på att battlet ska starta...",
+    "endingGame": "Battle pågår...",
+    "roomKicked": "Du har blivit utsparkad från rummet",
+    "abandonGame": "Avbryt battle",
+    "inGame": "I spel",
+    "failedGame": "Misslyckades",
+    "successGame": "Lyckades",
+    "youWon": "Du lyckades",
+    "youFailed": "Du misslyckades",
+    "tryNumber": "Försök {{number}}",
+    "noTraceAvailable": "Ingen trace tillgänglig",
+    "subjectTab": "Uppgift",
+    "codeTab": "Kod",
     "traceTab": "Trace",
-    "scoreboardTab": "Scoreboard",
-    "submitCode": "Submit code",
-    "waitingForResult": "Waiting for result...",
-    "retryInSeconds": "Retry in {{seconds}}s",
-    "gameEnded": "Game ended",
-    "selectChallenge": "Choose a challenge",
-    "randomChallenge": "Random"
+    "scoreboardTab": "Resultattavla",
+    "submitCode": "Skicka kod",
+    "waitingForResult": "Väntar på resultat...",
+    "retryInSeconds": "Försök igen om {{seconds}}s",
+    "gameEnded": "Spelet är slut",
+    "selectChallenge": "Välj en utmaning",
+    "randomChallenge": "Slumpmässig"
   },
   "history": {
-    "title": "history"
+    "title": "historik"
   },
   "settings": {
-    "title": "Settings",
-    "unexpectedError": "An unexpected error occurred. Please try again.",
-    "noChangesToUpdate": "No changes to update",
-    "profileUpdated": "Profile updated",
-    "profilePicture": "Profile picture",
-    "profilePictureHint": "Must be JPEG or PNG and cannot exceed 10MB.",
-    "username": "Username",
-    "email": "Email",
-    "password": "Password",
-    "newPasswordPlaceholder": "New password",
-    "loading": "Loading...",
-    "update": "Update"
+    "title": "Inställningar",
+    "unexpectedError": "Ett oväntat fel uppstod. Försök igen.",
+    "noChangesToUpdate": "Inga ändringar att uppdatera",
+    "profileUpdated": "Profilen har uppdaterats",
+    "profilePicture": "Profilbild",
+    "profilePictureHint": "Måste vara JPEG eller PNG och får inte överstiga 10 MB.",
+    "username": "Användarnamn",
+    "email": "E-post",
+    "password": "Lösenord",
+    "newPasswordPlaceholder": "Nytt lösenord",
+    "loading": "Laddar...",
+    "update": "Uppdatera"
   },
   "chat": {
-    "messagePlaceholder": "Message",
-    "to": "to",
-    "from": "from"
+    "messagePlaceholder": "Meddelande",
+    "to": "till",
+    "from": "från"
   },
   "common": {
-    "errorOccurred": "An error occurred"
+    "errorOccurred": "Ett fel har inträffat"
   }
 }
 
