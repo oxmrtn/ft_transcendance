@@ -11,9 +11,9 @@ import { SocialGateway } from './social.gateway';
 	providers: [
 		SocialService,
 		TokenStrat,
-	SocialGateway
+		SocialGateway
 	],
 	controllers: [SocialController],
-	exports: [SocialService],
+	exports: [SocialService, SocialGateway],
 })
 export class SocialModule {}

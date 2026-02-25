@@ -6,11 +6,11 @@ import { AuthGuard } from '@nestjs/passport';
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
-  @Get(':username')
+  @Get('me')
   @UseGuards(AuthGuard('jwt'))
-  async getProfile(@Param ('username') username : string)
+  async getMyProfile(@Req() request)
   {
-    return this.profileService.getProfile(username);
+    return this.profileService.getMyProfile(request);
   }
 
   @Patch('update')

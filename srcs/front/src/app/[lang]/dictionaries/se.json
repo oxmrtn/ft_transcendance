@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "VersuS Code",
-    "description": "EN desc"
+    "description": "SV desc"
   },
   "home": {
     "welcome": "Welcome!"
@@ -26,7 +26,7 @@
     "loadingButton": "Loading ...",
     "avatarSizeError": "File is too large"
   },
-    "header": {
+  "header": {
     "friendsTab": "friends",
     "playTab": "play",
     "historyTab": "history",
@@ -34,10 +34,10 @@
     "logout": "Log out"
   },
   "footer": {
-    "languageSelector": "Select a language",
-    "languageEnglish": "English",
-    "languageFrench": "French",
-    "languageSwedish": "Swedish",
+    "languageSelector": "Välj språk",
+    "languageEnglish": "Engelska",
+    "languageFrench": "Franska",
+    "languageSwedish": "Svenska",
     "privacyPolicy": "Privacy policy",
     "termsOfService": "Terms of service"
   },
@@ -124,3 +124,4 @@
     "errorOccurred": "An error occurred"
   }
 }
+

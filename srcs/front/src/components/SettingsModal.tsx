@@ -12,7 +12,7 @@ import Button from './ui/Button';
 import { toast } from 'sonner';
 
 export default function SettingsModal() {
-  const { username: actualUsername, email: actualEmail, profilePictureUrl: actualProfilePictureUrl, token, login } = useAuth();
+  const { username: actualUsername, email: actualEmail, profilePictureUrl: actualProfilePictureUrl, token, setProfile } = useAuth();
   const { dictionary } = useLanguage();
   const { closeModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
@@ -65,12 +65,11 @@ export default function SettingsModal() {
         throw new Error(response.statusText || dictionary.settings.unexpectedError);
       }
       const data = await response.json();
-      
-      if (data.token) {
-        login(data.token);
-      } else {
-        throw new Error(dictionary.settings.unexpectedError);
-      }
+      setProfile({
+        username: data.username,
+        email: data.email,
+        profilePictureUrl: data.profilePictureUrl ?? null,
+      });
 
       toast.success(dictionary.settings.profileUpdated);
       setUsername("");

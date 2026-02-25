@@ -103,6 +103,29 @@ export class SocialService
 		});
 	}
 
+	async getUserProfile(username: string)
+	{
+		if (!username)
+			throw new BadRequestException("No match found for user name : " + username);
+
+		const foundUser = await this.prisma.user.findUnique({
+			where: { username },
+			select: { id: true, username: true, profilePictureUrl: true, createdAt: true },
+		});
+
+		if (!foundUser)
+			throw new BadRequestException("No match found for user name : " + username);
+
+		const isOnline = this.socialGateway.getOnlineUsers().has(foundUser.id);
+
+		return {
+			username: foundUser.username,
+			profilePictureUrl: foundUser.profilePictureUrl,
+			createdAt: foundUser.createdAt,
+			status: isOnline ? true : false,
+		};
+	}
+
 		async getFriendsRequests(userId: number)
 	{
 		await this.checkUser(userId);
