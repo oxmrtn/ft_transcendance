@@ -22,22 +22,22 @@ int main()
 }
 #endif
 
-#ifdef TEST_PYRAMID
+#ifdef TEST_PYRAMYD
 
-void pyramid(int);
+void pyramyd(int);
 
 int main()
 {
 	write(1, "argument= 0:\n", 13);
-	pyramid(0);
+	pyramyd(0);
 	write(1, "argument= 1:\n", 13);
-	pyramid(1);
+	pyramyd(1);
 	write(1, "argument= 4:\n", 13);
-	pyramid(4);
+	pyramyd(4);
 	write(1, "argument= 20:\n", 14);
-	pyramid(20);
+	pyramyd(20);
 	write(1, "argument= -100:\n", 16);
-	pyramid(-100);
+	pyramyd(-100);
 
 	return(0);
 }

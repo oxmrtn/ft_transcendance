@@ -146,29 +146,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	private gameSessions = new Map<string, GameSession>();
 	private clientToRoom = new Map<number, string>();
-	private static	exo_strlen : string = "Assignment name  : ft_strlen\nExpected files   : ft_strlen.c\nAllowed functions: none\n\
--------------------------------------------------------------------------------\n\n\
-Write a function named ft_strlen that takes a string as a parameter and returns\nits length.\n\n\
-The length of a string is the number of characters that precede the terminating\nNUL character.\n\n\
-Your function must be declared as follows:\n\n\int ft_strlen(char *str);\n";
-
-	private static	exo_pyramid : string = "Assignment name  : pyramid\nExpected files   : pyramid.c\nAllowed functions: write\n\
--------------------------------------------------------------------------------\n\
-Write a function named pyramid that takes an integer 'size' as a parameter and\n\
-displays a left-aligned half-pyramid of '*' characters on the standard output.\n\
-The 'size' parameter represents the number of rows of the pyramid.\nYour function must be declared as follows:\n\
-void pyramid(int size);\nExamples:\nIf size is 2, the expected output is:\n*\n**\n\
-If size is 5, the expected output is:\n*\n**\n***\n****\n*****\n";
-
-	private static	exo_min_range : string = "Assignment name  : min_range\nExpected files   : min_range.c\nAllowed functions: none\n\
--------------------------------------------------------------------------------\n\n\
-Write a function named min_range that takes an array of integers and its length\n\
-as parameters, and returns the minimum absolute difference between any two \nelements in the array.\n\n\
-If the array's length is less than 2, the function must return 0.\n\nYour function must be declared as follows:\n\n\
-unsigned int min_range(int *arr, unsigned int len);\n\
--------------------------------------------------------------------------------\nExamples:\n\
-If arr is {1, 5, 12, 18, 9} and len is 5, the expected output is 4 \n\
-(because the absolute difference between 5 and 9 is 4, which is the minimum).\n\nIf arr is {3} and len is 1, the expected output is 0.\n";
 
 	handleConnection(@ConnectedSocket() client: Socket) {}
 
