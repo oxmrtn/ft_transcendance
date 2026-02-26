@@ -24,8 +24,8 @@ fi
 if [ "$PLAYER_FILE" == "strlen"* ]; then
 	TEST_FLAG="-D TEST_STRLEN"
 	EXO_NAME="Strlen"
-elif [ "$PLAYER_FILE" == "pyramid"* ]; then
-	TEST_FLAG="-D TEST_PYRAMID"
+elif [ "$PLAYER_FILE" == "pyramyd"* ]; then
+	TEST_FLAG="-D TEST_PYRAMYD"
 	EXO_NAME="Pyramid"
 elif [ "$PLAYER_FILE" == "min_range"* ]; then
 	TEST_FLAG="-D TEST_RANGE"
