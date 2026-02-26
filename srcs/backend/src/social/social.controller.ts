@@ -37,8 +37,9 @@ export class SocialController
 	async accept(@Req() req, @Param('targetName', ParseUserPipe) targetId: any)
 	{
 		const res = await this.socialService.handleRequest(req.user.userId, targetId, true);
-
-		this.socialGateway.newFriendship(req.user, this.prismaService.user.findUnique({ where: targetId}));
+		const target = await await this.prismaService.user.findUnique({ where: { id: targetId } });
+		
+		this.socialGateway.newFriendship(req.user, target);
 
 		return res;
 	}
@@ -53,8 +54,9 @@ export class SocialController
 	async remove(@Req() req, @Param('targetName', ParseUserPipe) targetId: any)
 	{
 		const res = await this.socialService.removeFriend(req.user.userId, targetId);
+		const target = await this.prismaService.user.findUnique({ where: { id: targetId } });
 
-		this.socialGateway.friendshipRemoved(req.user, this.prismaService.user.findUnique({ where: targetId}));
+		this.socialGateway.friendshipRemoved(req.user, target);
 
 		return res;
 	}
