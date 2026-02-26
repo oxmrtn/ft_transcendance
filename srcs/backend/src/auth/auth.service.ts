@@ -40,7 +40,6 @@ export class AuthService
         return { token };
     } catch (error)
         {
-            // TO DO --- COMMENT GERER PROPREMENT ? 
             throw new ConflictException("User already exist in database !");
         }
     }
