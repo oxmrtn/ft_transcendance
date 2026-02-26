@@ -42,6 +42,7 @@ interface GameContextType {
   availableChallenges: string[];
   selectedChallenge: { name: string; description: string } | null;
   remainingTries: number;
+  resetGame: () => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -93,8 +94,10 @@ function GameProvider({ children }: { children: ReactNode }) {
     } else if ((isPlaying || isFinished) && prevGameStateRef.current === "playing") {
       setGamePlayers((prev) =>
         prev.map((gp) => {
-          const inPayload = (payload.players ?? []).find((p: GamePlayer) => p.username === gp.username);
-          if (inPayload) return inPayload;
+          const inPayload = (payload.players ?? [])
+            .find((p: GamePlayer) => p.username === gp.username);
+          if (inPayload)
+            return inPayload;
           return { ...gp, passedChallenge: false };
         })
       );
@@ -171,7 +174,7 @@ function GameProvider({ children }: { children: ReactNode }) {
   }, [socket, lang, router, dictionary]);
 
   return (
-    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, roomPlayers, gamePlayers, gameState, hasLeftRoomRef, submitState, setSubmitState, trace, setTrace, result, availableChallenges, selectedChallenge, remainingTries }}>
+    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, roomPlayers, gamePlayers, gameState, hasLeftRoomRef, submitState, setSubmitState, trace, setTrace, result, availableChallenges, selectedChallenge, remainingTries, resetGame }}>
       {children}
     </GameContext.Provider>
   );

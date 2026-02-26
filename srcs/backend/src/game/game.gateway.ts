@@ -313,10 +313,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		const currentGame = this.gameSessions.get(gameId);
 
 		if (!currentGame)
-		{
-			this.errorMessage(client, `Room doesn\'t exist!`);
 			return;
-		}
 
 		client.leave(`game_${gameId}`);
 		client.emit('game-info', { event: 'room-left' });
@@ -342,7 +339,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		if (!currentGame)
 		{
-			this.errorMessage(client, `You are not in a battle!`);
+			this.errorMessage(client, `You are not in a game!`);
 			return;
 		}
 
@@ -371,24 +368,25 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		if (userId !== currentGame.creatorId)
 		{
-			this.errorMessage(client, `You can't start the battle!`)
+			this.errorMessage(client, `You can't start the game!`)
 			return;
 		}
 
 		if (currentGame.players.size < 2)
 		{
-			this.errorMessage(client, `The battle need at least two players!`);
+			this.errorMessage(client, `The game need at least two players!`);
 			return;
 		}
 
 		if (currentGame.gameState !== "waiting")
 		{
-			this.errorMessage(client, `The battle has already started!`);
+			this.errorMessage(client, `The game has already started!`);
 			return;
 		}
 
-		const challengeName = payload.challengeName.trim() ?? null;
-		const challenge = !challengeName ? CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)]
+		const challengeName = (payload.challengeName ?? "").trim();
+		const challenge = !challengeName
+			? CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)]
 			: CHALLENGES.find((c) => c.name === challengeName);
 		
 		if (!challenge)
@@ -415,26 +413,38 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		if (!currentGame)
 		{
-			this.errorMessage(client, `Room ${gameId} doesn\'t exist!`)
+			this.errorMessage(client, `You are not in a game!`);
+			return;
+		}
+
+		if (!currentGame.selectedChallenge)
+		{
+			this.errorMessage(client, `No challenge selected for this game yet!`);
 			return;
 		}
 		
 		if (currentGame.gameState === "waiting")
 		{
-			this.errorMessage(client, `The battle has not started yet!`);
+			this.errorMessage(client, `The game has not started yet!`);
 			return;
 		}
 
 		if (currentGame.gameState === "finished")
 		{
-			this.errorMessage(client, `The battle has already finished!`);
+			this.errorMessage(client, `The game has already finished!`);
 			return;
 		}
 
 		const playerInfo = currentGame.players.get(userId);
 		if (!playerInfo)
 		{
-			this.errorMessage(client, `You are not in this Battle!`);
+			this.errorMessage(client, `You are not in this game!`);
+			return;
+		}
+
+		if (playerInfo.passedChallenge !== null)
+		{
+			this.errorMessage(client, `You have already finished this game!`);
 			return;
 		}
 
@@ -484,7 +494,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	private getInGamePlayerIds(game: GameSession): number[]
 	{
 		return Array.from(game.players.entries())
-			.filter(([, info]) => info.passedChallenge === null)
+			.filter(([, info]) => info && info.passedChallenge === null)
 			.map(([id]) => id);
 	}
 
@@ -499,23 +509,32 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			select: { id: true, username: true, profilePictureUrl: true },
 		});
 
-		const players = playerIds.map((id) => {
-			const user = users.find((u) => u.id === id);
-			const info = game.players.get(id);
-			return {
-				username: user.username,
-				profilePictureUrl: user.profilePictureUrl,
-				passedChallenge: info.passedChallenge,
-			};
-		});
+		const players = playerIds
+			.map((id) => {
+				const user = users.find((u) => u.id === id);
+				const info = game.players.get(id);
 
-		const creatorUsername = await this.prismaService.user.findUnique({ where: { id: game.creatorId }, select: { username: true } });
+				if (!user || !info)
+					return null;
+
+				return {
+					username: user.username,
+					profilePictureUrl: user.profilePictureUrl,
+					passedChallenge: info.passedChallenge,
+				};
+			})
+			.filter((p) => p !== null);
+
+		const creator = await this.prismaService.user.findUnique({
+			where: { id: game.creatorId },
+			select: { username: true },
+		});
 
 		this.server.to(`game_${game.gameId}`).emit('game-info', {
 			event: 'room-update',
 			players,
 			gameId: game.gameId,
-			creatorUsername: creatorUsername.username,
+			creatorUsername: creator?.username ?? null,
 			gameState: game.gameState,
 			selectedChallenge: game.selectedChallenge,
 		});

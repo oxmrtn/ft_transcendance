@@ -12,11 +12,11 @@ export default function Trace() {
     const { dictionary } = useLanguage();
 
     return (
-        <div className="h-full w-full">
-            <ScrollArea className="w-full h-full">
-                <div className="flex flex-col gap-4 h-full">
-                    {trace.length > 0 ? (
-                        trace.map(({ trace, result }, index) => (
+        <>
+            {trace.length > 0 ? (
+                <ScrollArea className="h-full w-full min-h-0 overflow-auto p-4">
+                    <div className="w-full flex flex-col gap-4">
+                        {trace.map(({ trace, result }, index) => (
                             <Collapsible key={index} className="w-full flex flex-col rounded-md border border-px border-white/10 overflow-hidden">
                                 <div className="flex items-center justify-between py-2 px-4 bg-black/50">
                                     <div className="flex items-center gap-4">
@@ -30,18 +30,18 @@ export default function Trace() {
                                     </CollapsibleTrigger>
                                 </div>
                                 <CollapsibleContent className="py-3 px-4 bg-white/5 border-t border-px border-white/10">
-                                    <p className="text-sm text-sub-text font-medium font-mono">{trace}</p>
+                                    <p className="text-sm text-sub-text font-medium font-mono whitespace-pre-wrap break-words">{trace}</p>
                                 </CollapsibleContent>
                             </Collapsible>
-                        ))
-                    ) : (
-                        <div className="h-full w-full flex items-center justify-center flex flex-col gap-2 w-fit w-fit">
-                            <FileText size={50} />
-                            <p className="text-sub-text">{dictionary.game.noTraceAvailable}</p>
-                        </div>
-                    )}
+                        ))}
+                    </div>
+                </ScrollArea>
+            ) : (
+                <div className="h-full w-full flex items-center justify-center flex-col gap-2">
+                    <FileText size={50} />
+                    <p className="text-sub-text">{dictionary.game.noTraceAvailable}</p>
                 </div>
-            </ScrollArea>
-        </div>
+            )}
+        </>
     );
 }

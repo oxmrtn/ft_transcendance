@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 export default function RegisterForm() {
   const router = useRouter();
   const { login } = useAuth();
-  const { dictionary } = useLanguage();
+  const { dictionary, lang } = useLanguage();
   const [isLoading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -42,7 +42,7 @@ export default function RegisterForm() {
 
       if (data.token) {
         login(data.token);
-        router.push('/');
+        router.push(`/${lang}`);
       } else {
         throw new Error(dictionary.common.errorOccurred);
       }

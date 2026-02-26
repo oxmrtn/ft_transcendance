@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { API_URL } from '../../../../lib/utils';
 
 export default function Page() {
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
   const [isLoading, setLoading] = useState(false);
@@ -35,6 +35,13 @@ export default function Page() {
           "Authorization": `Bearer ${token}`
         }
       });
+
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired);
+        return;
+      }
 
       const data = await response.json();
       if (!response.ok) {
@@ -68,6 +75,13 @@ export default function Page() {
         }
       });
 
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired);
+        return;
+      }
+
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || dictionary.common.errorOccurred);
@@ -98,6 +112,13 @@ export default function Page() {
         }
       });
 
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired, { id: toastId });
+        return;
+      }
+
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || dictionary.common.errorOccurred);
@@ -126,6 +147,13 @@ export default function Page() {
           "Authorization": `Bearer ${token}`
         }
       });
+
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired, { id: toastId });
+        return;
+      }
 
       const data = await response.json();
       if (!response.ok) {
@@ -159,6 +187,13 @@ export default function Page() {
           "Authorization": `Bearer ${token}`
         }
       });
+
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired, { id: toastId });
+        return;
+      }
 
       const data = await response.json();
       if (!response.ok) {
@@ -205,7 +240,7 @@ export default function Page() {
     <ContentWrapper title={dictionary.friends.title}>
       <Tabs defaultValue="friends" className="h-full w-full flex flex-col">
 
-        <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
+        <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10 gap-2 flex-wrap">
           <TabsList className="flex gap-2">
             <TabsTrigger value="friends" onClick={() => { fetchFriends() }}>
               {dictionary.friends.friendsTab}
@@ -216,7 +251,7 @@ export default function Page() {
           </TabsList>
           <form className="flex gap-2" onSubmit={e => { e.preventDefault(); sendFriendRequest(searchFriend) }}>
             <TextInput
-              customWidth="w-[191px]"
+              customWidth="w-[135px]"
               placeholder={dictionary.friends.searchPlaceholder}
               id="search-friend"
               onChange={e => setSearchFriend(e.target.value)}

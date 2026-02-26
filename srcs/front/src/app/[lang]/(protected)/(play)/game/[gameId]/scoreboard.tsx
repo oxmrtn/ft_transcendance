@@ -7,15 +7,27 @@ import { useLanguage } from "../../../../../../contexts/LanguageContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../../../components/ui/tabs";
 import { useSocket } from "../../../../../../contexts/SocketContext";
 import Trace from "./trace";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, EllipsisVertical, User, MessageCircleMore } from "lucide-react";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
-import StatusPastille, { type StatusPastilleVariant } from "../../../../../../components/StatusPastille";
+import StatusDot, { type StatusDotVariant } from "../../../../../../components/StatusDot";
 import { cn } from "../../../../../../lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../../../../../components/ui/dropdown-menu";
+import { useModal } from "../../../../../../contexts/ModalContext";
+import { ChatModal } from "../../../../../../components/Chat";
+import ProfileModal from "../../../../../../components/ProfileModal";
+import { useAuth } from "../../../../../../contexts/AuthContext";
 
 export default function Scoreboard() {
     const { result, gameId, hasLeftRoomRef, gamePlayers, gameState } = useGame();
     const { dictionary } = useLanguage();
     const { socket } = useSocket();
+    const { openModal } = useModal();
+    const { username: myUsername } = useAuth();
 
     const shortenedGameId = `${gameId.slice(0, 4)}...${gameId.slice(-4)}`;
 
@@ -42,8 +54,8 @@ export default function Scoreboard() {
                         {dictionary.game.leaveGame}
                     </Button>
                 </div>
-                <div className="flex-1">
-                    <TabsContent value="scoreboard" className="h-full w-full flex flex-col">
+                <div className="flex-1 min-h-0 flex flex-col">
+                    <TabsContent value="scoreboard" className="flex-1 min-h-0 w-full flex flex-col">
                         <div className="p-4">
                             <div className={cn("w-full flex items-center justify-center gap-3 py-6 rounded-md border border-px", result ? "bg-green/10 border-green/30" : "bg-destructive/10 border-destructive/30")}>
                                 <p className="text-xl text-white font-medium font-mono">{result ? dictionary.game.youWon : dictionary.game.youFailed}</p>
@@ -64,7 +76,7 @@ export default function Scoreboard() {
                                 });
 
                                 for (const [index, player] of sortedPlayers.entries()) {
-                                    const status: { variant: StatusPastilleVariant; label: string } = player.passedChallenge === true
+                                    const status: { variant: StatusDotVariant; label: string } = player.passedChallenge === true
                                         ? { variant: "success", label: dictionary.game.successGame }
                                         : player.passedChallenge === null
                                         ? { variant: "inGame", label: dictionary.game.inGame }
@@ -75,13 +87,36 @@ export default function Scoreboard() {
                                                 <span className="text-sub-text font-mono">
                                                     {index + 1}.
                                                 </span>
-                                                <div className="flex items-center space-x-4">
+                                                <div className="flex items-center gap-2">
                                                     <ProfilePicture profilePictureUrl={player.profilePictureUrl} size={12} />
                                                     <p className="font-mono text-semibold">{player.username}</p>
+                                                    {player.username !== myUsername && (
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer transition-colors duration-200">
+                                                                <EllipsisVertical className="size-5 text-white" />
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()} className="mr-2 bg-white/5 backdrop-blur-xl border border-white/10">
+                                                                <DropdownMenuItem className="hover:bg-white/10 gap-2.5" onClick={() => openModal(<ProfileModal username={player.username} />)}>
+                                                                    <User className="h-4 w-4" />
+                                                                    <span className="text-sm">{dictionary.profile.viewProfile}</span>
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem
+                                                                    className="hover:bg-white/10 gap-2.5"
+                                                                    onClick={() => openModal(
+                                                                        <ChatModal target={player.username} triggerId={Date.now()} />,
+                                                                        { variant: 'chat', preventClose: true }
+                                                                    )}
+                                                                >
+                                                                    <MessageCircleMore className="h-4 w-4" />
+                                                                    <span className="text-sm">{dictionary.profile.sendMessage}</span>
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="flex gap-2 items-center">
-                                                <StatusPastille variant={status.variant} />
+                                                <StatusDot variant={status.variant} />
                                                 <span className="text-sm text-muted-text">{status.label}</span>
                                             </div>
                                         </div>
@@ -108,7 +143,7 @@ export default function Scoreboard() {
                             )}
                         </div>
                     </TabsContent>
-                    <TabsContent value="trace" className="h-full w-full p-4">
+                    <TabsContent value="trace" className="flex-1 min-h-0 w-full overflow-hidden">
                         <Trace />
                     </TabsContent>
                 </div>
