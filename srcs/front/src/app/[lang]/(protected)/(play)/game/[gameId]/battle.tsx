@@ -11,7 +11,9 @@ import ProfilePicture from "../../../../../../components/ProfilePicture";
 import Trace from "./trace";
 import { cn } from "../../../../../../lib/utils";
 import { ScrollArea } from "../../../../../../components/ui/scroll-area";
-import StatusPastille from "../../../../../../components/StatusPastille";
+import StatusDot from "../../../../../../components/StatusDot";
+
+type BattleTab = "code" | "subject" | "trace";
 
 export default function Battle() {
   const { trace, gameId, gamePlayers, submitState, setSubmitState, selectedChallenge, remainingTries } = useGame();
@@ -19,7 +21,7 @@ export default function Battle() {
   const { dictionary } = useLanguage();
   const [code, setCode] = useState("");
   const [timeoutSeconds, setTimeoutSeconds] = useState(0);
-  const [activeTab, setActiveTab] = useState("code");
+  const [activeTab, setActiveTab] = useState<BattleTab>("code");
   const [traceNotification, setTraceNotification] = useState(false);
   const prevLengthRef = useRef(trace.length);
 
@@ -62,23 +64,33 @@ export default function Battle() {
   }, [submitState, setSubmitState]);
 
   useEffect(() => {
-    if (trace.length > prevLengthRef.current)
+    if (trace.length > prevLengthRef.current && activeTab !== "trace")
       setTraceNotification(true);
     prevLengthRef.current = trace.length;
   }, [trace.length]);
 
   return (
     <ContentWrapper title={`${dictionary.game.gameTitle} - ${shortenedGameId}`}>
-      <Tabs defaultValue="code" className="h-full w-full flex flex-col">
+      <Tabs
+        defaultValue="code"
+        className="h-full w-full flex flex-col"
+        value={activeTab}
+        onValueChange={(v) => {
+          const newTab = v as BattleTab;
+          setActiveTab(newTab);
+          if (newTab === "trace")
+            setTraceNotification(false);
+        }}
+      >
         <div className="flex-wrap gap-2 flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
           <TabsList className="flex gap-2">
-              <TabsTrigger value="code" onClick={() => setActiveTab("code")}>
+              <TabsTrigger value="code">
                 {dictionary.game.codeTab}
               </TabsTrigger>
-              <TabsTrigger value="subject" onClick={() => setActiveTab("subject")}>
+              <TabsTrigger value="subject">
                 {dictionary.game.subjectTab}
               </TabsTrigger>
-              <TabsTrigger className={cn("!relative", traceNotification ?  "animate-pulse bg-primary/20" : "")} value="trace" onClick={() => { setActiveTab("trace"); setTraceNotification(false); }}>
+              <TabsTrigger className={cn("!relative", traceNotification ?  "animate-pulse bg-primary/20" : "")} value="trace">
                 {dictionary.game.traceTab}
                 {traceNotification &&
                   <div className="absolute top-[-4px] right-[-4px] h-2.5 w-2.5 rounded-full flex items-center justify-center bg-primary/20">
@@ -92,8 +104,8 @@ export default function Battle() {
           </Button>
         </div>
 
-        <div className="flex-1 min-h-0 p-4 flex">
-          <TabsContent value="code" className="flex-1 w-full">
+        <div className="flex-1 min-h-0 flex">
+          <TabsContent value="code" className="flex-1 w-full p-4">
             <Editor
               height="100%"
               width="100%"
@@ -107,7 +119,7 @@ export default function Battle() {
               }}
             />
           </TabsContent>
-          <TabsContent value="subject" className="flex-1 min-h-0 w-full flex flex-col border border-px border-white/10 rounded-md overflow-hidden">
+          <TabsContent value="subject" className="flex-1 min-h-0 w-full flex flex-col border border-px border-white/10 rounded-md overflow-hidden p-4">
               <div className="w-full flex flex-col gap-2 bg-black/50 py-4 px-6 border-b border-px border-white/10">
                 <p className="text-sm text-white font-medium font-mono">{selectedChallenge.name}</p>
               </div>
@@ -117,7 +129,7 @@ export default function Battle() {
                 </div>
               </ScrollArea>
           </TabsContent>
-          <TabsContent value="trace" className="flex-1 w-full">
+          <TabsContent value="trace" className="flex-1 min-h-0 h-full w-full overflow-hidden">
             <Trace />
           </TabsContent>
         </div>
@@ -134,11 +146,11 @@ export default function Battle() {
                   </div>
                   <div className="pl-1 flex items-center gap-1.5">
                   {player.passedChallenge === null ? (
-                      <StatusPastille variant="inGame" />
+                      <StatusDot variant="inGame" />
                     ) : player.passedChallenge === false ? (
-                      <StatusPastille variant="fail" />
+                      <StatusDot variant="fail" />
                     ) : (
-                      <StatusPastille variant="success" />
+                      <StatusDot variant="success" />
                     )
                   }
                   </div>

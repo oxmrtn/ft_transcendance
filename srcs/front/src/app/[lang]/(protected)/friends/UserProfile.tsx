@@ -12,7 +12,8 @@ import {
 import ProfilePicture from '../../../../components/ProfilePicture';
 import { useModal } from '../../../../contexts/ModalContext';
 import { ChatModal } from '../../../../components/Chat';
-import StatusPastille from '../../../../components/StatusPastille';
+import StatusDot from '../../../../components/StatusDot';
+import ProfileModal from '../../../../components/ProfileModal';
 
 export interface UserType {
     username: string;
@@ -55,7 +56,7 @@ export default function UserProfile({
                     <p className="font-mono text-semibold">{user.username}</p>
                     {user.online !== null && (
                         <div className="flex gap-2 items-center">
-                            <StatusPastille variant={user.online ? "success" : "fail"} />
+                            <StatusDot variant={user.online ? "success" : "fail"} />
                             <p className="text-sm text-muted-text">
                                 {user.online ? dictionary.friends.online : dictionary.friends.offline}
                             </p>
@@ -64,22 +65,25 @@ export default function UserProfile({
                 </div>
             </div>
             <div className="flex gap-2">
-                <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 ">
-                    <X className="size-5 text-destructive" onClick={onRemove} />
-                </button>
                 {display === "friendsList" && (
                     <DropdownMenu>
                         <DropdownMenuTrigger className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer transition-colors duration-200">
                             <EllipsisVertical className="size-5 text-white" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()} className="mr-2 bg-white/5 backdrop-blur-xl border border-white/10">
-                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5">
+                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5" onClick={() => openModal(<ProfileModal username={user.username} />)}>
                                 <User className="h-4 w-4" />
-                                <span className="text-sm">View Profile</span>
+                                <span className="text-sm">{dictionary.profile.viewProfile}</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5" onClick={() => openModal(<ChatModal target={user.username} />, { variant: 'chat', preventClose: true })}>
+                            <DropdownMenuItem
+                                className="hover:bg-white/10 gap-2.5"
+                                onClick={() => openModal(
+                                    <ChatModal target={user.username} triggerId={Date.now()} />,
+                                    { variant: 'chat', preventClose: true }
+                                )}
+                            >
                                 <MessageCircleMore className="h-4 w-4" />
-                                <span className="text-sm">Send Message</span>
+                                <span className="text-sm">{dictionary.profile.sendMessage}</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -89,6 +93,9 @@ export default function UserProfile({
                         <Check className="size-5 text-green" onClick={onAccept} />
                     </button>
                 )}
+                <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 ">
+                    <X className="size-5 text-destructive" onClick={onRemove} />
+                </button>
             </div>
         </div>
     );

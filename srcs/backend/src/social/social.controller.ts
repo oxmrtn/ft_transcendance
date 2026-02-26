@@ -4,7 +4,6 @@ import { Controller,
 		UseGuards
 	} from '@nestjs/common';
 import { SocialService } from './social.service';
-import { SearchQueryDto } from 'src/dto/search-query.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ParseUserPipe } from '../pipes/parseUser.pipe';
 import { SocialGateway } from './social.gateway';
@@ -17,12 +16,6 @@ export class SocialController
 	constructor(private readonly socialService: SocialService,
 				private readonly socialGateway: SocialGateway,
 				private readonly prismaService: PrismaService) {}
-
-	@Get('search')
-	search(@Query() query: SearchQueryDto)
-	{
-		return this.socialService.searchUsers(query.q);
-	}
 
 	@Get('friends')
 	async getFriends(@Req() req)
@@ -70,6 +63,12 @@ export class SocialController
 	getRequest(@Req() req)
 	{
 		return this.socialService.getFriendsRequests(req.user.userId);
+	}
+
+	@Get('profile/:username')
+	getUserProfile(@Req() req, @Param('username') username: string)
+	{
+		return this.socialService.getUserProfile(username, req.user.userId);
 	}
 }
 

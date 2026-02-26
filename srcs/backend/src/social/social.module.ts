@@ -11,7 +11,7 @@ import { SocialGateway } from './social.gateway';
 	providers: [
 		SocialService,
 		TokenStrat,
-	SocialGateway
+		SocialGateway
 	],
 	controllers: [SocialController],
 	exports: [SocialService],

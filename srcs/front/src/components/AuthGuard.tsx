@@ -3,6 +3,7 @@
 import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Loader2Icon } from "lucide-react"
 
 export default function AuthGuard({
@@ -14,15 +15,16 @@ export default function AuthGuard({
 }) {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
+  const { lang } = useLanguage();
 
   useEffect(() => {
     if (!isLoading) {
       if (supposelyAuth && isAuthenticated)
-        router.push('/');
+        router.push(`/${lang}`);
       else if (!supposelyAuth && !isAuthenticated)
-        router.push('/login');
+        router.push(`/${lang}/login`);
     }
-  }, [isAuthenticated, isLoading, router, supposelyAuth]);
+  }, [isAuthenticated, isLoading, router, supposelyAuth, lang]);
 
   if (isLoading || (supposelyAuth && isAuthenticated) || (!supposelyAuth && !isAuthenticated)) {
     return (

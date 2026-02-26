@@ -66,46 +66,58 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	private async handleOnlineUser(user : any)
 	{
-		const friends = await this.socialService.getFriendsId(user.userId);
+		try {
+			const friends = await this.socialService.getFriendsId(user.userId);
 
-		friends.forEach(friend =>
-		{
-			this.server.to(`user_${friend.id}`).emit('user-status', {
-				username: user.username,
-				status: true
+			friends.forEach(friend =>
+			{
+				this.server.to(`user_${friend.id}`).emit('user-status', {
+					username: user.username,
+					status: true
+				});
 			});
-		});
+		} catch (err) {
+			console.error(err);
+		}
 	}
 
 	private async handleOfflineUser(user : any)
 	{
-		const friends = await this.socialService.getFriendsId(user.userId);
-		
-		friends.forEach(friend =>
-		{
-			this.server.to(`user_${friend.id}`).emit('user-status', {
-				username: user.username,
-				status: false
+		try {
+			const friends = await this.socialService.getFriendsId(user.userId);
+
+			friends.forEach(friend =>
+			{
+				this.server.to(`user_${friend.id}`).emit('user-status', {
+					username: user.username,
+					status: false
+				});
 			});
-		});
+		} catch (err) {
+			console.error(err);
+		}
 	}
 
 	public async sendOnlineFriendStatus(userId : number)
 	{
-		const friends = await this.socialService.getFriendsId(userId);
+		try {
+			const friends = await this.socialService.getFriendsId(userId);
 
-		const friendStatus = friends.map(friend => {
-			const isOnline = this.onlineUsers.has(friend.id);
-			return { username: friend.username, status : isOnline ? true : false};
-		});
+			const friendStatus = friends.map(friend => {
+				const isOnline = this.onlineUsers.has(friend.id);
+				return { username: friend.username, status : isOnline ? true : false};
+			});
 
-		friendStatus.forEach(user => {
-			if (user.status === true)
-					this.server.to(`user_${userId}`).emit('user-status', {
-						username: user.username,
-						status: true
-					});
-		});
+			friendStatus.forEach(user => {
+				if (user.status === true)
+						this.server.to(`user_${userId}`).emit('user-status', {
+							username: user.username,
+							status: true
+						});
+			});
+		} catch (err) {
+			console.error(err);
+		}
 	}
 
 	public newFriendship(user1: any, user2: any)

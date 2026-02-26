@@ -11,8 +11,10 @@ import { API_URL } from '../lib/utils';
 import Button from './ui/Button';
 import { toast } from 'sonner';
 
+const MAX_SIZE_BYTES = 10 * 1024 * 1024;
+
 export default function SettingsModal() {
-  const { username: actualUsername, email: actualEmail, profilePictureUrl: actualProfilePictureUrl, token, login } = useAuth();
+  const { username: actualUsername, email: actualEmail, profilePictureUrl: actualProfilePictureUrl, token, setProfile, logout } = useAuth();
   const { dictionary } = useLanguage();
   const { closeModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +28,16 @@ export default function SettingsModal() {
     const file = e.target.files?.[0];
     
     if (file) {
+      if (file.size > MAX_SIZE_BYTES) {
+        toast.error(dictionary.settings.pictureSizeError);
+        return;
+      }
+
+      if (file.type !== "image/jpeg" && file.type !== "image/png") {
+        toast.error(dictionary.settings.pictureFormatError);
+        return;
+      }
+
       setProfilePicture(file);
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
@@ -61,16 +73,22 @@ export default function SettingsModal() {
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error(response.statusText || dictionary.settings.unexpectedError);
+      if (response.status === 401) {
+        setIsLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired);
+        return;
       }
+
+      if (!response.ok)
+        toast.error(response.statusText || dictionary.common.errorOccurred);
+
       const data = await response.json();
-      
-      if (data.token) {
-        login(data.token);
-      } else {
-        throw new Error(dictionary.settings.unexpectedError);
-      }
+      setProfile({
+        username: data.username,
+        email: data.email,
+        profilePictureUrl: data.profilePictureUrl ?? null,
+      });
 
       toast.success(dictionary.settings.profileUpdated);
       setUsername("");
@@ -92,16 +110,16 @@ export default function SettingsModal() {
   }, [previewUrl]);
 
   return (
-    <div className="w-[380px] bg-modal-bg rounded-xl border border-white/10 shadow-[0_0_30px] shadow-black/70 overflow-hidden">
-      <div className="bg-white/5 flex flex items-center justify-between px-4 py-2 relative border-b border-white/10">
+    <div className="w-[400px] sm:w-[440px] md:w-[520px] gradient-background rounded-xl border border-white/10 shadow-[0_0_40px] shadow-black/80 overflow-hidden">
+      <div className="bg-black/40 flex items-center justify-between px-5 py-3 relative border-b border-white/10">
         <h1>{dictionary.settings.title}</h1>
         <button className="p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer transition-colors duration-200" onClick={closeModal}>
           <X className="size-6" />
         </button>
         <div className="grid-gradient absolute top-0 left-0 w-full h-full"></div>
       </div>
-      <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-4">
-        <div className="flex items-center gap-4">
+      <form onSubmit={handleSubmit} className="p-5 flex flex-col gap-5">
+        <div className="flex items-center gap-4 border border-white/10 rounded-lg bg-black/30 px-4 py-3">
           <FileInput
             id="profile-picture-input"
             previewUrl={previewUrl}
@@ -112,36 +130,40 @@ export default function SettingsModal() {
             <p className="text-sm text-muted-text">{dictionary.settings.profilePictureHint}</p>
           </div>
         </div>
-        <div className="flex flex-col">
-          <TextInput
-            placeholder={actualUsername || ""}
-            label={dictionary.settings.username}
-            id="username-input"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-          />
+        <div className="border border-white/10 rounded-lg bg-black/20 px-4 py-4 flex flex-col gap-3">
+          <div className="flex flex-col md:flex-row md:gap-3 gap-3">
+            <div className="flex-1 flex flex-col">
+              <TextInput
+                placeholder={actualUsername || ""}
+                label={dictionary.settings.username}
+                id="username-input"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+              />
+            </div>
+            <div className="flex-1 flex flex-col">
+              <TextInput
+                placeholder={actualEmail || ""}
+                label={dictionary.settings.email}
+                id="email-input"
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <TextInput
+              placeholder={dictionary.settings.newPasswordPlaceholder}
+              label={dictionary.settings.password}
+              id="password-input"
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+          </div>
         </div>
-        <div className="flex flex-col">
-          <TextInput
-            placeholder={actualEmail || ""}
-            label={dictionary.settings.email}
-            id="email-input"
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="flex flex-col">
-          <TextInput
-            placeholder={dictionary.settings.newPasswordPlaceholder}
-            label={dictionary.settings.password}
-            id="password-input"
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
-        </div>
-        <Button fullWidth={true} disabled={isLoading} type="submit" variant="primary">
+        <Button fullWidth={true} disabled={isLoading} type="submit" variant="primary" >
           {isLoading ? dictionary.settings.loading : dictionary.settings.update}
         </Button>
       </form>

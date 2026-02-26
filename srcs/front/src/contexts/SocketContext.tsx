@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 import { useAuth } from "./AuthContext";
+import { useLanguage } from "./LanguageContext";
 import { toast } from "sonner";
 import { useRef } from "react";
 
@@ -28,7 +29,8 @@ interface SocketContextType {
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
 function SocketProvider({ children }: { children: React.ReactNode }) {
-    const { isAuthenticated, token } = useAuth();
+    const { isAuthenticated, token, logout } = useAuth();
+    const { dictionary } = useLanguage();
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
@@ -60,7 +62,7 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
             setUnreadMessagesCount(unreadMessagesCountRef.current + 1);
         setMessages((prevMessages) => {
             const updatedMessages = [...prevMessages, newMessage];
-            return updatedMessages.slice(-20); 
+            return updatedMessages.slice(-100);
         });
     };
 
@@ -91,7 +93,12 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
         });
 
         newSocket.on("error", (error: any) => {
-            toast.error(error.message);
+            if (error?.message === "session-expired") {
+                logout();
+                toast.error(dictionary.common.sessionExpired);
+            } else {
+                toast.error(error?.message || "Socket error");
+            }
         });
 
         setSocket(newSocket);
