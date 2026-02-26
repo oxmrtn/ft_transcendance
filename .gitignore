@@ -1,6 +1,11 @@
 srcs/backend/dist
 srcs/backend/node_modules
 srcs/backend/pictures/*.jpg
+srcs/backend/results/*
+srcs/backend/submissions/*
+
+srcs/sandbox/tester/submissions/*
+srcs/sandbox/tester/results/*
 
 srcs/front/.next
 srcs/front/node_modules

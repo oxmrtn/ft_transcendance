@@ -1,18 +1,25 @@
 
 
-import { cn } from '../lib/utils';
+import { cn } from '../../../../lib/utils';
 import { X, User, EllipsisVertical, MessageCircleMore, Check } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '../../../../contexts/LanguageContext';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "./ui/dropdown-menu"
-import ProfilePicture from './ProfilePicture';
-import { useModal } from '../contexts/ModalContext';
-import { ChatModal } from './Chat';
-import type { UserType } from '../types';
+} from "../../../../components/ui/dropdown-menu"
+import ProfilePicture from '../../../../components/ProfilePicture';
+import { useModal } from '../../../../contexts/ModalContext';
+import { ChatModal } from '../../../../components/Chat';
+import StatusDot from '../../../../components/StatusDot';
+import ProfileModal from '../../../../components/ProfileModal';
+
+export interface UserType {
+    username: string;
+    profilePictureUrl: string | null;
+    online: boolean | null;
+}
 
 export default function UserProfile({
     user,
@@ -41,26 +48,16 @@ export default function UserProfile({
 
     return (
         <div className={cn(
-            "w-full flex items-center justify-between py-2 px-4 gap-4 transition-colors duration-200 hover:bg-white/5",
+            "w-full flex items-center justify-between py-3 px-4 gap-4 transition-colors duration-200 hover:bg-white/5",
         )}>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-4">
                 <ProfilePicture profilePictureUrl={user.profilePictureUrl} size={12} />
                 <div className="flex flex-col justify-evenly">
                     <p className="font-mono text-semibold">{user.username}</p>
                     {user.online !== null && (
                         <div className="flex gap-2 items-center">
-                            <div className={cn(
-                                "h-2.5 w-2.5 rounded-full flex items-center justify-center",
-                                user.online ? "bg-green/20" : "bg-destructive/30"
-                            )}>
-                                <div className={cn(
-                                    "h-1.5 w-1.5 rounded-full",
-                                    user.online ? "bg-green" : "bg-destructive"
-                                )}></div>
-                            </div>
-                            <p className={cn(
-                                "text-sm text-muted-text"
-                            )}>
+                            <StatusDot variant={user.online ? "success" : "fail"} />
+                            <p className="text-sm text-muted-text">
                                 {user.online ? dictionary.friends.online : dictionary.friends.offline}
                             </p>
                         </div>
@@ -68,22 +65,25 @@ export default function UserProfile({
                 </div>
             </div>
             <div className="flex gap-2">
-                <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 ">
-                    <X className="size-5 text-destructive" onClick={onRemove} />
-                </button>
                 {display === "friendsList" && (
                     <DropdownMenu>
                         <DropdownMenuTrigger className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-white/10 cursor-pointer transition-colors duration-200">
                             <EllipsisVertical className="size-5 text-white" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent onCloseAutoFocus={(e) => e.preventDefault()} className="mr-2 bg-white/5 backdrop-blur-xl border border-white/10">
-                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5">
+                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5" onClick={() => openModal(<ProfileModal username={user.username} />)}>
                                 <User className="h-4 w-4" />
-                                <span className="text-sm">View Profile</span>
+                                <span className="text-sm">{dictionary.profile.viewProfile}</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="hover:bg-white/10 gap-2.5" onClick={() => openModal(<ChatModal target={user.username} />, { variant: 'chat', preventClose: true })}>
+                            <DropdownMenuItem
+                                className="hover:bg-white/10 gap-2.5"
+                                onClick={() => openModal(
+                                    <ChatModal target={user.username} triggerId={Date.now()} />,
+                                    { variant: 'chat', preventClose: true }
+                                )}
+                            >
                                 <MessageCircleMore className="h-4 w-4" />
-                                <span className="text-sm">Send Message</span>
+                                <span className="text-sm">{dictionary.profile.sendMessage}</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -93,6 +93,9 @@ export default function UserProfile({
                         <Check className="size-5 text-green" onClick={onAccept} />
                     </button>
                 )}
+                <button className="flex items-center justify-center p-1 bg-white/0 rounded-md hover:bg-destructive/20 cursor-pointer transition-colors duration-200 ">
+                    <X className="size-5 text-destructive" onClick={onRemove} />
+                </button>
             </div>
         </div>
     );

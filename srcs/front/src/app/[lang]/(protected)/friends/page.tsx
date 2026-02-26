@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Users } from 'lucide-react';
 import ContentWrapper from '../../../../components/ContentWrapper';
 import { useSocket } from '../../../../contexts/SocketContext';
 import { useLanguage } from '../../../../contexts/LanguageContext';
@@ -9,15 +8,13 @@ import { useAuth } from '../../../../contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../components/ui/tabs"
 import { TextInput } from '../../../../components/ui/Input';
 import Button from '../../../../components/ui/Button';
-import { FriendsSkeleton } from '../../../../components/ui/skeleton';
-import Pagination from '../../../../components/ui/pagination';
-import UserProfile from '../../../../components/UserProfile';
+import FriendsListTab from './FriendsListTab';
+import { UserType } from './UserProfile';
 import { toast } from 'sonner';
 import { API_URL } from '../../../../lib/utils';
-import type { UserType } from '../../../../types';
 
 export default function Page() {
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const { socket } = useSocket();
   const { dictionary } = useLanguage();
   const [isLoading, setLoading] = useState(false);
@@ -25,19 +22,6 @@ export default function Page() {
   const [friends, setFriends] = useState<UserType[]>([]);
   const [pending, setPending] = useState<UserType[]>([]);
   const [searchFriend, setSearchFriend] = useState("");
-  const [friendsPage, setFriendsPage] = useState(1);
-  const [pendingPage, setPendingPage] = useState(1);
-  const itemsPerPage = 7;
-
-  const totalFriendsPages = Math.ceil(friends.length / itemsPerPage) || 1;
-  const startFriendsIndex = (friendsPage - 1) * itemsPerPage;
-  const endFriendsIndex = startFriendsIndex + itemsPerPage;
-  const displayedFriends = friends.slice(startFriendsIndex, endFriendsIndex);
-
-  const totalPendingPages = Math.ceil(pending.length / itemsPerPage) || 1;
-  const startPendingIndex = (pendingPage - 1) * itemsPerPage;
-  const endPendingIndex = startPendingIndex + itemsPerPage;
-  const displayedPending = pending.slice(startPendingIndex, endPendingIndex);
 
   const fetchFriends = async () => {
     setLoading(true);
@@ -51,6 +35,13 @@ export default function Page() {
           "Authorization": `Bearer ${token}`
         }
       });
+
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired);
+        return;
+      }
 
       const data = await response.json();
       if (!response.ok) {
@@ -84,6 +75,13 @@ export default function Page() {
         }
       });
 
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired);
+        return;
+      }
+
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || dictionary.common.errorOccurred);
@@ -114,6 +112,13 @@ export default function Page() {
         }
       });
 
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired, { id: toastId });
+        return;
+      }
+
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || dictionary.common.errorOccurred);
@@ -142,6 +147,13 @@ export default function Page() {
           "Authorization": `Bearer ${token}`
         }
       });
+
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired, { id: toastId });
+        return;
+      }
 
       const data = await response.json();
       if (!response.ok) {
@@ -175,6 +187,13 @@ export default function Page() {
           "Authorization": `Bearer ${token}`
         }
       });
+
+      if (response.status === 401) {
+        setLoading(false);
+        logout();
+        toast.error(dictionary.common.sessionExpired, { id: toastId });
+        return;
+      }
 
       const data = await response.json();
       if (!response.ok) {
@@ -219,9 +238,9 @@ export default function Page() {
 
   return (
     <ContentWrapper title={dictionary.friends.title}>
-      <Tabs defaultValue="friends" className="h-full w-full flex">
+      <Tabs defaultValue="friends" className="h-full w-full flex flex-col">
 
-        <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
+        <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10 gap-2 flex-wrap">
           <TabsList className="flex gap-2">
             <TabsTrigger value="friends" onClick={() => { fetchFriends() }}>
               {dictionary.friends.friendsTab}
@@ -232,7 +251,7 @@ export default function Page() {
           </TabsList>
           <form className="flex gap-2" onSubmit={e => { e.preventDefault(); sendFriendRequest(searchFriend) }}>
             <TextInput
-              customWidth="w-[191px]"
+              customWidth="w-[135px]"
               placeholder={dictionary.friends.searchPlaceholder}
               id="search-friend"
               onChange={e => setSearchFriend(e.target.value)}
@@ -243,77 +262,27 @@ export default function Page() {
           </form>
         </div>
 
-        <TabsContent value="friends" className="flex-1 flex flex-col">
-          <div className="flex-1">
-            {isLoading ? (
-              <FriendsSkeleton isFriends={true} />
-            ) : error ? (
-              <div className="h-full w-full flex items-center justify-center">
-                <p className="text-sm text-red-400">{error}</p>
-              </div>
-            ) : friends.length === 0 ? (
-              <div className="h-full w-full flex items-center justify-center flex flex-col gap-2 w-fit w-fit">
-                <Users size="50" />
-                <p className="text-sub-text">{dictionary.friends.noFriends}</p>
-              </div>
-            ) : (
-              <div className="h-full w-full flex flex-col py-2.5 gap-0.5">
-                {displayedFriends.map((friend, index) => (
-                  <UserProfile
-                    user={friend}
-                    display="friendsList"
-                    key={index}
-                    onRemove={() => { removeFriend(friend.username) }}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="flex justify-center py-2 border-t border-px border-white/10">
-            <Pagination
-              currentPage={friendsPage}
-              totalPages={totalFriendsPages}
-              onPageChange={setFriendsPage}
-            />
-          </div>
+        <TabsContent value="friends" className="flex-1 min-h-0 flex flex-col">
+          <FriendsListTab
+            variant="friends"
+            users={friends}
+            isLoading={isLoading}
+            error={error}
+            emptyMessage={dictionary.friends.noFriends}
+            onRemove={removeFriend}
+          />
         </TabsContent>
 
-        <TabsContent value="pending" className="flex-1 flex flex-col">
-          <div className="flex-1">
-            {isLoading ? (
-              <FriendsSkeleton />
-            ) : error ? (
-              <div className="h-full w-full flex items-center justify-center">
-                <p className="text-sm text-red-400">{error}</p>
-              </div>
-            ) : pending.length === 0 ? (
-              <div className="h-full w-full flex items-center justify-center flex flex-col gap-2 w-fit w-fit">
-                <Users size="50" />
-                <p className="text-sub-text">{dictionary.friends.noPending}</p>
-              </div>
-            ) : (
-              <div className="h-full w-full flex flex-col justify-between py-2">
-                {displayedPending.map((pendingRequest, index) => (
-                  <UserProfile
-                    user={pendingRequest}
-                    display="pendingList"
-                    key={index}
-                    onAccept={() => { handlePendingRequest(pendingRequest.username, true) }}
-                    onRemove={() => { handlePendingRequest(pendingRequest.username, false) }}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="flex justify-center py-2 border-t border-px border-white/10">
-            <Pagination
-              currentPage={pendingPage}
-              totalPages={totalPendingPages}
-              onPageChange={setPendingPage}
-            />
-          </div>
+        <TabsContent value="pending" className="flex-1 min-h-0 flex flex-col">
+          <FriendsListTab
+            variant="pending"
+            users={pending}
+            isLoading={isLoading}
+            error={error}
+            emptyMessage={dictionary.friends.noPending}
+            onRemove={(username) => handlePendingRequest(username, false)}
+            onAccept={(username) => handlePendingRequest(username, true)}
+          />
         </TabsContent>
 
       </Tabs>

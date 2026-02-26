@@ -18,17 +18,17 @@ export default function LanguageSelector() {
     
     return (
         <Select onValueChange={changeLanguage} defaultValue={lang}>
-        <SelectTrigger className="bg-white/5 border border-white/10 w-[164px] transition-colors duration-200 cursor-pointer
-        hover:bg-white/10">
+          <SelectTrigger className="w-[164px]">
             <SelectValue placeholder="" />
-        </SelectTrigger>
-        <SelectContent className="bg-white/5 backdrop-blur-xl border border-white/10">
+          </SelectTrigger>
+          <SelectContent>
             <SelectGroup>
-            <SelectLabel>{dictionary.footer.languageSelector}</SelectLabel>
-            <SelectItem value="en">English</SelectItem>
-            <SelectItem value="fr">Français</SelectItem>
+              <SelectLabel>{dictionary.footer.languageSelector}</SelectLabel>
+              <SelectItem value="en">{dictionary.footer.languageEnglish}</SelectItem>
+              <SelectItem value="fr">{dictionary.footer.languageFrench}</SelectItem>
+              <SelectItem value="se">{dictionary.footer.languageSwedish}</SelectItem>
             </SelectGroup>
-        </SelectContent>
+          </SelectContent>
         </Select>
     );
 }

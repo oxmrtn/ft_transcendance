@@ -13,16 +13,119 @@ import { UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { WsJwtGuard } from "src/auth/wsjwt/wsjwt.guard";
 import { codeSubmitDto } from "src/dto/code-submit.dto";
 import { gameIdDto } from "src/dto/game-id.dto";
+import { KickPlayerDto } from "src/dto/kick-player.dto";
+import { connected } from "node:process";
 import { PrismaService } from "prisma/prisma.service";
+import { waitForDebugger } from "node:inspector";
+import { StartGameDto } from "src/dto/start-game.dto";
+import { submitCode } from "src/submission/submitCode";
+
+interface Challenge {
+	name: string;
+	description: string;
+}
+
+interface PlayerInfos {
+	passedChallenge: boolean | null;
+	remainingTries: number;
+	lastSubmitTime: Date | null;
+}
+
+export interface CodeResult {
+	trace: string;
+	result: boolean;
+}
+
+type GameState = "waiting" | "playing" | "finished";
+
+const BASE_SUBMIT_TIMEOUT_SECONDS = 15;
+const BASE_REMAINING_TRIES = 3;
+
+const CHALLENGES : Challenge[] = [
+	{
+		name: "strlen",
+		description: `Assignment name  : ft_strlen
+Allowed functions: none
+-------------------------------------------------------------------------------
+
+Write a function named ft_strlen that takes a string as a parameter and returns
+its length.
+
+The length of a string is the number of characters that precede the terminating
+NUL character.
+
+Your function must be declared as follows:
+
+int ft_strlen(char *str);`
+	},
+	{
+		name: "pyramyd",
+		description: `Assignment name  : pyramyd
+Allowed functions: write
+-------------------------------------------------------------------------------
+
+Write a function named pyramid that takes an integer 'size' as a parameter and
+displays a left-aligned half-pyramid of '*' characters on the standard output.
+The 'size' parameter represents the number of rows of the pyramid.
+Your function must be declared as follows:
+void pyramid(int size);
+-------------------------------------------------------------------------------
+
+Examples:
+If size is 2, the expected output is:
+*
+**
+If size is 5, the expected output is:
+*
+**
+***
+****
+*****`
+	},
+	{
+		name: "min_range",
+		description: `Assignment name  : min_range
+Allowed functions: none
+-------------------------------------------------------------------------------
+
+Write a function named min_range that takes an array of integers and its length
+as parameters, and returns the minimum absolute difference between any two
+elements in the array.
+
+If the array's length is less than 2, the function must return 0.
+
+Your function must be declared as follows:
+
+unsigned int min_range(int *arr, unsigned int len);
+-------------------------------------------------------------------------------
+Allowed functions: none
+-------------------------------------------------------------------------------
+
+Write a function named min_range that takes an array of integers and its length
+as parameters, and returns the minimum absolute difference between any two
+elements in the array.
+
+If the array's length is less than 2, the function must return 0.
+
+Your function must be declared as follows:
+
+unsigned int min_range(int *arr, unsigned int len);
+-------------------------------------------------------------------------------
+Examples:
+If arr is {1, 5, 12, 18, 9} and len is 5, the expected output is 4
+(because the absolute difference between 5 and 9 is 4, which is the minimum).
+
+If arr is {3} and len is 1, the expected output is 0.`
+	}
+];
 
 class GameSession {
 	public playerNumber : number;
 	public gameId : string;
-	public roomPlayers: Set<number>;
-	public gamePlayers: Set<number>;
-	public playerSubmitMap: Map<number, number>;
-	public isStarted: boolean;
+	public players: Map<number, PlayerInfos>;
+	public gameState: GameState;
 	public creatorId: number;
+	public selectedChallenge: Challenge;
 	
 	constructor (gameId: string, playerNumber: number)
 	{
@@ -87,36 +190,21 @@ If arr is {1, 5, 12, 18, 9} and len is 5, the expected output is 4 \n\
 		if (this.clientToRoom.has(userId))
 			this.clientToRoom.delete(userId);
 
-		if (currentGame.gamePlayers.has(userId))
-			currentGame.gamePlayers.delete(userId);
+		if (currentGame.players.has(userId))
+			currentGame.players.delete(userId);
 
-		if (currentGame.gamePlayers.size === 1 && currentGame.isStarted)
-		{
-			const winnerId = Array.from(currentGame.gamePlayers)[0];
-			this.server.to(`game_${gameId}`).emit('game-info', {
-				event: 'results',
-				winner: winnerId
-			});
-			currentGame.gamePlayers.clear();
-		}
-
-		if (currentGame.roomPlayers.has(userId))
-			currentGame.roomPlayers.delete(userId);
-
-		if (!currentGame.roomPlayers.size)
+		if (!currentGame.players.size)
 			this.gameSessions.delete(gameId);
 
-		this.server.to(`game_${gameId}`).emit('game-info', {
-			event: 'room-status',
-			roomPlayers: Array.from(currentGame.roomPlayers),
-			gamePlayers: Array.from(currentGame.gamePlayers),
-			playerNumber: currentGame.playerNumber,
-			gameId: currentGame.gameId
-		});
+		const inGameIds = this.getInGamePlayerIds(currentGame);
+		if (inGameIds.length === 0 && currentGame.gameState === "playing")
+			currentGame.gameState = "finished";
+
+		this.notifyGameStatus(currentGame);
 	}
 
 	@SubscribeMessage('create-room')
-	createGameRoom(@ConnectedSocket() client: Socket)
+	async createGameRoom(@ConnectedSocket() client: Socket)
 	{
 		const playerNumber = 4;
 		const gameId = randomUUID();
@@ -132,21 +220,20 @@ If arr is {1, 5, 12, 18, 9} and len is 5, the expected output is 4 \n\
 
 		const currentGame = this.gameSessions.get(gameId);
 		
-		currentGame.roomPlayers = new Set();
-		currentGame.roomPlayers.add(userId);
-		currentGame.gamePlayers = new Set();
+		currentGame.players = new Map();
+		currentGame.players.set(userId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 		this.clientToRoom.set(userId, gameId);
 		currentGame.creatorId = userId;
-		currentGame.isStarted = false;
-		currentGame.playerSubmitMap = new Map();
+		currentGame.gameState = "waiting";
 
 		client.join(`game_${gameId}`);
 
-		this.notifyGameStatus(client, 'room-created');
+		await this.notifyGameStatus(currentGame);
+		client.emit('game-info', { event: 'room-created', gameId: gameId, availableChallenges: CHALLENGES.map((c) => c.name) });
 	}
 
 	@SubscribeMessage('join-room')
-	handleJoinGame(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
+	async handleJoinGame(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
 	{
 		const gameId = payload.gameId;
 		const user = client.data.user;
@@ -158,216 +245,265 @@ If arr is {1, 5, 12, 18, 9} and len is 5, the expected output is 4 \n\
 			return;
 		}
 
-		if (currentGame.roomPlayers.has(user.userId))
+		if (currentGame.players.has(user.userId))
 		{
-			this.errorMessage(client, `${user.username} already join this room!`);
+			this.errorMessage(client, `You already join this room!`);
 			return;
 		}
 
 		if (this.clientToRoom.has(user.userId))
 		{
-			this.errorMessage(client, `${user.username} already join another Room!`);
+			this.errorMessage(client, `You already join another Room!`);
+			return;
+		}
+
+		if (currentGame.gameState !== "waiting")
+		{
+			this.errorMessage(client, `This game has already started!`);
 			return;
 		}
 		
-		client.join(`game_${gameId}`);
-
-		if (currentGame.roomPlayers.size >= currentGame.playerNumber)
+		if (currentGame.players.size + 1 >= currentGame.playerNumber)
 		{
 			this.errorMessage(client, `This room is already full!`);
 			return;
 		}
 
-		currentGame.roomPlayers.add(user.userId);
+		client.join(`game_${gameId}`);
+		currentGame.players.set(user.userId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 		this.clientToRoom.set(user.userId, gameId);
 
-		this.notifyGameStatus(client, 'room-joined');
+		await this.notifyGameStatus(currentGame);
+		client.emit('game-info', { event: 'room-joined', gameId: gameId });
+	}
+
+	@SubscribeMessage('kick-player')
+	async kickPlayer(@ConnectedSocket() client: Socket, @MessageBody() payload: KickPlayerDto)
+	{
+		const userId = client.data.user.userId;
+		const currentGame = this.gameSessions.get(this.clientToRoom.get(userId));
+		const targetUsername = payload.targetUsername;
+		const targetUser = await this.prismaService.user.findUnique({ where: { username: targetUsername }, select: { id: true } });
+
+		if (!currentGame)
+		{
+			this.errorMessage(client, `You are not in a room!`);
+			return;
+		}
+
+		if (currentGame.gameState !== "waiting")
+		{
+			this.errorMessage(client, `This game has already started!`);
+			return;
+		}
+
+		if (!currentGame.players.has(userId) || userId !== currentGame.creatorId)
+		{
+			this.errorMessage(client, `You are not allowed to kick players!`);
+			return;
+		}
+
+		if (!targetUser)
+		{
+			this.errorMessage(client, `User ${targetUsername} not found!`);
+			return;
+		}
+
+		if (!currentGame.players.has(targetUser.id))
+		{
+			this.errorMessage(client, `User ${targetUsername} is not in this room!`);
+			return;
+		}
+
+		if (targetUser.id === userId)
+		{
+			this.errorMessage(client, `You can't kick yourself!`);
+			return;
+		}
+
+		currentGame.players.delete(targetUser.id);
+		this.clientToRoom.delete(targetUser.id);
+
+		await this.notifyGameStatus(currentGame);
+		this.server.to(`user_${targetUser.id}`).emit('game-info', { event: 'room-kicked' });
 	}
 
 	@SubscribeMessage('leave-room')
-	async leaveRoom(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
+	async leaveRoom(@ConnectedSocket() client: Socket)
 	{
-		const gameId = payload.gameId;
-		const user = client.data.user;
+		const userId = client.data.user.userId;
+		const gameId = this.clientToRoom.get(userId);
 		const currentGame = this.gameSessions.get(gameId);
 
 		if (!currentGame)
-		{
-			this.errorMessage(client, `${gameId} room doesn\'t exist!`);
 			return;
-		}
-
-		if (!currentGame.roomPlayers.has(user.userId))
-		{
-			this.errorMessage(client, ` There is no user ${user.username} in this room!`);
-			return;
-		}
 
 		client.leave(`game_${gameId}`);
+		client.emit('game-info', { event: 'room-left' });
 
-		currentGame.roomPlayers.delete(user.userId);
-		this.clientToRoom.delete(user.userId);
+		currentGame.players.delete(userId);
+		this.clientToRoom.delete(userId);
 
-		if(currentGame.gamePlayers.has(user.userId))
-			currentGame.gamePlayers.delete(user.userId);
-
-		if (!currentGame.roomPlayers.size)
+		if (!currentGame.players.size)
 			this.gameSessions.delete(gameId);
-		else
-		{
-			const roomPlayerArray = Array.from(currentGame.roomPlayers);		
-			const roomPlayerByName = await this.prismaService.user.findMany({ where: { id: { in: roomPlayerArray } }, select: { username : true, profilePictureUrl : true } });
-
-			const gamePlayerArray = Array.from(currentGame.gamePlayers);
-			const gamePlayerByName = await this.prismaService.user.findMany({ where: { id: { in: gamePlayerArray } }, select: { username : true } });
-			const gamePlayerArrayByName = gamePlayerByName.map(user => user.username);
-
-			this.server.to(`game_${currentGame.gameId}`).emit('game-info', {
-				event: 'room-left',
-				roomPlayers: roomPlayerByName,
-				gamePlayers: gamePlayerArrayByName,
-				gameId: currentGame.gameId
-			});
+		else {
+			if (userId === currentGame.creatorId)
+				currentGame.creatorId = Array.from(currentGame.players.keys())[0];
+			this.notifyGameStatus(currentGame);
 		}
-	}
-
-	@SubscribeMessage('join-game')
-	launchBattle(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
-	{
-		const gameId = payload.gameId;
-		const user = client.data.user;
-		const currentGame = this.gameSessions.get(gameId);
-
-		if (!currentGame)
-		{
-			this.errorMessage(client, `Room ${gameId} doesn\'t exist!`);
-			return;
-		}
-
-		if (currentGame.gamePlayers.has(user.userId))
-		{
-			this.errorMessage(client, `${user.username} already joined this Battle!`);
-			return;
-		}
-
-		if (!currentGame.roomPlayers.has(user.userId))
-		{
-			this.errorMessage(client, `${user.userId} can't join this Battle!`);
-			return;
-		}
-
-		if (currentGame.gamePlayers.size >= currentGame.playerNumber)
-		{
-			this.errorMessage(client, `This Battle is already full!`);
-			return;
-		}
-
-		currentGame.gamePlayers.add(user.userId);
-		if (!currentGame.playerSubmitMap.has(user.userId))
-			currentGame.playerSubmitMap[user.userId] = 0;
-
-		this.notifyGameStatus(client, 'game-joined');
 	}
 
 	@SubscribeMessage('leave-game')
-	leaveGame(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
+	async leaveGame(@ConnectedSocket() client: Socket)
 	{
-		const gameId = payload.gameId;
-		const user = client.data.user;
+		const userId = client.data.user.userId;
+		const gameId = this.clientToRoom.get(userId);
+		const currentGame = gameId !== undefined ? this.gameSessions.get(gameId) : undefined;
+
+		if (!currentGame)
+		{
+			this.errorMessage(client, `You are not in a game!`);
+			return;
+		}
+
+		currentGame.players.set(userId, { passedChallenge: false, remainingTries: 0, lastSubmitTime: null });
+
+		const inGameIds = this.getInGamePlayerIds(currentGame);
+		if (inGameIds.length === 0 && currentGame.gameState === "playing")
+			currentGame.gameState = "finished";
+
+		await this.notifyGameStatus(currentGame);
+		client.emit('game-info', { event: 'game-left' });
+	}
+
+	@SubscribeMessage('start-game')
+	async startGame(@ConnectedSocket() client: Socket, @MessageBody() payload: StartGameDto)
+	{
+		const userId = client.data.user.userId;
+		const gameId = this.clientToRoom.get(userId);
 		const currentGame = this.gameSessions.get(gameId);
 
 		if (!currentGame)
 		{
-			this.errorMessage(client, `Room ${gameId} doesn\'t exist!`)
+			this.errorMessage(client, `You are not in a room!`);
 			return;
 		}
+
+		if (userId !== currentGame.creatorId)
+		{
+			this.errorMessage(client, `You can't start the game!`)
+			return;
+		}
+
+		if (currentGame.players.size < 2)
+		{
+			this.errorMessage(client, `The game need at least two players!`);
+			return;
+		}
+
+		if (currentGame.gameState !== "waiting")
+		{
+			this.errorMessage(client, `The game has already started!`);
+			return;
+		}
+
+		const challengeName = (payload.challengeName ?? "").trim();
+		const challenge = !challengeName
+			? CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)]
+			: CHALLENGES.find((c) => c.name === challengeName);
 		
-		if (!currentGame.gamePlayers.has(user.userId))
+		if (!challenge)
 		{
-			this.errorMessage(client, `There is no user ${user.username} in this Battle!`)
+			this.errorMessage(client, `Challenge "${challengeName}" not found!`);
 			return;
 		}
 
-		currentGame.gamePlayers.delete(user.userId);
-		
-		if (currentGame.gamePlayers.size === 1 && currentGame.isStarted)
-		{
-			const winnerId = Array.from(currentGame.gamePlayers)[0];
-			this.server.to(`game_${gameId}`).emit('game-info', {
-				event: 'results',
-				winner: winnerId
-			});
-			currentGame.gamePlayers.clear();
-		}
-
-		this.notifyGameStatus(client, 'game-left');
-	}
-
-	@SubscribeMessage('start-game')
-	startGame(@ConnectedSocket() client: Socket, @MessageBody() payload: gameIdDto)
-	{
-		const gameId = payload.gameId;
-		const user = client.data.user;
-		const currentGame = this.gameSessions.get(gameId);
-
-		if (user.userId !== currentGame.creatorId)
-		{
-			this.errorMessage(client, `${user.username} can't start Battle!`)
-			return;
-		}
-
-		if (currentGame.gamePlayers.size < 2)
-		{
-			this.errorMessage(client, `The battle need at least two players!`);
-			return;
-		}
-		if (currentGame.isStarted)
-		{
-			this.errorMessage(client, `The battle has already started!`);
-			return;
-		}
-
-		this.server.to(`game_${gameId}`).emit('game-info', {
-			event: 'start' ,
-			subject: GameGateway.exo_strlen//ou autre exo
+		currentGame.selectedChallenge = challenge;
+		currentGame.players.forEach((_, playerId) => {
+			currentGame.players.set(playerId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 		});
-		currentGame.isStarted = true;
+		currentGame.gameState = "playing";
+
+		await this.notifyGameStatus(currentGame);
 	}
 
 	@SubscribeMessage('code-submit')
 	async handleCodeSubmit(@ConnectedSocket() client: Socket, @MessageBody() payload: codeSubmitDto)
 	{
-		const gameId = payload.gameId;
-		const user = client.data.user;
+		const userId = client.data.user.userId;
+		const gameId = this.clientToRoom.get(userId);
 		const currentGame = this.gameSessions.get(gameId);
 
 		if (!currentGame)
 		{
-			this.errorMessage(client, `Room ${gameId} doesn\'t exist!`)
+			this.errorMessage(client, `You are not in a game!`);
+			return;
+		}
+
+		if (!currentGame.selectedChallenge)
+		{
+			this.errorMessage(client, `No challenge selected for this game yet!`);
 			return;
 		}
 		
-		if (!currentGame.gamePlayers.has(user.userId))
+		if (currentGame.gameState === "waiting")
 		{
-			this.errorMessage(client, `There is no user ${user.username} in this Battle!`)
+			this.errorMessage(client, `The game has not started yet!`);
 			return;
 		}
 
-		++currentGame.playerSubmitMap[user.userId];
+		if (currentGame.gameState === "finished")
+		{
+			this.errorMessage(client, `The game has already finished!`);
+			return;
+		}
 
-		if (currentGame.playerSubmitMap[user.userId] > 3)
+		const playerInfo = currentGame.players.get(userId);
+		if (!playerInfo)
 		{
-			this.errorMessage(client, `${user.username} can't submit code anymore!`)
-			currentGame.gamePlayers.delete(user.userID);
+			this.errorMessage(client, `You are not in this game!`);
+			return;
 		}
-		else
+
+		if (playerInfo.passedChallenge !== null)
 		{
-			client.to(`game_${gameId}`).emit('game-info', {
-				event: 'code-submit',
-				player: user.username
-			});
-			//passer le code a l'api de tests
+			this.errorMessage(client, `You have already finished this game!`);
+			return;
 		}
+
+		if (playerInfo.remainingTries <= 0)
+		{
+			this.errorMessage(client, `You can't submit code anymore!`);
+			return;
+		}
+
+		const now = new Date();
+		const timeSinceLastSubmit = now.getTime() - (playerInfo.lastSubmitTime?.getTime() ?? 0);
+		const penaltyMultiplier = BASE_REMAINING_TRIES - playerInfo.remainingTries;
+		const requiredTimeoutMs = BASE_SUBMIT_TIMEOUT_SECONDS * 1000 * penaltyMultiplier;
+		if (timeSinceLastSubmit < requiredTimeoutMs)
+		{
+			this.errorMessage(client, `You have to wait ${Math.ceil((requiredTimeoutMs - timeSinceLastSubmit) / 1000)}s before submitting again.`);
+			return;
+		}
+		playerInfo.lastSubmitTime = now;
+		playerInfo.remainingTries--;
+
+		const codeResult = await submitCode(currentGame.selectedChallenge.name, userId, payload.code);
+
+		if (playerInfo.remainingTries <= 0 && !codeResult.result)
+			playerInfo.passedChallenge = false;
+		else if (codeResult.result)
+			playerInfo.passedChallenge = true;
+
+		if (playerInfo.passedChallenge !== null) {
+			const inGameIds = this.getInGamePlayerIds(currentGame);
+			if (inGameIds.length === 0 && currentGame.gameState === "playing")
+				currentGame.gameState = "finished";
+		}
+
+		this.notifyGameStatus(currentGame);
+		client.emit('game-info', { event: 'code-result', result: codeResult.result, trace: codeResult.trace, remainingTries: playerInfo.remainingTries });
 	}
 
 	private errorMessage(@ConnectedSocket() client : Socket, msg : string)
@@ -378,26 +514,52 @@ If arr is {1, 5, 12, 18, 9} and len is 5, the expected output is 4 \n\
 		});
 	}
 
-	 private async notifyGameStatus(@ConnectedSocket() client: Socket, event: string)
+	private getInGamePlayerIds(game: GameSession): number[]
 	{
-		const userId : number = client.data.user.userId;
-		const currentGame = this.gameSessions.get(this.clientToRoom.get(userId))
+		return Array.from(game.players.entries())
+			.filter(([, info]) => info && info.passedChallenge === null)
+			.map(([id]) => id);
+	}
 
-		if (!currentGame)
-				return;
+	private async notifyGameStatus(game: GameSession)
+	{
+		if (!game)
+			return;
 
-		const roomPlayerArray = Array.from(currentGame.roomPlayers);		
-		const roomPlayerByName = await this.prismaService.user.findMany({ where: { id: { in: roomPlayerArray } }, select: { username : true, profilePictureUrl : true } });
+		const playerIds = Array.from(game.players.keys());
+		const users = await this.prismaService.user.findMany({
+			where: { id: { in: playerIds } },
+			select: { id: true, username: true, profilePictureUrl: true },
+		});
 
-		const gamePlayerArray = Array.from(currentGame.gamePlayers);
-		const gamePlayerByName = await this.prismaService.user.findMany({ where: { id: { in: gamePlayerArray } }, select: { username : true } });
-		const gamePlayerArrayByName = gamePlayerByName.map(user => user.username);
+		const players = playerIds
+			.map((id) => {
+				const user = users.find((u) => u.id === id);
+				const info = game.players.get(id);
 
-		this.server.to(`game_${currentGame.gameId}`).emit('game-info', {
-			event,
-			roomPlayers: roomPlayerByName,
-			gamePlayers: gamePlayerArrayByName,
-			gameId: currentGame.gameId
+				if (!user || !info)
+					return null;
+
+				return {
+					username: user.username,
+					profilePictureUrl: user.profilePictureUrl,
+					passedChallenge: info.passedChallenge,
+				};
+			})
+			.filter((p) => p !== null);
+
+		const creator = await this.prismaService.user.findUnique({
+			where: { id: game.creatorId },
+			select: { username: true },
+		});
+
+		this.server.to(`game_${game.gameId}`).emit('game-info', {
+			event: 'room-update',
+			players,
+			gameId: game.gameId,
+			creatorUsername: creator?.username ?? null,
+			gameState: game.gameState,
+			selectedChallenge: game.selectedChallenge,
 		});
 	}
 }
