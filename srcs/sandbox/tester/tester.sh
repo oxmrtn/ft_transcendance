@@ -26,7 +26,7 @@ if [ "$PLAYER_FILE" == "strlen"* ]; then
 	EXO_NAME="Strlen"
 elif [ "$PLAYER_FILE" == "pyramyd"* ]; then
 	TEST_FLAG="-D TEST_PYRAMYD"
-	EXO_NAME="Pyramid"
+	EXO_NAME="Pyramyd"
 elif [ "$PLAYER_FILE" == "min_range"* ]; then
 	TEST_FLAG="-D TEST_RANGE"
 	EXO_NAME="Range"
