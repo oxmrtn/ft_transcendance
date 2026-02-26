@@ -151,6 +151,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	handleDisconnect(@ConnectedSocket() client: Socket)
 	{
+		console.log("1 2 3 4")
 		const userId : number = client.data.user.userId;
 		const gameId :string = this.clientToRoom.get(userId);
 		const currentGame = this.gameSessions.get(gameId);
@@ -167,8 +168,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (this.clientToRoom.has(userId))
 			this.clientToRoom.delete(userId);
 
-		if (currentGame.players.has(userId))
-			currentGame.players.delete(userId);
+		// if (currentGame.players.has(userId))
+		//  	currentGame.players[userId].isConnected = false;
 
 		if (!currentGame.players.size)
 			this.gameSessions.delete(gameId);
@@ -222,41 +223,40 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		if (currentGame.players.has(user.userId))
-		{
-			this.errorMessage(client, `You already join this room!`);
-			return;
-		}
-
-		if (this.clientToRoom.has(user.userId))
+		if (this.clientToRoom.has(user.userId) && !currentGame.players.has(user.userId))
 		{
 			this.errorMessage(client, `You already join another Room!`);
 			return;
 		}
 
-		if (currentGame.gameState !== "waiting")
+		if (currentGame.gameState !== "waiting" && !currentGame.players.has(user.userId))
 		{
 			this.errorMessage(client, `This game has already started!`);
 			return;
 		}
 		
-		if (currentGame.players.size + 1 >= currentGame.playerNumber)
+		if (currentGame.players.size + 1 > currentGame.playerNumber && !currentGame.players.has(user.userId))
 		{
 			this.errorMessage(client, `This room is already full!`);
 			return;
 		}
 
-		client.join(`game_${gameId}`);
-		currentGame.players.set(user.userId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
+		if (!currentGame.players.has(user.userId))
+			currentGame.players.set(user.userId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
+		
 		this.clientToRoom.set(user.userId, gameId);
+		client.join(`game_${gameId}`);
+
 
 		await this.notifyGameStatus(currentGame);
 		client.emit('game-info', { event: 'room-joined', gameId: gameId });
+		console.log('players2: ', currentGame.players)
 	}
 
 	@SubscribeMessage('kick-player')
 	async kickPlayer(@ConnectedSocket() client: Socket, @MessageBody() payload: KickPlayerDto)
 	{
+		console.log("coucou");
 		const userId = client.data.user.userId;
 		const currentGame = this.gameSessions.get(this.clientToRoom.get(userId));
 		const targetUsername = payload.targetUsername;
@@ -333,6 +333,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	@SubscribeMessage('leave-game')
 	async leaveGame(@ConnectedSocket() client: Socket)
 	{
+		console.log("coucou234")
 		const userId = client.data.user.userId;
 		const gameId = this.clientToRoom.get(userId);
 		const currentGame = gameId !== undefined ? this.gameSessions.get(gameId) : undefined;
@@ -340,6 +341,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (!currentGame)
 		{
 			this.errorMessage(client, `You are not in a game!`);
+			return;
+		}
+
+		if (currentGame.gameState === 'waiting')
+		{
+			this.errorMessage(client, `You can't leave the battle white it's not started!`);
 			return;
 		}
 
