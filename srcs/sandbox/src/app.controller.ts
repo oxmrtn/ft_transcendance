@@ -23,11 +23,13 @@ export class AppController {
         await execPromise(command);
         //console.log("\n\n\nCommand executed \n\n\n");
         return {
+          success: true,
           time: timestamp
         }
     }catch(error : any)
     {
         return {
+          success: false,
           time: timestamp
         }
     }
