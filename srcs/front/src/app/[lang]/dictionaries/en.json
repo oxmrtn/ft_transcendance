@@ -35,8 +35,17 @@
   },
   "footer": {
     "languageSelector": "Select a language",
+    "languageEnglish": "English",
+    "languageFrench": "French",
+    "languageSwedish": "Swedish",
     "privacyPolicy": "Privacy policy",
     "termsOfService": "Terms of service"
+  },
+  "privacy": {
+    "title": "Privacy policy"
+  },
+  "conditions": {
+    "title": "Terms of service"
   },
   "friends": {
     "title": "friends",
@@ -44,7 +53,7 @@
     "pendingTab": "pending",
     "noFriends": "No friends added yet",
     "noPending": "No pending requests",
-    "searchPlaceholder": "Search for a player",
+    "searchPlaceholder": "Player name",
     "addButton": "add",
     "sendingRequest": "Sending friend request to",
     "requestSent": "Friend request sent to",
@@ -65,11 +74,36 @@
     "roomIdPlaceholder": "Room ID"
   },
   "game": {
-    "title": "Game",
+    "roomTitle": "Room",
+    "gameTitle": "Game",
+    "scoreboardTitle": "Scoreboard",
     "roomIdLabel": "Room ID",
-    "gameIdCopied": "Game ID copied to clipboard",
+    "gameIdCopied": "Room ID copied to clipboard",
     "leaveRoom": "Leave room",
-    "startGame": "Start game"
+    "leaveGame": "Leave game",
+    "startGame": "Start battle",
+    "startingGame": "Waiting for battle to start...",
+    "endingGame": "Battle in progress...",
+    "roomKicked": "You have been kicked from the room",
+    "abandonGame": "Abandon battle",
+    "inGame": "In game",
+    "failedGame": "Failed",
+    "successGame": "Success",
+    "youWon": "You succeeded",
+    "youFailed": "You failed",
+    "tryNumber": "Try {{number}}",
+    "noTraceAvailable": "No trace available",
+    "subjectTab": "Subject",
+    "codeTab": "Code",
+    "traceTab": "Trace",
+    "scoreboardTab": "Scoreboard",
+    "submitCode": "Submit code",
+    "waitingForResult": "Waiting for result...",
+    "retryInSeconds": "Retry in {{seconds}}s",
+    "gameEnded": "Game ended",
+    "selectChallenge": "Choose a challenge",
+    "randomChallenge": "Random",
+    "gameDisconnected": "You have been disconnected from the game"
   },
   "history": {
     "title": "history"
@@ -86,14 +120,34 @@
     "password": "Password",
     "newPasswordPlaceholder": "New password",
     "loading": "Loading...",
-    "update": "Update"
+    "update": "Update",
+    "pictureSizeError": "The picture must be less than 10MB.",
+    "pictureFormatError": "The picture must be in JPEG or PNG format."
   },
   "chat": {
     "messagePlaceholder": "Message",
     "to": "to",
-    "from": "from"
+    "from": "from",
+    "tabAll": "All",
+    "tabGlobal": "Global",
+    "tabPrivate": "Private"
+  },
+  "profile": {
+    "title": "Profile",
+    "viewProfile": "View profile",
+    "memberSince": "Member since",
+    "registeredSince": "Registered since",
+    "friendStatus": "Friendship status",
+    "friend": "Friend",
+    "pending": "Friend request pending",
+    "notFriend": "Not a friend yet",
+    "sendMessage": "Send private message",
+    "addFriendButton": "Add as friend",
+    "removeFriendButton": "Remove friend",
+    "requestAlreadySent": "Request sent"
   },
   "common": {
-    "errorOccurred": "An error occurred"
+    "errorOccurred": "An error occurred",
+    "sessionExpired": "Your session has expired. Please log in again."
   }
 }

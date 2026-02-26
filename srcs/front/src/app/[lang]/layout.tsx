@@ -14,6 +14,7 @@ import { SocketProvider } from '../../contexts/SocketContext';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Toaster from '../../components/ui/Toaster';
+import Chat from '../../components/Chat';
 
 const bebas = Bebas_Neue({
   weight: '400',
@@ -55,7 +56,7 @@ export default async function RootLayout({
 
   return (
     <html lang={lang}>
-      <body className={`${GeistSans.className} ${GeistMono.variable} ${bebas.variable}`}>
+      <body className={`${GeistSans.className} ${GeistMono.variable} ${bebas.variable} gradient-background`}>
         <AuthProvider>
           <LanguageProvider initialLang={lang} initialDictionary={dict}>
             <SocketProvider>
@@ -64,8 +65,9 @@ export default async function RootLayout({
                 <main>{children}</main>
                 <Footer />
                 <Toaster />
+                <Chat />
               </ModalProvider>
-              </SocketProvider>
+            </SocketProvider>
           </LanguageProvider>
         </AuthProvider>
       </body>

@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "title": "VersuS Code",
+    "description": "Svensk beskrivning"
+  },
+  "home": {
+    "welcome": "Välkommen!"
+  },
+  "login": {
+    "dividerText": "Logga in",
+    "emailPlaceholder": "E-post",
+    "passwordPlaceholder": "Lösenord",
+    "loginButton": "Logga in",
+    "loadingButton": "Laddar ...",
+    "noAccountText": "Inget konto?",
+    "registerLink": "Registrera dig"
+  },
+  "register": {
+    "dividerText": "Registrera dig",
+    "avatarUploadTitle": "Lägg till en profilbild",
+    "avatarUploadText": "Bilden måste vara i JPEG- eller PNG-format och får inte överstiga 10 MB.",
+    "usernamePlaceholder": "Användarnamn",
+    "emailPlaceholder": "E-post",
+    "passwordPlaceholder": "Lösenord",
+    "registerButton": "Registrera dig",
+    "loadingButton": "Laddar ...",
+    "avatarSizeError": "Filen är för stor"
+  },
+  "header": {
+    "friendsTab": "vänner",
+    "playTab": "spela",
+    "historyTab": "historik",
+    "settings": "Inställningar",
+    "logout": "Logga ut"
+  },
+  "footer": {
+    "languageSelector": "Välj språk",
+    "languageEnglish": "Engelska",
+    "languageFrench": "Franska",
+    "languageSwedish": "Svenska",
+    "privacyPolicy": "Privacy policy",
+    "termsOfService": "Terms of service"
+  },
+  "privacy": {
+    "title": "Integritetspolicy"
+  },
+  "conditions": {
+    "title": "Användarvillkor"
+  },
+  "friends": {
+    "title": "vänner",
+    "friendsTab": "vänner",
+    "pendingTab": "väntande",
+    "noFriends": "Inga vänner tillagda ännu",
+    "noPending": "Inga väntande förfrågningar",
+    "searchPlaceholder": "Spelarnamn",
+    "addButton": "lägg till",
+    "sendingRequest": "Skickar vänförfrågan till",
+    "requestSent": "Vänförfrågan skickad till",
+    "removingFriend": "Tar bort",
+    "friendRemoved": "har tagits bort från dina vänner",
+    "accepting": "Accepterar",
+    "rejecting": "Avvisar",
+    "accepted": "har accepterats",
+    "rejected": "har avvisats",
+    "error": "Fel",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "play": {
+    "title": "spela",
+    "createRoom": "Skapa rum",
+    "joinRoom": "Gå med i rum",
+    "roomIdPlaceholder": "Rums-ID"
+  },
+  "game": {
+    "roomTitle": "Rum",
+    "gameTitle": "Spel",
+    "scoreboardTitle": "Resultattavla",
+    "roomIdLabel": "Rums-ID",
+    "gameIdCopied": "Rums-ID kopierat till urklipp",
+    "leaveRoom": "Lämna rummet",
+    "leaveGame": "Lämna spelet",
+    "startGame": "Starta battle",
+    "startingGame": "Väntar på att battlet ska starta...",
+    "endingGame": "Battle pågår...",
+    "roomKicked": "Du har blivit utsparkad från rummet",
+    "abandonGame": "Avbryt battle",
+    "inGame": "I spel",
+    "failedGame": "Misslyckades",
+    "successGame": "Lyckades",
+    "youWon": "Du lyckades",
+    "youFailed": "Du misslyckades",
+    "tryNumber": "Försök {{number}}",
+    "noTraceAvailable": "Ingen trace tillgänglig",
+    "subjectTab": "Uppgift",
+    "codeTab": "Kod",
+    "traceTab": "Trace",
+    "scoreboardTab": "Resultattavla",
+    "submitCode": "Skicka kod",
+    "waitingForResult": "Väntar på resultat...",
+    "retryInSeconds": "Försök igen om {{seconds}}s",
+    "gameEnded": "Spelet är slut",
+    "selectChallenge": "Välj en utmaning",
+    "randomChallenge": "Slumpmässig",
+    "gameDisconnected": "Du har blivit utsparkad från spelet"
+  },
+  "history": {
+    "title": "historik"
+  },
+  "settings": {
+    "title": "Inställningar",
+    "unexpectedError": "Ett oväntat fel uppstod. Försök igen.",
+    "noChangesToUpdate": "Inga ändringar att uppdatera",
+    "profileUpdated": "Profilen har uppdaterats",
+    "profilePicture": "Profilbild",
+    "profilePictureHint": "Måste vara JPEG eller PNG och får inte överstiga 10 MB.",
+    "username": "Användarnamn",
+    "email": "E-post",
+    "password": "Lösenord",
+    "newPasswordPlaceholder": "Nytt lösenord",
+    "loading": "Laddar...",
+    "update": "Uppdatera",
+    "pictureSizeError": "Bilden måste vara mindre än 10MB.",
+    "pictureFormatError": "Bilden måste vara i JPEG eller PNG-format."
+  },
+  "chat": {
+    "messagePlaceholder": "Meddelande",
+    "to": "till",
+    "from": "från",
+    "tabAll": "Allt",
+    "tabGlobal": "Global",
+    "tabPrivate": "Privat"
+  },
+  "profile": {
+    "title": "Profil",
+    "viewProfile": "Visa profil",
+    "memberSince": "Medlem sedan",
+    "registeredSince": "Registrerad sedan",
+    "friendStatus": "Vänstatus",
+    "friend": "Vän",
+    "pending": "Vänförfrågan väntar",
+    "notFriend": "Inte vän ännu",
+    "sendMessage": "Skicka privat meddelande",
+    "addFriendButton": "Lägg till som vän",
+    "removeFriendButton": "Ta bort vän",
+    "requestAlreadySent": "Förfrågan skickad"
+  },
+  "common": {
+    "errorOccurred": "Ett fel har inträffat",
+    "sessionExpired": "Din session har gått ut. Logga in igen."
+  }
+}
+

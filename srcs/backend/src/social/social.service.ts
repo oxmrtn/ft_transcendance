@@ -25,17 +25,6 @@ export class SocialService
 			throw new NotFoundException(`User ${userId} not found`);
 	}
 
-
-	async searchUsers(query: string)
-	{
-		if (!query || query.length < 2)
-			return [];
-		return this.prisma.user.findMany({
-			where: { username: { contains: query, mode: 'insensitive' }, },
-			select: { id: true, username: true, profilePictureUrl: true },
-		});
-	}
-
 	async getFriendsId(userId: number)
 	{
 		await this.checkUser(userId);
@@ -101,6 +90,50 @@ export class SocialService
 			const isOnline = this.socialGateway.getOnlineUsers().has(friend.id);
 			return { username: friend.username, profilePictureUrl: friend.profilePictureUrl, status : isOnline ? true : false};
 		});
+	}
+
+	async getUserProfile(username: string, viewerId: number)
+	{
+		if (!username)
+			throw new BadRequestException("No match found for user name : " + username);
+
+		const foundUser = await this.prisma.user.findUnique({
+			where: { username },
+			select: { id: true, username: true, profilePictureUrl: true, createdAt: true },
+		});
+
+		if (!foundUser)
+			throw new BadRequestException("No match found for user name : " + username);
+
+		const isOnline = this.socialGateway.getOnlineUsers().has(foundUser.id);
+
+		let friendStatus: 'friend' | 'pending' | null = null;
+
+		if (viewerId && viewerId !== foundUser.id)
+		{
+			const [id1, id2] = [viewerId, foundUser.id].sort((a, b) => a - b);
+			const friendship = await this.prisma.friendship.findUnique({
+				where: {
+					userId1_userId2: { userId1: id1, userId2: id2 },
+				},
+			});
+
+			if (friendship)
+			{
+				if (friendship.status === 'ACCEPT')
+					friendStatus = 'friend';
+				else if (friendship.status === 'PENDING')
+					friendStatus = 'pending';
+			}
+		}
+
+		return {
+			username: foundUser.username,
+			profilePictureUrl: foundUser.profilePictureUrl,
+			createdAt: foundUser.createdAt,
+			status: isOnline ? true : false,
+			friendStatus,
+		};
 	}
 
 		async getFriendsRequests(userId: number)

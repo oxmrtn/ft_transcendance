@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 export default function LoginForm() {
   const router = useRouter();
   const { login } = useAuth();
-  const { dictionary } = useLanguage();
+  const { dictionary, lang } = useLanguage();
   const [isLoading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,12 +26,12 @@ export default function LoginForm() {
 
     try {
       const response = await fetch(`${API_URL}/auth/login`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        });
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
       const data = await response.json();
       if (!response.ok) {
@@ -40,7 +40,7 @@ export default function LoginForm() {
 
       if (data.token) {
         login(data.token);
-        router.push('/');
+        router.push(`/${lang}`);
       } else {
         throw new Error(dictionary.common.errorOccurred);
       }

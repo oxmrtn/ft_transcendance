@@ -1,9 +1,8 @@
 import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
 
-export class SearchQueryDto
-{
+export class KickPlayerDto {
 	@IsString()
 	@IsNotEmpty()
 	@MaxLength(100)
-	q: string;
+	targetUsername: string;
 }

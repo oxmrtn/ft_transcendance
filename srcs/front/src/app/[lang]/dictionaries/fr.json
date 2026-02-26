@@ -35,8 +35,17 @@
   },
   "footer": {
     "languageSelector": "Selectionnez une langue",
+    "languageEnglish": "Anglais",
+    "languageFrench": "Français",
+    "languageSwedish": "Suédois",
     "privacyPolicy": "Politique de confidentialité",
     "termsOfService": "Conditions d'utilisation"
+  },
+  "privacy": {
+    "title": "Politique de confidentialité"
+  },
+  "conditions": {
+    "title": "Conditions d'utilisation"
   },
   "friends": {
     "title": "amis",
@@ -44,7 +53,7 @@
     "pendingTab": "en attente",
     "noFriends": "Vous n'avez pas encore d'amis",
     "noPending": "Aucune demande en attente",
-    "searchPlaceholder": "Rechercher un joueur",
+    "searchPlaceholder": "Nom de joueur",
     "addButton": "ajouter",
     "sendingRequest": "Envoi de la demande d'ami à",
     "requestSent": "Demande d'ami envoyée à",
@@ -65,11 +74,36 @@
     "roomIdPlaceholder": "ID de la partie"
   },
   "game": {
-    "title": "Partie",
-    "roomIdLabel": "ID de la partie",
-    "gameIdCopied": "ID copié dans le presse-papiers",
-    "leaveRoom": "Quitter la partie",
-    "startGame": "Lancer la partie"
+    "roomTitle": "Room",
+    "gameTitle": "Game",
+    "scoreboardTitle": "Scoreboard",
+    "roomIdLabel": "ID de la room",
+    "gameIdCopied": "ID de la room copié dans le presse-papiers",
+    "leaveRoom": "Quitter la room",
+    "leaveGame": "Quitter la partie",
+    "startGame": "Lancer le battle",
+    "startingGame": "En attente du lancement du battle...",
+    "endingGame": "Battle en cours...",
+    "roomKicked": "Vous avez été expulsé de la room",
+    "abandonGame": "Abandonner le battle",
+    "inGame": "En jeu",
+    "failedGame": "Echec",
+    "successGame": "Succès",
+    "youWon": "Vous avez réussi",
+    "youFailed": "Vous avez échoué",
+    "tryNumber": "Tentative {{number}}",
+    "noTraceAvailable": "Aucune trace disponible",
+    "subjectTab": "Sujet",
+    "codeTab": "Code",
+    "traceTab": "Trace",
+    "scoreboardTab": "Scoreboard",
+    "submitCode": "Soumettre le code",
+    "waitingForResult": "En attente du résultat...",
+    "retryInSeconds": "Réessayer dans {{seconds}}s",
+    "gameEnded": "Partie terminée",
+    "selectChallenge": "Choisir un challenge",
+    "randomChallenge": "Aléatoire",
+    "gameDisconnected": "Vous avez été déconnecté de la partie"
   },
   "history": {
     "title": "historique"
@@ -86,14 +120,34 @@
     "password": "Mot de passe",
     "newPasswordPlaceholder": "Nouveau mot de passe",
     "loading": "Chargement...",
-    "update": "Mettre à jour"
+    "update": "Mettre à jour",
+    "pictureSizeError": "La photo doit être inférieure à 10MB.",
+    "pictureFormatError": "La photo doit être au format JPEG ou PNG."
   },
   "chat": {
     "messagePlaceholder": "Message",
     "to": "à",
-    "from": "de"
+    "from": "de",
+    "tabAll": "Tout",
+    "tabGlobal": "Global",
+    "tabPrivate": "Privé"
+  },
+  "profile": {
+    "title": "Profil",
+    "viewProfile": "Voir le profil",
+    "memberSince": "Membre depuis",
+    "registeredSince": "Inscrit depuis",
+    "friendStatus": "Statut d'amitié",
+    "friend": "Ami",
+    "pending": "Demande d'ami en attente",
+    "notFriend": "Pas encore ami",
+    "sendMessage": "Envoyer un message privé",
+    "addFriendButton": "Ajouter en ami",
+    "removeFriendButton": "Retirer des amis",
+    "requestAlreadySent": "Demande envoyée"
   },
   "common": {
-    "errorOccurred": "Une erreur est survenue"
+    "errorOccurred": "Une erreur est survenue",
+    "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter."
   }
 }

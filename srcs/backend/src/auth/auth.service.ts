@@ -24,9 +24,9 @@ export class AuthService
         return bcrypt.hash(password, salt);
     }
 
-    async generateToken(userId : number, username : string, email : string, profilePictureUrl : string | null) : Promise<string>
+    async generateToken(userId : number, username : string) : Promise<string>
     {
-        return jwt.sign({ userId, username, email, profilePictureUrl }, this.jwt_secret, {expiresIn: '1h'});
+        return jwt.sign({ userId, username }, this.jwt_secret, {expiresIn: '1h'});
     }
 
     async register(email : string, password : string, username : string) : Promise<{token: string}>
@@ -36,7 +36,7 @@ export class AuthService
         const user = await this.prisma.user.create({
             data: {email, hashedPwd : hashedpwd, username},
         });
-        const token = await this.generateToken(user.id, username, email, null);
+        const token = await this.generateToken(user.id, user.username);
         return { token };
     } catch (error)
         {
@@ -49,7 +49,7 @@ export class AuthService
     const user = await this.prisma.user.findUnique({ where : { email }});
         if (!user || !(await bcrypt.compare(password, user.hashedPwd)))
             throw new UnauthorizedException('Invalid mail or password');
-        const token = await this.generateToken(user.id, user.username, user.email, user.profilePictureUrl);
+        const token = await this.generateToken(user.id, user.username);
         return { token };
     }
 
