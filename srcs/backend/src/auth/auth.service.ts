@@ -1,5 +1,6 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException, InternalServerErrorException} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
@@ -7,7 +8,7 @@ import * as jwt from 'jsonwebtoken';
 @Injectable()
 export class AuthService 
 {
-    private readonly jwt_secret: string;
+    private readonly jwt_secret: any;
     constructor(
         private prisma: PrismaService,
         private configService: ConfigService,
@@ -33,21 +34,38 @@ export class AuthService
     {
         const hashedpwd = await this.hashPassword(password);
         try {
-        const user = await this.prisma.user.create({
-            data: {email, hashedPwd : hashedpwd, username},
-        });
-        const token = await this.generateToken(user.id, user.username);
-        return { token };
-    } catch (error)
+            const user = await this.prisma.user.create({
+                data: {email, hashedPwd : hashedpwd, username},
+            });
+            const token = await this.generateToken(user.id, user.username);
+            return { token };
+        } catch (error)
         {
-            throw new ConflictException("User already exist in database !");
+            if (error instanceof Prisma.PrismaClientKnownRequestError)
+            {
+                if (error.code === 'P2002')
+                {
+                    const target = error.meta?.target as string[];
+                    if (target.includes('email')) {
+                        throw new ConflictException("Seems like you already have an account, login instead?");
+                    }
+                    if (target.includes('username')) {
+                        throw new ConflictException("This username is already taken, choose another one!");
+                }
+            }
+        }
+        throw new InternalServerErrorException("Unexpected error while creating account!");
+
         }
     }
+
     async login(email : string, password : string) : Promise<{token: string}>
     {
-    const user = await this.prisma.user.findUnique({ where : { email }});
-        if (!user || !(await bcrypt.compare(password, user.hashedPwd)))
-            throw new UnauthorizedException('Invalid mail or password');
+        const user = await this.prisma.user.findUnique({ where : { email }});
+        if (!user)
+            throw new UnauthorizedException('Invalid credential');
+        if (!(await bcrypt.compare(password, user.hashedPwd)))
+            throw new UnauthorizedException('Invalid credential');
         const token = await this.generateToken(user.id, user.username);
         return { token };
     }
@@ -67,3 +85,4 @@ export class AuthService
         return this.prisma.user.findUnique({ where : { username }});
     }
 }
+
