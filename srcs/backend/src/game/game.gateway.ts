@@ -313,7 +313,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		this.clientToRoom.delete(userId);
 
-		if (!currentGame.players.size)
+		console.log("1", this.clientToRoom);
+		console.log("2", currentGame);
+
+		const checkEmptyRoom = !Array.from(this.clientToRoom.values()).includes(gameId);
+
+		if (checkEmptyRoom)
 			this.gameSessions.delete(gameId);
 		else {
 			if (userId === currentGame.creatorId)
@@ -502,6 +507,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 
 		const playerIds = Array.from(game.players.keys());
+
 		const users = await this.prismaService.user.findMany({
 			where: { id: { in: playerIds } },
 			select: { id: true, username: true, profilePictureUrl: true },
@@ -523,7 +529,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			})
 			.filter((p) => p !== null);
 
-		const creator = await this.prismaService.user.findUnique({
+			const creator = await this.prismaService.user.findUnique({
 			where: { id: game.creatorId },
 			select: { username: true },
 		});
