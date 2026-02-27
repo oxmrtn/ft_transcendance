@@ -20,7 +20,6 @@ export class SocialService
 			where: { id: userId },
 			select: { id: true },
 		});
-
 		if (!res)
 			throw new NotFoundException(`User ${userId} not found`);
 	}

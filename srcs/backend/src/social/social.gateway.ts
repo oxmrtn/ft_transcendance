@@ -43,7 +43,6 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (this.onlineUsers.get(userId).size === 1)
 			await this.handleOnlineUser(user);
 
-		console.log("connect: ", `user_${userId}`);
 		await client.join(`user_${userId}`);
 	}
 

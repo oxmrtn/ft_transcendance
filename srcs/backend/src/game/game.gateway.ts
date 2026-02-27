@@ -151,7 +151,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	handleDisconnect(@ConnectedSocket() client: Socket)
 	{
-		console.log("1 2 3 4")
 		const userId : number = client.data.user.userId;
 		const gameId :string = this.clientToRoom.get(userId);
 		const currentGame = this.gameSessions.get(gameId);
@@ -250,13 +249,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		await this.notifyGameStatus(currentGame);
 		client.emit('game-info', { event: 'room-joined', gameId: gameId });
-		console.log('players2: ', currentGame.players)
 	}
 
 	@SubscribeMessage('kick-player')
 	async kickPlayer(@ConnectedSocket() client: Socket, @MessageBody() payload: KickPlayerDto)
 	{
-		console.log("coucou");
 		const userId = client.data.user.userId;
 		const currentGame = this.gameSessions.get(this.clientToRoom.get(userId));
 		const targetUsername = payload.targetUsername;
@@ -318,14 +315,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		client.leave(`game_${gameId}`);
 		client.emit('game-info', { event: 'room-left' });
 
-		currentGame.players.delete(userId);
 		this.clientToRoom.delete(userId);
 
 		if (!currentGame.players.size)
 			this.gameSessions.delete(gameId);
 		else {
 			if (userId === currentGame.creatorId)
-				currentGame.creatorId = Array.from(currentGame.players.keys())[0];
+				currentGame.creatorId = Array.from(currentGame.players.keys())[1];
 			this.notifyGameStatus(currentGame);
 		}
 	}
@@ -333,7 +329,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 	@SubscribeMessage('leave-game')
 	async leaveGame(@ConnectedSocket() client: Socket)
 	{
-		console.log("coucou234")
 		const userId = client.data.user.userId;
 		const gameId = this.clientToRoom.get(userId);
 		const currentGame = gameId !== undefined ? this.gameSessions.get(gameId) : undefined;
@@ -346,7 +341,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		if (currentGame.gameState === 'waiting')
 		{
-			this.errorMessage(client, `You can't leave the battle white it's not started!`);
+			this.errorMessage(client, `You can't leave the battle before it has started!`);
 			return;
 		}
 
