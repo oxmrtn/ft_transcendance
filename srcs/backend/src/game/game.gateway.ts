@@ -59,8 +59,8 @@ Your function must be declared as follows:
 int ft_strlen(char *str);`
 	},
 	{
-		name: "pyramyd",
-		description: `Assignment name  : pyramyd
+		name: "pyramid",
+		description: `Assignment name  : pyramid
 Allowed functions: write
 -------------------------------------------------------------------------------
 
@@ -167,9 +167,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (this.clientToRoom.has(userId))
 			this.clientToRoom.delete(userId);
 
-		if (currentGame.players.has(userId))
-			currentGame.players.delete(userId);
-
 		if (!currentGame.players.size)
 			this.gameSessions.delete(gameId);
 
@@ -222,33 +219,29 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 
-		if (currentGame.players.has(user.userId))
-		{
-			this.errorMessage(client, `You already join this room!`);
-			return;
-		}
-
-		if (this.clientToRoom.has(user.userId))
+		if (this.clientToRoom.has(user.userId) && !currentGame.players.has(user.userId))
 		{
 			this.errorMessage(client, `You already join another Room!`);
 			return;
 		}
 
-		if (currentGame.gameState !== "waiting")
+		if (currentGame.gameState !== "waiting" && !currentGame.players.has(user.userId))
 		{
 			this.errorMessage(client, `This game has already started!`);
 			return;
 		}
 		
-		if (currentGame.players.size + 1 >= currentGame.playerNumber)
+		if (currentGame.players.size + 1 > currentGame.playerNumber && !currentGame.players.has(user.userId))
 		{
 			this.errorMessage(client, `This room is already full!`);
 			return;
 		}
 
-		client.join(`game_${gameId}`);
-		currentGame.players.set(user.userId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
+		if (!currentGame.players.has(user.userId))
+			currentGame.players.set(user.userId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
+		
 		this.clientToRoom.set(user.userId, gameId);
+		client.join(`game_${gameId}`);
 
 		await this.notifyGameStatus(currentGame);
 		client.emit('game-info', { event: 'room-joined', gameId: gameId });
@@ -318,14 +311,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		client.leave(`game_${gameId}`);
 		client.emit('game-info', { event: 'room-left' });
 
-		currentGame.players.delete(userId);
 		this.clientToRoom.delete(userId);
 
-		if (!currentGame.players.size)
+		console.log("1", this.clientToRoom);
+		console.log("2", currentGame);
+
+		const checkEmptyRoom = !Array.from(this.clientToRoom.values()).includes(gameId);
+
+		if (checkEmptyRoom)
 			this.gameSessions.delete(gameId);
 		else {
 			if (userId === currentGame.creatorId)
-				currentGame.creatorId = Array.from(currentGame.players.keys())[0];
+				currentGame.creatorId = Array.from(currentGame.players.keys())[1];
 			this.notifyGameStatus(currentGame);
 		}
 	}
@@ -340,6 +337,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (!currentGame)
 		{
 			this.errorMessage(client, `You are not in a game!`);
+			return;
+		}
+
+		if (currentGame.gameState === 'waiting')
+		{
+			this.errorMessage(client, `You can't leave the battle before it has started!`);
 			return;
 		}
 
@@ -504,6 +507,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 
 		const playerIds = Array.from(game.players.keys());
+
 		const users = await this.prismaService.user.findMany({
 			where: { id: { in: playerIds } },
 			select: { id: true, username: true, profilePictureUrl: true },
@@ -525,7 +529,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			})
 			.filter((p) => p !== null);
 
-		const creator = await this.prismaService.user.findUnique({
+			const creator = await this.prismaService.user.findUnique({
 			where: { id: game.creatorId },
 			select: { username: true },
 		});
