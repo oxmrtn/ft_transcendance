@@ -167,9 +167,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (this.clientToRoom.has(userId))
 			this.clientToRoom.delete(userId);
 
-		// if (currentGame.players.has(userId))
-		//  	currentGame.players[userId].isConnected = false;
-
 		if (!currentGame.players.size)
 			this.gameSessions.delete(gameId);
 
