@@ -1,6 +1,6 @@
 #include <unistd.h>
 
-void pyramyd(int size)
+void pyramid(int size)
 {
 	if (size <= 0)
 		return;
