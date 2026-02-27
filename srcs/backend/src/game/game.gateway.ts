@@ -38,7 +38,6 @@ type GameState = "waiting" | "playing" | "finished";
 const BASE_SUBMIT_TIMEOUT_SECONDS = 15;
 const BASE_REMAINING_TRIES = 3;
 
-
 class GameSession {
 	public playerNumber : number;
 	public gameId : string;
@@ -183,7 +182,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		
 		this.clientToRoom.set(user.userId, gameId);
 		client.join(`game_${gameId}`);
-
 
 		await this.notifyGameStatus(currentGame);
 		client.emit('game-info', { event: 'room-joined', gameId: gameId });
