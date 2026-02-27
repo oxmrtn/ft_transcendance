@@ -59,8 +59,8 @@ Your function must be declared as follows:
 int ft_strlen(char *str);`
 	},
 	{
-		name: "pyramyd",
-		description: `Assignment name  : pyramyd
+		name: "pyramid",
+		description: `Assignment name  : pyramid
 Allowed functions: write
 -------------------------------------------------------------------------------
 
@@ -242,7 +242,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		
 		this.clientToRoom.set(user.userId, gameId);
 		client.join(`game_${gameId}`);
-
 
 		await this.notifyGameStatus(currentGame);
 		client.emit('game-info', { event: 'room-joined', gameId: gameId });
