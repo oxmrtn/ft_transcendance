@@ -114,14 +114,14 @@
     "noChangesToUpdate": "No changes to update",
     "profileUpdated": "Profile updated",
     "profilePicture": "Profile picture",
-    "profilePictureHint": "Must be JPEG or PNG and cannot exceed 10MB.",
+    "profilePictureHint": "Must be JPEG or PNG and cannot exceed 5MB.",
     "username": "Username",
     "email": "Email",
     "password": "Password",
     "newPasswordPlaceholder": "New password",
     "loading": "Loading...",
     "update": "Update",
-    "pictureSizeError": "The picture must be less than 10MB.",
+    "pictureSizeError": "The picture must be less than 5MB.",
     "pictureFormatError": "The picture must be in JPEG or PNG format."
   },
   "chat": {
