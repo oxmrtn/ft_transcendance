@@ -22,7 +22,7 @@ async function bootstrap() {
 	fastifySousLeCapot.register(fastifyMultipart, {
 		limits: {
 			fileSize: 5 * 1024 * 1024,
-			files: 2,
+			files: 1,
 		},
 		attachFieldsToBody: true,
 	});
