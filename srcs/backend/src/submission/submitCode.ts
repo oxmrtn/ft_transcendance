@@ -4,23 +4,35 @@ import { Injectable } from "@nestjs/common"
 import { CodeResult } from "../game/game.gateway"
 
 
+export interface SandBoxResponse {
+	result: boolean;
+	timestamp: string;
+}
+
 
 export async function submitCode(ex_name : string , user_id : string, codeToSend : string) : Promise <CodeResult>
 {
     let to_send : CodeResult = {trace: "", result: false};
     const filename = `${ex_name}_${user_id}`;
 
-    const filesservice = new FilesService;
-    await filesservice.createInstance(filename, codeToSend);
-    const response = await sendDataToSandbox(filename);
-    to_send.trace = await filesservice.getFileContent(filename);
-    await filesservice.deleteInstance(filename);
+    try {
+        const filesservice = new FilesService;
+        await filesservice.createInstance(filename, codeToSend);
+        const response : SandBoxResponse = await sendDataToSandbox(filename);
+        to_send.trace = await filesservice.getFileContent(filename);
+        await filesservice.deleteInstance(filename);
 
-    if (to_send.trace.length != 0)
-        to_send.result = false;
-    else
-        to_send.result = true;
-    return to_send;
+        to_send.result = response.result;
+        return to_send;
+    }catch (error : any)
+    {
+        console.log(`Error while submitting code ${error.message}`);
+        return {
+            trace : "",
+            result: false
+        } as CodeResult;
+    }
+
 }
 
 
