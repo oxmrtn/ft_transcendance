@@ -46,7 +46,7 @@ fi
 timeout 3s ./a.out > $OUTPUT_FILE
 EXIT_STATUS=$?
 
-if [ $EXIT_STATUS -eq 124 ]; then
+if [ $EXIT_STATUS -ne 0 ]; then
 	rm -rf $OUTPUT_FILE ./a.out
 	echo "Execution took to long, look for infinite loop ? " > $RESULTS_FILE
 	exit 1
