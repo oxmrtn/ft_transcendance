@@ -19,6 +19,7 @@ export async function submitCode(ex_name : string , user_id : string, codeToSend
         const filesservice = new FilesService;
         await filesservice.createInstance(filename, codeToSend);
         const response : SandBoxResponse = await sendDataToSandbox(filename);
+        console.log("Received from sandbox : response.result = ", response.result, "response.timestamp = ", response.timestamp, "\n\n");
         to_send.trace = await filesservice.getFileContent(filename);
         await filesservice.deleteInstance(filename);
 
