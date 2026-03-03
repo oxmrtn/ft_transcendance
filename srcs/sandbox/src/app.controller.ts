@@ -12,22 +12,22 @@ export class AppController {
   @Post('receive')
   @HttpCode(200)
   async handleIncomingData(@Body() data: { file_name: string }) {
-    console.log("\n\nbefore exec ==================\n\n");
+    //console.log("\n\nbefore exec ==================\n\n");
     const command = `./runimage.sh ${data.file_name}`;
 
     const timestamp = new Date().toISOString()
     try{
         await execPromise(command);
         return {
-          success: true, 
-          time: timestamp
+          result: true, 
+          timestamp: timestamp
         }
     }catch(error : any)
     {
-      console.log("\n\n=========error : ", error.message);
+      //console.log("\n\n=========error : ", error.message);
         return {
-          success: false,
-          time: timestamp
+          result: false,
+          timestamp: timestamp
         }
     }
   }
