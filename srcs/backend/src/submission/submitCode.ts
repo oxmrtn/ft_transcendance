@@ -1,6 +1,5 @@
 import { sendDataToSandbox } from "./send_info";
 import { FilesService } from "./fileservice";
-import { Injectable } from "@nestjs/common"
 import { CodeResult } from "../game/game.gateway"
 
 
@@ -19,7 +18,6 @@ export async function submitCode(ex_name : string , user_id : string, codeToSend
         const filesservice = new FilesService;
         await filesservice.createInstance(filename, codeToSend);
         const response : SandBoxResponse = await sendDataToSandbox(filename);
-        // console.log("Received from sandbox : response.result = ", response.result, "response.timestamp = ", response.timestamp, "\n\n");
         to_send.trace = await filesservice.getFileContent(filename);
         await filesservice.deleteInstance(filename);
 
@@ -27,7 +25,6 @@ export async function submitCode(ex_name : string , user_id : string, codeToSend
         return to_send;
     }catch (error : any)
     {
-        console.log(`Error while submitting code ${error.message}`);
         return {
             trace : "",
             result: false
