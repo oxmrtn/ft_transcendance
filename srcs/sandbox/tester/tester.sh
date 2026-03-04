@@ -37,7 +37,7 @@ fi
 
 cc $CFLAGS $TEST_FLAG $TESTER $PLAYER_FILE
 
-if [ $? -ne 0 ]; then
+if [ $? -eq 124 ]; then
 	echo "Compilation error!" > $RESULTS_FILE
 	cc $CFLAGS $TEST_FLAG $TESTER $PLAYER_FILE 2>> $RESULTS_FILE
 	exit 1
