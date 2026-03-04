@@ -37,7 +37,7 @@ fi
 
 cc $CFLAGS $TEST_FLAG $TESTER $PLAYER_FILE
 
-if [ $? -eq 124 ]; then
+if [ $? -ne 0 ]; then
 	echo "Compilation error!" > $RESULTS_FILE
 	cc $CFLAGS $TEST_FLAG $TESTER $PLAYER_FILE 2>> $RESULTS_FILE
 	exit 1
@@ -46,7 +46,7 @@ fi
 timeout 3s ./a.out > $OUTPUT_FILE
 EXIT_STATUS=$?
 
-if [ $EXIT_STATUS -ne 0 ]; then
+if [ $EXIT_STATUS -eq 124 ]; then
 	rm -rf $OUTPUT_FILE ./a.out
 	echo "Execution took to long, look for infinite loop ? " > $RESULTS_FILE
 	exit 1
