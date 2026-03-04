@@ -313,18 +313,26 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		this.clientToRoom.delete(userId);
 
-		console.log("1", this.clientToRoom);
-		console.log("2", currentGame);
-
 		const checkEmptyRoom = !Array.from(this.clientToRoom.values()).includes(gameId);
 
 		if (checkEmptyRoom)
 			this.gameSessions.delete(gameId);
 		else {
 			if (userId === currentGame.creatorId)
-				currentGame.creatorId = Array.from(currentGame.players.keys())[1];
+				currentGame.creatorId = this.setNewGameCreator(gameId);
 			this.notifyGameStatus(currentGame);
 		}
+	}
+
+	private setNewGameCreator(gameId : string) : number
+	{
+		for (const [userId, roomId] of this.clientToRoom.entries())
+		{
+			if (roomId === gameId)
+				return userId;
+		}
+		
+		return null;
 	}
 
 	@SubscribeMessage('leave-game')
