@@ -9,6 +9,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ProfileModule } from './profile/profile.module';
 import { GameModule } from './game/game.module';
+import { ChallengeCache } from './challenges/challenge.cache';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { GameModule } from './game/game.module';
   controllers: [AppController],
   providers: [
     PrismaService,
+    ChallengeCache,
     {
       provide: APP_GUARD, 
       useClass: ThrottlerGuard,

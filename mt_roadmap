@@ -1,0 +1,23 @@
+Verify DB -- Add xp field on DB 
+
+Winner on match
+
+Insert match in DB
+
+XP gain depends on place 
+
+victory count for player -- include in profile page 
+xp bar in profile page
+title in profile page
+
+game history
+    - endpoint returning history
+    - front page
+
+achievement page with title and 
+    - front page
+
+leaderboard
+    -backend with sort using XP
+    -front page
+
