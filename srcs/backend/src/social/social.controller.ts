@@ -37,7 +37,7 @@ export class SocialController
 	async accept(@Req() req, @Param('targetName', ParseUserPipe) targetId: any)
 	{
 		const res = await this.socialService.handleRequest(req.user.userId, targetId, true);
-		const target = await await this.prismaService.user.findUnique({ where: { id: targetId } });
+		const target = await this.prismaService.user.findUnique({ where: { id: targetId } });
 		
 		this.socialGateway.newFriendship(req.user, target);
 
