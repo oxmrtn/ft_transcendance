@@ -55,7 +55,6 @@ export class FilesService
             return (data);
         }catch (error)
         {
-            console.log("ew\n\n");
             throw new Error("Error while getting response from checker \n");
         }
     }
