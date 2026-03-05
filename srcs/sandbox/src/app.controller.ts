@@ -12,24 +12,24 @@ export class AppController {
   @Post('receive')
   @HttpCode(200)
   async handleIncomingData(@Body() data: { file_name: string }) {
-    //console.log('received data  :', data);
-    
+    //console.log("\n\nbefore exec ==================\n\n");
     const command = `./runimage.sh ${data.file_name}`;
-    //console.log("Command received = ", command, " \n");
 
     const timestamp = new Date().toISOString()
     try{
-        //console.log ("---- Command gonna be executed ---- \n");
         await execPromise(command);
-        //console.log("\n\n\nCommand executed \n\n\n");
         return {
-          time: timestamp
+          result: true, 
+          timestamp: timestamp
         }
     }catch(error : any)
     {
+      //console.log("\n\n=========error : ", error.message);
         return {
-          time: timestamp
+          result: false,
+          timestamp: timestamp
         }
     }
   }
 }
+

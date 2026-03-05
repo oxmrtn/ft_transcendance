@@ -125,7 +125,7 @@ export default function Battle() {
               </div>
               <ScrollArea className="flex-1 min-h-0 w-full overflow-hidden bg-white/5">
                 <div className="py-3 px-4 text-sm text-sub-text font-medium font-mono whitespace-pre-wrap">
-                  {selectedChallenge.description}
+                  {selectedChallenge.subject}
                 </div>
               </ScrollArea>
           </TabsContent>

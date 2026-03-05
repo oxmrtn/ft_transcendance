@@ -43,8 +43,23 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-./a.out > $OUTPUT_FILE
+timeout 3s ./a.out > $OUTPUT_FILE
+EXIT_STATUS=$?
+
+if [ $EXIT_STATUS -eq 124 ]; then
+	rm -rf $OUTPUT_FILE ./a.out
+	echo "Execution took to long, look for infinite loop ? " > $RESULTS_FILE
+	exit 1
+fi
+
+
 
 diff $OUTPUT_FILE $CTL_FILES_DIR${EXO_NAME}.txt > $RESULTS_FILE
 
 rm $OUTPUT_FILE ./a.out
+
+if [ -s "$RESULTS_FILE" ]; then
+    exit 1
+fi
+
+exit 0
