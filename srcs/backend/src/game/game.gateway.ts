@@ -42,10 +42,13 @@ const BASE_REMAINING_TRIES = 3;
 class GameSession {
 	public playerNumber : number;
 	public gameId : string;
+	public dbGameId: number;
 	public players: Map<number, PlayerInfos>;
 	public gameState: GameState;
 	public creatorId: number;
 	public selectedChallenge: Challenge;
+	public gameTime : Date;
+	public rankCounter : number = 1;
 	
 	constructor (gameId: string, playerNumber: number)
 	{
@@ -69,7 +72,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	handleConnection(@ConnectedSocket() client: Socket) {}
 
-	handleDisconnect(@ConnectedSocket() client: Socket)
+	async handleDisconnect(@ConnectedSocket() client: Socket)
 	{
 		const userId : number = client.data.user.userId;
 		const gameId :string = this.clientToRoom.get(userId);
@@ -91,11 +94,28 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			currentGame.players.delete(userId);
 
 		if (!currentGame.players.size)
+		{
 			this.gameSessions.delete(gameId);
+			if (currentGame.dbGameId)
+			{
+				await this.prismaService.game.update({
+					where: { id: currentGame.dbGameId },
+					data: {
+						status: "FINISHED",
+						finishedAt: new Date()
+					}
+				});
+			}
+		}
 
 		const inGameIds = this.getInGamePlayerIds(currentGame);
 		if (inGameIds.length === 0 && currentGame.gameState === "playing")
+		{
 			currentGame.gameState = "finished";
+			setTimeout(() => {
+				this.gameSessions.delete(currentGame.gameId);
+					}, 60000);
+		}
 
 		this.notifyGameStatus(currentGame);
 	}
@@ -161,7 +181,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 		
-		if (currentGame.players.size + 1 >= currentGame.playerNumber)
+		if (currentGame.players.size >= currentGame.playerNumber)
 		{
 			this.errorMessage(client, `This room is already full!`);
 			return;
@@ -265,7 +285,20 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		}
 
 		currentGame.players.set(userId, { passedChallenge: false, remainingTries: 0, lastSubmitTime: null });
-
+		await this.prismaService.gameParticipant.update({
+			where: {
+				gameId_userId: {
+				gameId: currentGame.dbGameId,
+				userId: userId
+				}
+			},
+			data: {
+				rank: null,
+				timeTakenMs: 0,
+				finalCode: ""
+			}
+			});
+	
 		const inGameIds = this.getInGamePlayerIds(currentGame);
 		if (inGameIds.length === 0 && currentGame.gameState === "playing")
 			currentGame.gameState = "finished";
@@ -315,12 +348,29 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			this.errorMessage(client, `Challenge "${challengeName}" not found!`);
 			return;
 		}
+		const game = await this.prismaService.game.create({
+			data: {
+					exerciseId: challenge.id,
+					status: "IN_PROGRESS"
+			}
+		});
+		currentGame.dbGameId = game.id;
 		currentGame.selectedChallenge = challenge;
 		currentGame.players.forEach((_, playerId) => {
 			currentGame.players.set(playerId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 		});
+		for (const playerId of currentGame.players.keys() ){
+			await this.prismaService.gameParticipant.create({
+				data: {
+					gameId: currentGame.dbGameId,
+					userId: playerId,
+					timeTakenMs: 0,
+					finalCode: ""
+				}
+			})
+		};
+		currentGame.gameTime = new Date();
 		currentGame.gameState = "playing";
-
 		await this.notifyGameStatus(currentGame);
 	}
 
@@ -391,14 +441,69 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		if (playerInfo.remainingTries <= 0 && !codeResult.result)
 			playerInfo.passedChallenge = false;
 		else if (codeResult.result)
+		{
 			playerInfo.passedChallenge = true;
-
-		if (playerInfo.passedChallenge !== null) {
-			const inGameIds = this.getInGamePlayerIds(currentGame);
-			if (inGameIds.length === 0 && currentGame.gameState === "playing")
-				currentGame.gameState = "finished";
+			await this.prismaService.gameParticipant.update({
+				where: {
+					gameId_userId: {
+						gameId: currentGame.dbGameId,
+						userId: userId
+					}},
+				data: {
+					rank: currentGame.rankCounter++,
+					timeTakenMs: now.getTime() - currentGame.gameTime.getTime(),
+				}
+			});
+			await this.prismaService.user.update({
+			where: { id: userId },
+			data: {
+				xp: {
+					increment: 50 / currentGame.rankCounter - 1
+				}
+			}
+	});
 		}
 
+		if (playerInfo.passedChallenge !== null) {
+			await this.prismaService.gameParticipant.update({
+				where : {
+					gameId_userId: {
+						gameId: currentGame.dbGameId,
+						userId: userId
+					}
+				},
+				data: {
+					finalCode: payload.code
+				}
+			});
+			const inGameIds = this.getInGamePlayerIds(currentGame);
+			if (inGameIds.length === 0 && currentGame.gameState === "playing")
+			{
+				currentGame.gameState = "finished";
+
+				const winner = await this.prismaService.gameParticipant.findFirst({
+					where: {
+						gameId: currentGame.dbGameId,
+						rank: 1
+					},
+					select: {
+						userId: true
+					}
+					});
+
+				await this.prismaService.game.update({
+					where: { id: currentGame.dbGameId },
+					data: {
+						status: "FINISHED",
+						finishedAt: new Date(),
+						winnerId: winner?.userId
+					}
+				})
+				setTimeout(() => {
+					this.gameSessions.delete(currentGame.gameId);
+					}, 60000);
+			}
+		}
 		this.notifyGameStatus(currentGame);
 		client.emit('game-info', { event: 'code-result', result: codeResult.result, trace: codeResult.trace, remainingTries: playerInfo.remainingTries });
 	}

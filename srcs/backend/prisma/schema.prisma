@@ -59,6 +59,7 @@ model GameParticipant {
   userId      Int
   timeTakenMs Int
   finalCode   String
+  rank        Int?
   game        Game   @relation(fields: [gameId], references: [id])
   user        User   @relation(fields: [userId], references: [id])
 

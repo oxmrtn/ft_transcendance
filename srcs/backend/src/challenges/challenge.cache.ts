@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common'
 import { PrismaService } from 'prisma/prisma.service'
 
 export interface Challenge {
+  id: number
   title: string
   subject: string
 }
@@ -19,6 +20,7 @@ export class ChallengeCache implements OnModuleInit {
   async load() {
     this.challenges = await this.prisma.exercise.findMany({
       select: {
+        id: true,
         title: true,
         subject: true
       }
