@@ -39,6 +39,7 @@
 - **Frontend:** Next.js (Single Page Application)
 - **Backend:** NestJS (modular architecture)
 - **Database:** PostgreSQL (reliable, relational)
+- **ORM:** Prisma (type-safe database access, auto-migrations)
 - **Other Tools:** Docker (deployment), Nginx (reverse proxy), Docker-in-Docker (sandbox)
 
 ---
@@ -81,11 +82,6 @@
 | Remote Players                  | Major  | 2      | qsomarri, jpiech |
 | Multiplayer                     | Major  | 2      | qsomarri       |
 
-### Module of Choice
-| Module                          | Type   | Points | Team Member(s) |
-|---------------------------------|--------|--------|----------------|
-| Sandboxing                      | Major  | 2      | jpiech         |
-
 ### User Management
 | Module                          | Type   | Points | Team Member(s) |
 |---------------------------------|--------|--------|----------------|
@@ -100,6 +96,30 @@
 | Module                          | Type   | Points | Team Member(s) |
 |---------------------------------|--------|--------|----------------|
 | Gamification System             | Minor  | 1      | mtrullar       |
+
+### Module of Choice
+ | Module                          | Type   | Points | Team Member(s) |
+ |---------------------------------|--------|--------|----------------|
+ | Sandboxing                      | Major  | 2      | jpiech         |
+
+**Why this module?**
+We chose to implement a sandboxing system to securely execute untrusted player-submitted code in real time. This was critical to prevent malicious code from affecting our servers or other players' games, while allowing instant feedback—core to VersuSCode’s competitive gameplay.
+
+**Technical Challenges Addressed:**
+- **Security:** Isolated code execution to prevent system calls, infinite loops, or resource exhaustion attacks.
+- **Performance:** Optimized Docker-in-Docker to launch fast, lightweight and pre-configured containers for each submission.
+- **Complexity:** Managed nested Docker networks and permissions to ensure containers could communicate with the evaluation system without exposing the host.
+
+**Value Added:**
+- **Player Experience:** Enables real-time code evaluation, a cornerstone of the game’s fast-paced nature.
+- **Scalability:** Automated container cleanup and resource limits allow simultaneous games without degradation.
+- **Flexibility:** New coding challenges can be added by simply updating the tester script, without modifying the core system.
+
+**Why Major Module (2 points)?**
+This module required extensive research and development time to:
+1. Design a secure architecture using Docker-in-Docker (rarely documented for gaming).
+2. Implement automated image building and cleanup scripts to handle high player concurrency.
+3. Integrate seamlessly with WebSockets for live feedback and the backend for result persistence.
 
 **Total Points:** 8 Major (16 points) + 3 Minor (3 points) = **19 points**
 
