@@ -17,6 +17,7 @@ model User {
   wallet             Int               @default(0)
   title              String?
   xp                 Int               @default(0)
+  winner             Int               @default(0)
   hashedPwd          String
   friendshipsOne     Friendship[]      @relation("Initiator")
   friendshipsTwo     Friendship[]      @relation("Recipient")

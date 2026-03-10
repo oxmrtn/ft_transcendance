@@ -454,11 +454,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 					timeTakenMs: now.getTime() - currentGame.gameTime.getTime(),
 				}
 			});
+			const win  = currentGame.rankCounter - 1 === 1;
 			await this.prismaService.user.update({
 			where: { id: userId },
 			data: {
 				xp: {
 					increment: 50 / currentGame.rankCounter - 1
+				},
+				win: {
+					increment: win
 				}
 			}
 	});
@@ -550,7 +554,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			})
 			.filter((p) => p !== null);
 
-		const creator = await this.prismaService.user.findUnique({
+			const creator = await this.prismaService.user.findUnique({
 			where: { id: game.creatorId },
 			select: { username: true },
 		});
