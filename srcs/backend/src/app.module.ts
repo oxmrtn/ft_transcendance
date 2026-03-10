@@ -10,6 +10,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { ProfileModule } from './profile/profile.module';
 import { GameModule } from './game/game.module';
 import { ChallengeCache } from './challenges/challenge.cache';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
+import { HistoryModule } from './history/history.module';
 
 @Module({
   imports: [
@@ -25,7 +27,9 @@ import { ChallengeCache } from './challenges/challenge.cache';
     SocialModule,
     ChatModule,
     ProfileModule,
-    GameModule
+    GameModule,
+    LeaderboardModule,
+    HistoryModule
   ],
   controllers: [AppController],
   providers: [

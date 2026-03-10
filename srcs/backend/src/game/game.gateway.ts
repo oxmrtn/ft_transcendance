@@ -464,7 +464,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 					timeTakenMs: now.getTime() - currentGame.gameTime.getTime(),
 				}
 			});
-			const win = currentGame.rankCounter - 1 === 1;
+			const win = currentGame.rankCounter - 1 === 1 ? 0 : 1;
 			await this.prismaService.user.update({
 			where: { id: userId },
 			data: {
