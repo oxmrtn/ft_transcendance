@@ -27,15 +27,27 @@ export class ChallengeCache implements OnModuleInit {
     })
   }
 
-  getAll(): Challenge[] {
+  private async ensureLoaded()
+  {
+    if (this.challenges.length === 0)
+      await this.load()
+  }
+
+  async getAll(): Promise<Challenge[]>
+  {
+    await this.ensureLoaded();
     return this.challenges
   }
 
-  getRandom(): Challenge {
+  async getRandom(): Promise<Challenge>
+  {
+    await this.ensureLoaded();
     return this.challenges[Math.floor(Math.random() * this.challenges.length)]
   }
 
-  getByTitle(title: string): Challenge | undefined {
+  async getByTitle(title: string): Promise<Challenge | undefined>
+  {
+    await this.ensureLoaded();
     return this.challenges.find(c => c.title === title)
   }
 }

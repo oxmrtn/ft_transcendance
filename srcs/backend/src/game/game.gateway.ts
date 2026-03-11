@@ -142,8 +142,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		client.join(`game_${gameId}`);
 
 		await this.notifyGameStatus(currentGame);
-
-		client.emit('game-info', { event: 'room-created', gameId: gameId, availableChallenges: this.challengeCache.getAll().map(c => c.title)});
+		const challenges = await this.challengeCache.getAll();
+		client.emit('game-info', { event: 'room-created', gameId: gameId, availableChallenges: challenges.map(c => c.title)});
 	}
 
 	@SubscribeMessage('join-room')
@@ -350,8 +350,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		const challengeName = (payload.challengeName ?? "").trim();
 		const challenge : Challenge | undefined  = challengeName
-		? this.challengeCache.getByTitle(challengeName)
-		: this.challengeCache.getRandom();
+		? await this.challengeCache.getByTitle(challengeName)
+		: await this.challengeCache.getRandom();
 
 		if (!challenge)
 		{
