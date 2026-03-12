@@ -88,6 +88,7 @@
     "abandonGame": "Abandonner le battle",
     "inGame": "En jeu",
     "failedGame": "Echec",
+    "disconnectedGame": "Déconnecté",
     "successGame": "Succès",
     "youWon": "Vous avez réussi",
     "youFailed": "Vous avez échoué",

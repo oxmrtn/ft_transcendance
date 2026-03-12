@@ -4,6 +4,7 @@ import { Users } from "lucide-react";
 import { ScrollArea } from "../../../../components/ui/scroll-area";
 import { FriendsSkeleton } from "../../../../components/ui/skeleton";
 import UserProfile, { UserType } from "./UserProfile";
+import { useEffect, useState } from "react";
 
 type Variant = "friends" | "pending";
 
@@ -28,11 +29,21 @@ export default function FriendsListTab({
 }: Props) {
   const display = variant === "friends" ? "friendsList" : "pendingList";
   const skeletonIsFriends = variant === "friends";
+  const [showSkeleton, setShowSkeleton] = useState<boolean>(isLoading);
+
+  useEffect(() => {
+    if (isLoading) {
+      setShowSkeleton(true);
+      return;
+    }
+    const id = setTimeout(() => setShowSkeleton(false), 500);
+    return () => clearTimeout(id);
+  }, [isLoading]);
 
   return (
     <ScrollArea className="flex-1 min-h-0 w-full overflow-hidden">
       <div className="h-full">
-        {isLoading ? (
+        {showSkeleton ? (
           <FriendsSkeleton isFriends={skeletonIsFriends} />
         ) : error ? (
           <div className="h-full w-full flex items-center justify-center min-h-[200px]">

@@ -2,7 +2,7 @@
 
 import { cn } from "../lib/utils";
 
-export type StatusDotVariant = "success" | "fail" | "inGame";
+export type StatusDotVariant = "success" | "fail" | "inGame" | "ghost";
 
 const variantStyles: Record<
   StatusDotVariant,
@@ -11,6 +11,7 @@ const variantStyles: Record<
   success: { ring: "bg-green/20", dot: "bg-green" },
   fail: { ring: "bg-destructive/30", dot: "bg-destructive" },
   inGame: { ring: "bg-primary/20", dot: "bg-primary", pulse: true },
+  ghost: { ring: "bg-muted-text/30", dot: "bg-muted-text" },
 };
 
 interface StatusDotProps {
