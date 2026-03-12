@@ -57,7 +57,54 @@ function GameSkeleton() {
   )
 }
 
+function ProfileSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-4 border border-white/10 rounded-lg bg-black/40 px-4 py-3">
+        <Skeleton className="h-20 w-20 rounded-full" />
+        <div className="flex flex-col gap-2 flex-1">
+          <Skeleton className="h-5 w-32" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-3 w-3 rounded-full" />
+            <Skeleton className="h-4 w-20" />
+          </div>
+          <Skeleton className="h-3 w-40" />
+        </div>
+      </div>
+
+      <div className="border border-white/10 rounded-lg bg-black/30 px-4 py-3 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2 flex-1 max-w-[60%]">
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-4 w-10" />
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-20" />
+          </div>
+          <div className="flex flex-col items-end gap-2">
+            <Skeleton className="h-3 w-14" />
+            <Skeleton className="h-4 w-8" />
+            <Skeleton className="h-3 w-20" />
+          </div>
+        </div>
+      </div>
+
+      <div className="border border-white/10 rounded-lg bg-black/30 px-4 py-3 flex justify-between items-center gap-3">
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-3 w-28" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+        <div className="min-w-[120px]">
+          <Skeleton className="h-9 w-full" />
+        </div>
+      </div>
+
+      <Skeleton className="h-10 w-full" />
+    </div>
+  )
+}
+
 export {
   FriendsSkeleton,
-  GameSkeleton
+  GameSkeleton,
+  ProfileSkeleton
 }

@@ -115,6 +115,7 @@
     "noChangesToUpdate": "No changes to update",
     "profileUpdated": "Profile updated",
     "profilePicture": "Profile picture",
+    "updateProfilePicture": "Update profile picture",
     "profilePictureHint": "Must be JPEG or PNG and cannot exceed 5MB.",
     "username": "Username",
     "email": "Email",
@@ -145,7 +146,10 @@
     "sendMessage": "Send private message",
     "addFriendButton": "Add as friend",
     "removeFriendButton": "Remove friend",
-    "requestAlreadySent": "Request sent"
+    "requestAlreadySent": "Request sent",
+    "level": "Level",
+    "wins": "Wins",
+    "winRate": "Win rate"
   },
   "common": {
     "errorOccurred": "An error occurred",

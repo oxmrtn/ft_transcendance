@@ -115,6 +115,7 @@
     "noChangesToUpdate": "Inga ändringar att uppdatera",
     "profileUpdated": "Profilen har uppdaterats",
     "profilePicture": "Profilbild",
+    "updateProfilePicture": "Uppdatera profilbild",
     "profilePictureHint": "Måste vara JPEG eller PNG och får inte överstiga 10 MB.",
     "username": "Användarnamn",
     "email": "E-post",
@@ -145,7 +146,10 @@
     "sendMessage": "Skicka privat meddelande",
     "addFriendButton": "Lägg till som vän",
     "removeFriendButton": "Ta bort vän",
-    "requestAlreadySent": "Förfrågan skickad"
+    "requestAlreadySent": "Förfrågan skickad",
+    "level": "Nivå",
+    "wins": "Vinster",
+    "winRate": "Vinstprocent"
   },
   "common": {
     "errorOccurred": "Ett fel har inträffat",

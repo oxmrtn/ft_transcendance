@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, useState } from 'react';
-import { Eye, EyeOff, Upload } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface TextInputProps {
@@ -13,14 +13,6 @@ interface TextInputProps {
   value?: string;
   id: string;
   placeholder: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-}
-
-interface FileInputProps {
-  disabled?: boolean;
-  required?: boolean;
-  id: string;
-  previewUrl?: string | null;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -84,43 +76,4 @@ function TextInput({
   );
 }
 
-function FileInput({
-  disabled,
-  id,
-  previewUrl,
-  onChange
-}: FileInputProps) {
-  if (!id)
-    throw new Error("Missing id prop");
-
-  return (
-    <>
-      <label
-        htmlFor={id}
-        className={`h-20 w-20 rounded-full flex items-center justify-center overflow-hidden text-sub-text bg-white/5 border border-white/10 transition-colors duration-200 cursor-pointer
-        hover:bg-white/10 hover:text-white
-        ${disabled ? 'opacity-50 cursor-default' : ''}`}
-      >
-        {previewUrl ? (
-          <img src={previewUrl} className="w-full h-full object-cover" />
-        ) : (
-          <Upload className="w-5 h-5" />
-        )}
-      </label>
-      <input
-        disabled={disabled}
-        type="file"
-        id={id}
-        name={`${id}-name`}
-        onChange={onChange}
-        accept="image/png, image/jpeg"
-        className="hidden"
-      />
-    </>
-  );
-}
-
-export {
-  TextInput,
-  FileInput
-}
+export { TextInput };
