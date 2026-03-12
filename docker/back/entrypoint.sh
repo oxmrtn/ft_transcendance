@@ -14,5 +14,10 @@ fi
 
 echo "Migrating database: $@"
 npx prisma migrate dev --name init
+
+echo "Seeding database..."
+npx prisma db seed
+
+
 echo "Starting application: $@"
 exec "$@"

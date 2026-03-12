@@ -1,5 +1,7 @@
+import { SandBoxResponse } from "./submitCode";
 
-export async function sendDataToSandbox( file_name: string)
+
+export async function sendDataToSandbox( file_name: string) : Promise <SandBoxResponse> 
 {
     const sandboxUrl = 'http://sandbox:4444/receive';
 
@@ -19,9 +21,8 @@ export async function sendDataToSandbox( file_name: string)
         if (!response.ok) {
             throw new Error(`Error from sandbox: ${response.statusText}`);
         }
-
-        return await response.json();
+        return await response.json() as SandBoxResponse;
     } catch (error: any) {
-        console.error("Failed to send data to sandbox", error.message);
+        throw error;
     }
 }

@@ -19,11 +19,8 @@ import { PrismaService } from "prisma/prisma.service";
 import { waitForDebugger } from "node:inspector";
 import { StartGameDto } from "src/dto/start-game.dto";
 import { submitCode } from "src/submission/submitCode";
+import { ChallengeCache, Challenge } from '../challenges/challenge.cache';
 
-interface Challenge {
-	name: string;
-	description: string;
-}
 
 interface PlayerInfos {
 	passedChallenge: boolean | null;
@@ -41,91 +38,16 @@ type GameState = "waiting" | "playing" | "finished";
 const BASE_SUBMIT_TIMEOUT_SECONDS = 15;
 const BASE_REMAINING_TRIES = 3;
 
-const CHALLENGES : Challenge[] = [
-	{
-		name: "strlen",
-		description: `Assignment name  : ft_strlen
-Allowed functions: none
--------------------------------------------------------------------------------
-
-Write a function named ft_strlen that takes a string as a parameter and returns
-its length.
-
-The length of a string is the number of characters that precede the terminating
-NUL character.
-
-Your function must be declared as follows:
-
-int ft_strlen(char *str);`
-	},
-	{
-		name: "pyramid",
-		description: `Assignment name  : pyramid
-Allowed functions: write
--------------------------------------------------------------------------------
-
-Write a function named pyramid that takes an integer 'size' as a parameter and
-displays a left-aligned half-pyramid of '*' characters on the standard output.
-The 'size' parameter represents the number of rows of the pyramid.
-Your function must be declared as follows:
-void pyramid(int size);
--------------------------------------------------------------------------------
-
-Examples:
-If size is 2, the expected output is:
-*
-**
-If size is 5, the expected output is:
-*
-**
-***
-****
-*****`
-	},
-	{
-		name: "min_range",
-		description: `Assignment name  : min_range
-Allowed functions: none
--------------------------------------------------------------------------------
-
-Write a function named min_range that takes an array of integers and its length
-as parameters, and returns the minimum absolute difference between any two
-elements in the array.
-
-If the array's length is less than 2, the function must return 0.
-
-Your function must be declared as follows:
-
-unsigned int min_range(int *arr, unsigned int len);
--------------------------------------------------------------------------------
-Allowed functions: none
--------------------------------------------------------------------------------
-
-Write a function named min_range that takes an array of integers and its length
-as parameters, and returns the minimum absolute difference between any two
-elements in the array.
-
-If the array's length is less than 2, the function must return 0.
-
-Your function must be declared as follows:
-
-unsigned int min_range(int *arr, unsigned int len);
--------------------------------------------------------------------------------
-Examples:
-If arr is {1, 5, 12, 18, 9} and len is 5, the expected output is 4
-(because the absolute difference between 5 and 9 is 4, which is the minimum).
-
-If arr is {3} and len is 1, the expected output is 0.`
-	}
-];
-
 class GameSession {
 	public playerNumber : number;
 	public gameId : string;
+	public dbGameId: number;
 	public players: Map<number, PlayerInfos>;
 	public gameState: GameState;
 	public creatorId: number;
 	public selectedChallenge: Challenge;
+	public gameTime : Date;
+	public rankCounter : number = 1;
 	
 	constructor (gameId: string, playerNumber: number)
 	{
@@ -140,7 +62,7 @@ class GameSession {
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 {
 
-	constructor( private prismaService : PrismaService) {}
+	constructor( private prismaService : PrismaService, private challengeCache: ChallengeCache) {}
 
 	@WebSocketServer() server: Server;
 
@@ -149,7 +71,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 	handleConnection(@ConnectedSocket() client: Socket) {}
 
-	handleDisconnect(@ConnectedSocket() client: Socket)
+	async handleDisconnect(@ConnectedSocket() client: Socket)
 	{
 		const userId : number = client.data.user.userId;
 		const gameId :string = this.clientToRoom.get(userId);
@@ -168,11 +90,28 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			this.clientToRoom.delete(userId);
 
 		if (!currentGame.players.size)
+		{
 			this.gameSessions.delete(gameId);
+			if (currentGame.dbGameId)
+			{
+				await this.prismaService.game.update({
+					where: { id: currentGame.dbGameId },
+					data: {
+						status: "FINISHED",
+						finishedAt: new Date()
+					}
+				});
+			}
+		}
 
 		const inGameIds = this.getInGamePlayerIds(currentGame);
 		if (inGameIds.length === 0 && currentGame.gameState === "playing")
+		{
 			currentGame.gameState = "finished";
+			setTimeout(() => {
+				this.gameSessions.delete(currentGame.gameId);
+					}, 60000);
+		}
 
 		this.notifyGameStatus(currentGame);
 	}
@@ -186,7 +125,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 
 		if (this.clientToRoom.has(userId))
 		{
-			this.errorMessage(client, `${client.data.user.username} already join anonther room!`);
+			this.errorMessage(client, `${client.data.user.username} already joined another room!`);
 			return;
 		}
 
@@ -203,7 +142,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		client.join(`game_${gameId}`);
 
 		await this.notifyGameStatus(currentGame);
-		client.emit('game-info', { event: 'room-created', gameId: gameId, availableChallenges: CHALLENGES.map((c) => c.name) });
+		const challenges = await this.challengeCache.getAll();
+		client.emit('game-info', { event: 'room-created', gameId: gameId, availableChallenges: challenges.map(c => c.title)});
 	}
 
 	@SubscribeMessage('join-room')
@@ -231,7 +171,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 			return;
 		}
 		
-		if (currentGame.players.size + 1 > currentGame.playerNumber && !currentGame.players.has(user.userId))
+		if (currentGame.players.size >= currentGame.playerNumber)
 		{
 			this.errorMessage(client, `This room is already full!`);
 			return;
@@ -355,7 +295,20 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		}
 
 		currentGame.players.set(userId, { passedChallenge: false, remainingTries: 0, lastSubmitTime: null });
-
+		await this.prismaService.gameParticipant.update({
+			where: {
+				gameId_userId: {
+				gameId: currentGame.dbGameId,
+				userId: userId
+				}
+			},
+			data: {
+				rank: null,
+				timeTakenMs: 0,
+				finalCode: ""
+			}
+			});
+	
 		const inGameIds = this.getInGamePlayerIds(currentGame);
 		if (inGameIds.length === 0 && currentGame.gameState === "playing")
 			currentGame.gameState = "finished";
@@ -396,22 +349,38 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		}
 
 		const challengeName = (payload.challengeName ?? "").trim();
-		const challenge = !challengeName
-			? CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)]
-			: CHALLENGES.find((c) => c.name === challengeName);
-		
+		const challenge : Challenge | undefined  = challengeName
+		? await this.challengeCache.getByTitle(challengeName)
+		: await this.challengeCache.getRandom();
+
 		if (!challenge)
 		{
 			this.errorMessage(client, `Challenge "${challengeName}" not found!`);
 			return;
 		}
-
+		const game = await this.prismaService.game.create({
+			data: {
+					exerciseId: challenge.id,
+					status: "IN_PROGRESS"
+			}
+		});
+		currentGame.dbGameId = game.id;
 		currentGame.selectedChallenge = challenge;
 		currentGame.players.forEach((_, playerId) => {
 			currentGame.players.set(playerId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null });
 		});
+		for (const playerId of currentGame.players.keys() ){
+			await this.prismaService.gameParticipant.create({
+				data: {
+					gameId: currentGame.dbGameId,
+					userId: playerId,
+					timeTakenMs: 0,
+					finalCode: ""
+				}
+			})
+		};
+		currentGame.gameTime = new Date();
 		currentGame.gameState = "playing";
-
 		await this.notifyGameStatus(currentGame);
 	}
 
@@ -477,19 +446,78 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect
 		playerInfo.lastSubmitTime = now;
 		playerInfo.remainingTries--;
 
-		const codeResult = await submitCode(currentGame.selectedChallenge.name, userId, payload.code);
+		const codeResult = await submitCode(currentGame.selectedChallenge.title, userId, payload.code);
 
 		if (playerInfo.remainingTries <= 0 && !codeResult.result)
 			playerInfo.passedChallenge = false;
 		else if (codeResult.result)
+		{
 			playerInfo.passedChallenge = true;
-
-		if (playerInfo.passedChallenge !== null) {
-			const inGameIds = this.getInGamePlayerIds(currentGame);
-			if (inGameIds.length === 0 && currentGame.gameState === "playing")
-				currentGame.gameState = "finished";
+			await this.prismaService.gameParticipant.update({
+				where: {
+					gameId_userId: {
+						gameId: currentGame.dbGameId,
+						userId: userId
+					}},
+				data: {
+					rank: currentGame.rankCounter++,
+					timeTakenMs: now.getTime() - currentGame.gameTime.getTime(),
+				}
+			});
+			const win = currentGame.rankCounter - 1 === 1 ? 0 : 1;
+			await this.prismaService.user.update({
+			where: { id: userId },
+			data: {
+				xp: {
+					increment: 50 / currentGame.rankCounter - 1
+				},
+				win: {
+					increment: win
+				}
+			}
+	});
 		}
 
+		if (playerInfo.passedChallenge !== null) {
+			await this.prismaService.gameParticipant.update({
+				where : {
+					gameId_userId: {
+						gameId: currentGame.dbGameId,
+						userId: userId
+					}
+				},
+				data: {
+					finalCode: payload.code
+				}
+			});
+			const inGameIds = this.getInGamePlayerIds(currentGame);
+			if (inGameIds.length === 0 && currentGame.gameState === "playing")
+			{
+				currentGame.gameState = "finished";
+
+				const winner = await this.prismaService.gameParticipant.findFirst({
+					where: {
+						gameId: currentGame.dbGameId,
+						rank: 1
+					},
+					select: {
+						userId: true
+					}
+					});
+
+				await this.prismaService.game.update({
+					where: { id: currentGame.dbGameId },
+					data: {
+						status: "FINISHED",
+						finishedAt: new Date(),
+						winnerId: winner?.userId
+					}
+				})
+				setTimeout(() => {
+					this.gameSessions.delete(currentGame.gameId);
+					}, 60000);
+			}
+		}
 		this.notifyGameStatus(currentGame);
 		client.emit('game-info', { event: 'code-result', result: codeResult.result, trace: codeResult.trace, remainingTries: playerInfo.remainingTries });
 	}

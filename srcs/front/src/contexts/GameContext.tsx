@@ -40,7 +40,7 @@ interface GameContextType {
   setTrace: (trace: { trace: string; result: boolean }[]) => void;
   result: boolean | null;
   availableChallenges: string[];
-  selectedChallenge: { name: string; description: string } | null;
+  selectedChallenge: { title: string; subject: string } | null;
   remainingTries: number;
   resetGame: () => void;
 }
@@ -64,7 +64,7 @@ function GameProvider({ children }: { children: ReactNode }) {
   const [trace, setTrace] = useState<{ trace: string; result: boolean }[]>([]);
   const [result, setResult] = useState<boolean | null>(null);
   const [availableChallenges, setAvailableChallenges] = useState<string[]>([]);
-  const [selectedChallenge, setSelectedChallenge] = useState<{ name: string; description: string } | null>(null);
+  const [selectedChallenge, setSelectedChallenge] = useState<{ title: string; subject: string } | null>(null);
   const [remainingTries, setRemainingTries] = useState<number>(0);
 
   const resetGame = () => {
