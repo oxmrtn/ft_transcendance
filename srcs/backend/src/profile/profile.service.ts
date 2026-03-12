@@ -19,7 +19,7 @@ export class ProfileService {
 
 		return this.prisma.user.findUnique({
 			where: { id: request.user.userId },
-			select: { username: true, email: true, profilePictureUrl: true }
+			select: { username: true, email: true, profilePictureUrl: true, xp : true, win : true }
 		});
 	}
 

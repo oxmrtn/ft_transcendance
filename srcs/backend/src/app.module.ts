@@ -9,6 +9,10 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ProfileModule } from './profile/profile.module';
 import { GameModule } from './game/game.module';
+import { ChallengeCache } from './challenges/challenge.cache';
+import { ChallengeModule } from './challenges/challenge.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
+import { HistoryModule } from './history/history.module';
 
 @Module({
   imports: [
@@ -21,14 +25,18 @@ import { GameModule } from './game/game.module';
       limit: 100,
     }]),
     AuthModule,
+    ChallengeModule,
     SocialModule,
     ChatModule,
     ProfileModule,
-    GameModule
+    GameModule,
+    LeaderboardModule,
+    HistoryModule,
   ],
   controllers: [AppController],
   providers: [
     PrismaService,
+    ChallengeCache,
     {
       provide: APP_GUARD, 
       useClass: ThrottlerGuard,
