@@ -21,7 +21,7 @@ interface ChatModalProps {
 
 export function ChatModal({ target, triggerId }: ChatModalProps) {
     const { socket, messages, setUnreadMessagesCount, setIsChatOpen } = useSocket();
-    const { username } = useAuth();
+    const { username, isAuthenticated } = useAuth();
     const { closeModal } = useModal();
     const { dictionary } = useLanguage();
     const [message, setMessage] = useState("");
@@ -66,6 +66,14 @@ export function ChatModal({ target, triggerId }: ChatModalProps) {
         setIsChatOpen(true);
         setUnreadMessagesCount(0);
     }, []);
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            setIsChatOpen(false);
+            setUnreadMessagesCount(0);
+            closeModal();
+        }
+    }, [isAuthenticated, setIsChatOpen, setUnreadMessagesCount, closeModal]);
 
     useEffect(() => {
         if (messages.length <= prevMessagesLengthRef.current) {

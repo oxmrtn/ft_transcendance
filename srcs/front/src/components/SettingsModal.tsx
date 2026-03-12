@@ -84,10 +84,15 @@ export default function SettingsModal() {
         toast.error(response.statusText || dictionary.common.errorOccurred);
 
       const data = await response.json();
+
+      const nextProfilePictureUrl = data.profilePictureUrl
+        ? `${data.profilePictureUrl}?t=${Date.now()}`
+        : null;
+
       setProfile({
         username: data.username,
         email: data.email,
-        profilePictureUrl: data.profilePictureUrl ?? null,
+        profilePictureUrl: nextProfilePictureUrl,
       });
 
       toast.success(dictionary.settings.profileUpdated);
