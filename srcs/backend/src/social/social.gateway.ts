@@ -67,14 +67,9 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 	private async handleOnlineUser(user : any)
 	{
 		try {
-			const friends = await this.socialService.getFriendsId(user.userId);
-
-			friends.forEach(friend =>
-			{
-				this.server.to(`user_${friend.id}`).emit('user-status', {
-					username: user.username,
-					status: true
-				});
+			this.server.emit('user-status', {
+				username: user.username,
+				status: true
 			});
 		} catch (err) {
 			console.error(err);
@@ -84,14 +79,9 @@ export class SocialGateway implements OnGatewayConnection, OnGatewayDisconnect
 	private async handleOfflineUser(user : any)
 	{
 		try {
-			const friends = await this.socialService.getFriendsId(user.userId);
-
-			friends.forEach(friend =>
-			{
-				this.server.to(`user_${friend.id}`).emit('user-status', {
-					username: user.username,
-					status: false
-				});
+			this.server.emit('user-status', {
+				username: user.username,
+				status: false
 			});
 		} catch (err) {
 			console.error(err);

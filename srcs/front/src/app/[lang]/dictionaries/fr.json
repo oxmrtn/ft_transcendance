@@ -115,6 +115,7 @@
     "noChangesToUpdate": "Aucune modification à enregistrer",
     "profileUpdated": "Profil mis à jour",
     "profilePicture": "Photo de profil",
+    "updateProfilePicture": "Mettre à jour la photo de profil",
     "profilePictureHint": "JPEG ou PNG, 10 Mo max.",
     "username": "Nom d'utilisateur",
     "email": "E-mail",
@@ -145,7 +146,10 @@
     "sendMessage": "Envoyer un message privé",
     "addFriendButton": "Ajouter en ami",
     "removeFriendButton": "Retirer des amis",
-    "requestAlreadySent": "Demande envoyée"
+    "requestAlreadySent": "Demande envoyée",
+    "level": "Niveau",
+    "wins": "Victoires",
+    "winRate": "Taux de victoire"
   },
   "common": {
     "errorOccurred": "Une erreur est survenue",

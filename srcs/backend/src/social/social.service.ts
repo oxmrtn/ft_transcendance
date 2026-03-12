@@ -98,7 +98,20 @@ export class SocialService
 
 		const foundUser = await this.prisma.user.findUnique({
 			where: { username },
-			select: { id: true, username: true, profilePictureUrl: true, createdAt: true },
+			select: {
+				id: true,
+				username: true,
+				profilePictureUrl: true,
+				createdAt: true,
+				xp: true,
+				win: true,
+				_count: {
+					select: {
+						gamesWon: true,
+						gameParticipations: true,
+					},
+				},
+			},
 		});
 
 		if (!foundUser)
@@ -126,12 +139,18 @@ export class SocialService
 			}
 		}
 
+		const wins = foundUser._count?.gamesWon ?? 0;
+		const gamesPlayed = foundUser._count?.gameParticipations ?? 0;
+
 		return {
 			username: foundUser.username,
 			profilePictureUrl: foundUser.profilePictureUrl,
 			createdAt: foundUser.createdAt,
 			status: isOnline ? true : false,
 			friendStatus,
+			xp: foundUser.xp,
+			win: wins,
+			gamesPlayed,
 		};
 	}
 

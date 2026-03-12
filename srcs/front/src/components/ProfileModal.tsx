@@ -11,6 +11,8 @@ import { X, MessageCircleMore } from "lucide-react";
 import { toast } from "sonner";
 import { ChatModal } from "./Chat";
 import Button from "./ui/Button";
+import { ProfileSkeleton } from "./ui/skeleton";
+import { useSocket } from "../contexts/SocketContext";
 
 interface UserProfile {
   username: string;
@@ -18,6 +20,9 @@ interface UserProfile {
   createdAt: string;
   status: boolean;
   friendStatus: "friend" | "pending" | null;
+  xp: number;
+  win: number;
+  gamesPlayed: number;
 }
 
 export default function ProfileModal({ username }: { username: string }) {
@@ -26,8 +31,9 @@ export default function ProfileModal({ username }: { username: string }) {
   const { closeModal, openModal } = useModal();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSkeleton, setShowSkeleton] = useState(true);
   const [isFriendActionLoading, setIsFriendActionLoading] = useState(false);
-
+  const { socket } = useSocket();
   const fetchProfile = async () => {
     setIsLoading(true);
 
@@ -163,9 +169,33 @@ export default function ProfileModal({ username }: { username: string }) {
     }
   };
 
+  const updateUserStatus = (user: any) => {
+    setProfile(prev => prev ? { ...prev, status: user.status } : prev);
+  }
+
   useEffect(() => {
     fetchProfile();
   }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      const timeout = setTimeout(() => {
+        setShowSkeleton(false);
+      }, 500);
+      return () => clearTimeout(timeout);
+    } else {
+      setShowSkeleton(true);
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (!socket)
+      return;
+    socket.on('user-status', updateUserStatus);
+    return () => {
+      socket.off('user-status', updateUserStatus);
+    }
+  }, [socket]);
 
   return (
     <div className="w-[380px] sm:w-[420px] md:w-[460px] gradient-background rounded-xl border border-white/10 shadow-[0_0_40px] shadow-black/80 overflow-hidden">
@@ -180,15 +210,10 @@ export default function ProfileModal({ username }: { username: string }) {
         <div className="grid-gradient absolute top-0 left-0 w-full h-full"></div>
       </div>
 
-      <div className="p-5 flex flex-col gap-5">
-        {isLoading && (
-          <div className="flex flex-col gap-3">
-            <div className="h-16 rounded-lg bg-white/5 animate-pulse" />
-            <div className="h-24 rounded-lg bg-white/5 animate-pulse" />
-          </div>
-        )}
+      <div className="p-4 flex flex-col gap-4">
+        {showSkeleton && <ProfileSkeleton />}
 
-        {!isLoading && profile && (
+        {!showSkeleton && profile && (
           <>
             <div className="flex items-center gap-4 border border-white/10 rounded-lg bg-black/40 px-4 py-3">
               <ProfilePicture profilePictureUrl={profile.profilePictureUrl} size={20} />
@@ -203,6 +228,44 @@ export default function ProfileModal({ username }: { username: string }) {
                 <p className="text-xs text-muted-text">
                   {dictionary.profile.registeredSince} {formatDate(profile.createdAt)}
                 </p>
+              </div>
+            </div>
+
+            <div className="border border-white/10 rounded-lg bg-black/30 px-4 py-3 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <span className="text-xs text-muted-text">{dictionary.profile.level}</span>
+                  {(() => {
+                    const level = Math.floor(profile.xp / 100);
+                    const currentXp = profile.xp % 100;
+                    const percent = Math.min(100, (currentXp / 100) * 100);
+                    return (
+                      <div className="flex flex-col gap-1 mt-1">
+                        <span className="text-sm text-sub-text font-mono">{level}</span>
+                        <div className="w-28 h-2 rounded-full bg-white/10 overflow-hidden border border-white/10">
+                          <div className="h-full bg-primary" style={{ width: `${percent}%` }} />
+                        </div>
+                        <span className="text-xs text-muted-text font-mono">
+                          {currentXp}/100 XP
+                        </span>
+                      </div>
+                    );
+                  })()}
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="text-xs text-muted-text">{dictionary.profile.wins}</span>
+                  <span className="text-sm text-sub-text font-mono">{profile.win}</span>
+                  <span className="text-xs text-muted-text">
+                    {dictionary.profile.winRate}:{" "}
+                    {(() => {
+                      const { win, gamesPlayed } = profile;
+                      if (!gamesPlayed)
+                        return "0%";
+                      const rate = Math.round((win / gamesPlayed) * 100);
+                      return `${rate}%`;
+                    })()}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -242,7 +305,7 @@ export default function ProfileModal({ username }: { username: string }) {
                       variant="primary"
                       fullWidth
                       disabled
-                      onClick={() => {}}
+                      onClick={() => { }}
                     >
                       {dictionary.profile.requestAlreadySent}
                     </Button>
