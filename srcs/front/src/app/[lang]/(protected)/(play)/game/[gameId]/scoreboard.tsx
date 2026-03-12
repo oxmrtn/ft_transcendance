@@ -76,11 +76,14 @@ export default function Scoreboard() {
                                 });
 
                                 for (const [index, player] of sortedPlayers.entries()) {
-                                    const status: { variant: StatusDotVariant; label: string } = player.passedChallenge === true
-                                        ? { variant: "success", label: dictionary.game.successGame }
-                                        : player.passedChallenge === null
-                                        ? { variant: "inGame", label: dictionary.game.inGame }
-                                        : { variant: "fail", label: dictionary.game.failedGame };
+                                    const status: { variant: StatusDotVariant; label: string } =
+                                        !player.online && player.passedChallenge === null
+                                            ? { variant: "ghost", label: dictionary.game.disconnectedGame }
+                                            : player.passedChallenge === true
+                                            ? { variant: "success", label: dictionary.game.successGame }
+                                            : player.passedChallenge === null
+                                            ? { variant: "inGame", label: dictionary.game.inGame }
+                                            : { variant: "fail", label: dictionary.game.failedGame };
                                     rows.push(
                                         <div key={player.username} className="flex items-center justify-between py-4 px-4 hover:bg-white/5 transition-colors duration-200">
                                             <div className="flex items-center gap-8">

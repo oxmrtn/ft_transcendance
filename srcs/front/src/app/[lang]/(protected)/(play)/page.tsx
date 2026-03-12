@@ -1,26 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ContentWrapper from "../../../../components/ContentWrapper";
 import Button from "../../../../components/ui/Button";
 import { TextInput } from "../../../../components/ui/Input";
 import { useSocket } from "../../../../contexts/SocketContext";
 import { useLanguage } from "../../../../contexts/LanguageContext";
+import { useGame } from "../../../../contexts/GameContext";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [roomId, setRoomId] = useState("");
   const { socket } = useSocket();
-  const { dictionary } = useLanguage();
+  const { dictionary, lang } = useLanguage();
+  const { gameId, gameState } = useGame();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!gameId)
+      return;
+    if (gameState === "finished")
+      return;
+    router.replace(`/${lang}/game/${gameId}`);
+  }, [gameId, gameState, router, lang]);
 
   const joinRoom = () => {
     if (!socket)
-        return;
+      return;
     socket.emit("join-room", { gameId: roomId });
   };
 
   const createRoom = () => {
     if (!socket)
-        return;
+      return;
     socket.emit("create-room");
   };
 

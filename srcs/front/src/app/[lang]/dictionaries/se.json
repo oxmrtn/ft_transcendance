@@ -88,6 +88,7 @@
     "abandonGame": "Avbryt battle",
     "inGame": "I spel",
     "failedGame": "Misslyckades",
+    "disconnectedGame": "Frånkopplad",
     "successGame": "Lyckades",
     "youWon": "Du lyckades",
     "youFailed": "Du misslyckades",

@@ -18,6 +18,7 @@ export interface GamePlayer {
   username: string;
   profilePictureUrl: string | null;
   passedChallenge: boolean | null;
+  online: boolean;
 }
 
 export type GameState = "waiting" | "playing" | "finished";
@@ -43,6 +44,7 @@ interface GameContextType {
   selectedChallenge: { title: string; subject: string } | null;
   remainingTries: number;
   resetGame: () => void;
+  isLoading: boolean;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -66,6 +68,7 @@ function GameProvider({ children }: { children: ReactNode }) {
   const [availableChallenges, setAvailableChallenges] = useState<string[]>([]);
   const [selectedChallenge, setSelectedChallenge] = useState<{ title: string; subject: string } | null>(null);
   const [remainingTries, setRemainingTries] = useState<number>(0);
+  const [isLoading, setisLoading] = useState<boolean>(true);
 
   const resetGame = () => {
     setGameId(null);
@@ -81,6 +84,7 @@ function GameProvider({ children }: { children: ReactNode }) {
     setAvailableChallenges([]);
     setSelectedChallenge(null);
     setRemainingTries(0);
+    setisLoading(false);
   }
 
   const setGame = (payload: any) => {
@@ -103,6 +107,10 @@ function GameProvider({ children }: { children: ReactNode }) {
       );
     }
 
+    const me = (payload.players ?? []).find((p: GamePlayer) => p.username === myUsername && p.passedChallenge !== null);
+    if (me)
+      setResult(me.passedChallenge);
+
     prevGameStateRef.current = nextState;
     setGameId(payload.gameId);
     setCreatorUsername(payload.creatorUsername);
@@ -120,6 +128,12 @@ function GameProvider({ children }: { children: ReactNode }) {
       if (payload.event === "error") {
         toast.error(payload.message || dictionary.common.errorOccurred);
         return
+      }
+
+      if (payload.event === "no-active-game") {
+        resetGame();
+        router.replace(`/${lang}/`);
+        return;
       }
 
       if (payload.event === "room-kicked") {
@@ -144,10 +158,20 @@ function GameProvider({ children }: { children: ReactNode }) {
       if (payload.event === "room-created"
         || payload.event === "room-joined"
       ) {
+        resetGame();
+        setGameId(payload.gameId);
         setAvailableChallenges(payload.availableChallenges);
         hasLeftRoomRef.current = false;
         router.push(`/${lang}/game/${payload.gameId}`);
         setRemainingTries(BASE_REMAINING_TRIES);
+        setisLoading(false);
+        return;
+      }
+
+      if (payload.event === "resume-game") {
+        hasLeftRoomRef.current = false;
+        router.push(`/${lang}/game/${payload.gameId}`);
+        setisLoading(false);
         return;
       }
 
@@ -168,13 +192,15 @@ function GameProvider({ children }: { children: ReactNode }) {
     };
 
     socket.on("game-info", onGameInfo);
+    setisLoading(true);
+    socket.emit("get-game");
     return () => {
       socket.off("game-info", onGameInfo);
     };
   }, [socket, lang, router, dictionary]);
 
   return (
-    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, roomPlayers, gamePlayers, gameState, hasLeftRoomRef, submitState, setSubmitState, trace, setTrace, result, availableChallenges, selectedChallenge, remainingTries, resetGame }}>
+    <GameContext.Provider value={{ gameId, creatorUsername, isCreator, roomPlayers, gamePlayers, gameState, hasLeftRoomRef, submitState, setSubmitState, trace, setTrace, result, availableChallenges, selectedChallenge, remainingTries, resetGame, isLoading }}>
       {children}
     </GameContext.Provider>
   );
