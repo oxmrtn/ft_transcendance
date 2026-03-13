@@ -28,6 +28,7 @@
   },
     "header": {
     "friendsTab": "friends",
+    "leaderboardTab": "leaderboard",
     "playTab": "play",
     "historyTab": "history",
     "settings": "Settings",
@@ -108,6 +109,17 @@
   },
   "history": {
     "title": "history"
+  },
+  "leaderboard": {
+    "title": "leaderboard",
+    "topLabel": "Top {{count}}",
+    "searchPlaceholder": "Player name",
+    "levelLabel": "Lvl",
+    "xpLabel": "XP",
+    "you": "You",
+    "empty": "No ranked players yet",
+    "noSearchResult": "No player found",
+    "loading": "Loading leaderboard..."
   },
   "settings": {
     "title": "Settings",

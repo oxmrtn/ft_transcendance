@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGame } from "../../../../../../contexts/GameContext";
 import Room from "./room";
 import Battle from "./battle";
@@ -17,6 +17,9 @@ export default function Game() {
   const [showSkeleton, setShowSkeleton] = useState<boolean>(isLoading);
   const router = useRouter();
   const { socket } = useSocket();
+  const socketRef = useRef(socket);
+  const gameIdRef = useRef(gameId);
+  const gameStateRef = useRef(gameState);
 
   useEffect(() => {
     if (isLoading) {
@@ -33,12 +36,18 @@ export default function Game() {
   }, [isLoading, gameId, router, lang]);
 
   useEffect(() => {
+    socketRef.current = socket;
+    gameIdRef.current = gameId;
+    gameStateRef.current = gameState;
+  }, [socket, gameId, gameState]);
+
+  useEffect(() => {
     return () => {
-      if (!socket || !gameId || hasLeftRoomRef.current || gameState !== "waiting")
+      if (!socketRef.current || !gameIdRef.current || hasLeftRoomRef.current || gameStateRef.current !== "waiting")
         return;
-      socket.emit("leave-room");
+      socketRef.current.emit("leave-room");
     };
-  }, [socket, hasLeftRoomRef, gameId, gameState]);
+  }, [hasLeftRoomRef]);
 
   if (showSkeleton || !gameId) {
     return (

@@ -28,6 +28,7 @@
   },
   "header": {
     "friendsTab": "vänner",
+    "leaderboardTab": "leaderboard",
     "playTab": "spela",
     "historyTab": "historik",
     "settings": "Inställningar",
@@ -108,6 +109,17 @@
   },
   "history": {
     "title": "historik"
+  },
+  "leaderboard": {
+    "title": "leaderboard",
+    "topLabel": "Topp {{count}}",
+    "searchPlaceholder": "Spelarnamn",
+    "levelLabel": "Lvl",
+    "xpLabel": "XP",
+    "you": "Du",
+    "empty": "Inga rankade spelare ännu",
+    "noSearchResult": "Ingen spelare hittades",
+    "loading": "Laddar leaderboard..."
   },
   "settings": {
     "title": "Inställningar",

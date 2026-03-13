@@ -70,6 +70,14 @@ function GameProvider({ children }: { children: ReactNode }) {
   const [remainingTries, setRemainingTries] = useState<number>(0);
   const [isLoading, setisLoading] = useState<boolean>(true);
 
+  useEffect(() => {
+    if (!creatorUsername || !myUsername) {
+      setIsCreator(false);
+      return;
+    }
+    setIsCreator(creatorUsername === myUsername);
+  }, [creatorUsername, myUsername]);
+
   const resetGame = () => {
     setGameId(null);
     setCreatorUsername(null);
@@ -114,10 +122,12 @@ function GameProvider({ children }: { children: ReactNode }) {
     prevGameStateRef.current = nextState;
     setGameId(payload.gameId);
     setCreatorUsername(payload.creatorUsername);
-    setRoomPlayers(payload.players);
-    setIsCreator(payload.creatorUsername === myUsername);
+    setRoomPlayers(payload.players ?? []);
     setGameState(nextState);
     setSelectedChallenge(payload.selectedChallenge);
+
+    if (Array.isArray(payload.availableChallenges))
+      setAvailableChallenges(payload.availableChallenges);
   }
 
   useEffect(() => {
@@ -160,7 +170,11 @@ function GameProvider({ children }: { children: ReactNode }) {
       ) {
         resetGame();
         setGameId(payload.gameId);
-        setAvailableChallenges(payload.availableChallenges);
+        setAvailableChallenges(payload.availableChallenges ?? []);
+        if (payload.event === "room-created") {
+          setCreatorUsername(myUsername ?? null);
+          setIsCreator(true);
+        }
         hasLeftRoomRef.current = false;
         router.push(`/${lang}/game/${payload.gameId}`);
         setRemainingTries(BASE_REMAINING_TRIES);
@@ -169,6 +183,8 @@ function GameProvider({ children }: { children: ReactNode }) {
       }
 
       if (payload.event === "resume-game") {
+        if (Array.isArray(payload.availableChallenges))
+          setAvailableChallenges(payload.availableChallenges);
         hasLeftRoomRef.current = false;
         router.push(`/${lang}/game/${payload.gameId}`);
         setisLoading(false);

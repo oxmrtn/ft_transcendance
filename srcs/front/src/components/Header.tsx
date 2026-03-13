@@ -42,7 +42,8 @@ export default function Header() {
       <div className="absolute left-1/2 -translate-x-1/2 top-0 w-fit h-full max-h-full">
         <Nav tabs={[
           { name: dictionary.header.friendsTab, href: "/friends" },
-          { name: dictionary.header.playTab, href: "/" }
+          { name: dictionary.header.playTab, href: "/" },
+          { name: dictionary.header.leaderboardTab, href: "/leaderboard" }
         ]} />
       </div>
 

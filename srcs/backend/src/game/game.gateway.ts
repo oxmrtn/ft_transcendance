@@ -229,8 +229,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		info.online = true;
 		currentGame.players.set(userId, info);
 		client.join(`game_${currentGame.gameId}`);
+		const challenges = await this.challengeCache.getAll();
 
-		client.emit('game-info', { event: 'resume-game', gameId: currentGame.gameId });
+		client.emit('game-info', {
+			event: 'resume-game',
+			gameId: currentGame.gameId,
+			availableChallenges: challenges.map(c => c.title)
+		});
 		this.notifyGameStatus(currentGame);
 	}
 
@@ -579,6 +584,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			select: { username: true },
 		});
 
+		const challenges = await this.challengeCache.getAll();
+
 		this.server.to(`game_${game.gameId}`).emit('game-info', {
 			event: 'room-update',
 			players,
@@ -586,6 +593,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			creatorUsername: creator?.username ?? null,
 			gameState: game.gameState,
 			selectedChallenge: game.selectedChallenge,
+			availableChallenges: challenges.map(c => c.title),
 		});
 	}
 }
