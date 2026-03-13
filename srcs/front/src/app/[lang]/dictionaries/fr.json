@@ -72,7 +72,13 @@
     "title": "jouer",
     "createRoom": "Créer une partie",
     "joinRoom": "Rejoindre",
-    "roomIdPlaceholder": "ID de la partie"
+    "roomIdPlaceholder": "ID de la partie",
+    "loadingRooms": "Chargement des rooms...",
+    "noWaitingRooms": "Aucune room en attente",
+    "roomIdLabel": "ID",
+    "creatorLabel": "Créateur",
+    "playersLabel": "Joueurs",
+    "unknownCreator": "Inconnu"
   },
   "game": {
     "roomTitle": "Room",
@@ -108,7 +114,27 @@
     "gameDisconnected": "Vous avez été déconnecté de la partie"
   },
   "history": {
-    "title": "historique"
+    "title": "historique",
+    "topLabel": "100 dernières parties",
+    "loading": "Chargement de l'historique...",
+    "empty": "Aucune partie dans l'historique",
+    "noSearchResult": "Aucune partie trouvée",
+    "gameIdLabel": "ID",
+    "challengeLabel": "Challenge",
+    "rankLabel": "Rang",
+    "playersLabel": "Joueurs",
+    "dateLabel": "Date",
+    "hourLabel": "Heure",
+    "detailsButton": "Détails",
+    "detailsTitle": "détails de la partie",
+    "backButton": "Retour",
+    "loadingDetails": "Chargement des détails...",
+    "noDetails": "Aucun détail disponible pour cette partie",
+    "statusLabel": "Statut",
+    "timeLabel": "Temps",
+    "startedAtLabel": "Commencée le",
+    "notFinished": "Non terminée",
+    "noRank": "-"
   },
   "leaderboard": {
     "title": "leaderboard",

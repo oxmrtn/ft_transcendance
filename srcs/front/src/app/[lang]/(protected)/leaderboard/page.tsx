@@ -140,6 +140,13 @@ export default function Page() {
                 const rank = (page - 1) * ITEMS_PER_PAGE + index + 1;
                 const isMe = myUsername === player.username;
                 const level = Math.floor(player.xp / 100);
+                const rankClassName = rank === 1
+                  ? "text-[#f7c66a] text-shadow-[0_0_8px_rgba(247,198,106,0.35)]"
+                  : rank === 2
+                  ? "text-[#d7dde5] text-shadow-[0_0_8px_rgba(215,221,229,0.3)]"
+                  : rank === 3
+                  ? "text-[#c98a66] text-shadow-[0_0_8px_rgba(201,138,102,0.3)]"
+                  : "text-sub-text";
 
                 return (
                   <div
@@ -147,7 +154,7 @@ export default function Page() {
                     className="w-full flex items-center justify-between py-3 px-4 transition-colors duration-200 hover:bg-white/5"
                   >
                     <div className="flex items-center gap-4">
-                      <span className="font-mono text-sub-text min-w-8">#{rank}</span>
+                      <span className={`font-mono min-w-8 ${rankClassName}`}>#{rank}</span>
                       <ProfilePicture profilePictureUrl={player.profilePictureUrl} size={12} />
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
