@@ -3,6 +3,9 @@
 :root {
     --primary: #d46e2e;
     --primary-30: rgba(212, 110, 46, .3);
+    --podium-gold: #f7c66a;
+    --podium-silver: #d7dde5;
+    --podium-bronze: #c98a66;
     --destructive: #ff0037;
     --green: #50FF8A;
     --modal-background: rgba(0, 0, 0, .5);
@@ -15,6 +18,9 @@
 @theme {
     --color-primary: var(--primary);
     --color-primary-30: var(--primary-30);
+    --color-podium-gold: var(--podium-gold);
+    --color-podium-silver: var(--podium-silver);
+    --color-podium-bronze: var(--podium-bronze);
     --color-destructive: var(--destructive);
     --color-green: var(--green);
     --color-sub-text: var(--sub-text);

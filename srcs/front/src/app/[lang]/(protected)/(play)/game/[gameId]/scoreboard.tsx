@@ -89,11 +89,11 @@ export default function Scoreboard() {
                                 for (const [index, player] of sortedPlayers.entries()) {
                                     const rankPosition = index + 1;
                                     const rankClassName = rankPosition === 1
-                                        ? "text-[#f7c66a] text-shadow-[0_0_8px_rgba(247,198,106,0.35)]"
+                                        ? "text-podium-gold drop-shadow-[0_0_8px_currentColor]"
                                         : rankPosition === 2
-                                        ? "text-[#d7dde5] text-shadow-[0_0_8px_rgba(215,221,229,0.3)]"
+                                        ? "text-podium-silver drop-shadow-[0_0_8px_currentColor]"
                                         : rankPosition === 3
-                                        ? "text-[#c98a66] text-shadow-[0_0_8px_rgba(201,138,102,0.3)]"
+                                        ? "text-podium-bronze drop-shadow-[0_0_8px_currentColor]"
                                         : "text-sub-text";
                                     const status: { variant: StatusDotVariant; label: string } =
                                         !player.online && player.passedChallenge === null

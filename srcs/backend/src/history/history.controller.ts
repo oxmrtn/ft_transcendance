@@ -8,7 +8,7 @@ export class HistoryController {
 
     @UseGuards(AuthGuard('jwt'))
     @Get('me')
-    async getHistory(@Req() req: any, @Query('page') page = 1, @Query('limit') limit = 10)
+    async getHistory(@Req() req: any, @Query('page') page = 1, @Query('limit') limit: number = 100)
     {
       return this.gamesService.getUserGameHistory(req.user.userId, Number(page), Number(limit));
     }
