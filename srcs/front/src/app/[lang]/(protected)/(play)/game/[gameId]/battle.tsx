@@ -11,7 +11,7 @@ import ProfilePicture from "../../../../../../components/ProfilePicture";
 import Trace from "./trace";
 import { cn } from "../../../../../../lib/utils";
 import { ScrollArea } from "../../../../../../components/ui/scroll-area";
-import StatusDot from "../../../../../../components/StatusDot";
+import StatusDot, { type StatusDotVariant } from "../../../../../../components/StatusDot";
 
 type BattleTab = "code" | "subject" | "trace";
 
@@ -119,15 +119,17 @@ export default function Battle() {
               }}
             />
           </TabsContent>
-          <TabsContent value="subject" className="flex-1 min-h-0 w-full flex flex-col border border-px border-white/10 rounded-md overflow-hidden p-4">
+          <TabsContent value="subject" className="flex flex-1 min-h-0 w-full p-4">
+            <div className="flex-1 flex flex-col border border-px border-white/10 rounded-md overflow-hidden">
               <div className="w-full flex flex-col gap-2 bg-black/50 py-4 px-6 border-b border-px border-white/10">
-                <p className="text-sm text-white font-medium font-mono">{selectedChallenge.name}</p>
+                <p className="text-sm text-white font-medium font-mono">{selectedChallenge.title}</p>
               </div>
               <ScrollArea className="flex-1 min-h-0 w-full overflow-hidden bg-white/5">
                 <div className="py-3 px-4 text-sm text-sub-text font-medium font-mono whitespace-pre-wrap">
                   {selectedChallenge.subject}
                 </div>
               </ScrollArea>
+            </div>
           </TabsContent>
           <TabsContent value="trace" className="flex-1 min-h-0 h-full w-full overflow-hidden">
             <Trace />
@@ -138,6 +140,14 @@ export default function Battle() {
           {(() => {
             const cards = [];
             for (const player of gamePlayers) {
+              const statusVariant: StatusDotVariant =
+                !player.online && player.passedChallenge === null
+                  ? "ghost"
+                  : player.passedChallenge === null
+                  ? "inGame"
+                  : player.passedChallenge === false
+                  ? "fail"
+                  : "success";
               cards.push(
                 <div key={player.username} className="flex items-center justify-center bg-black/30 border border-px border-white/10 rounded-md p-2 gap-1">
                   <div className="flex items-center gap-2">
@@ -145,14 +155,7 @@ export default function Battle() {
                     <p className="text-sub-text font-medium">{player.username}</p>
                   </div>
                   <div className="pl-1 flex items-center gap-1.5">
-                  {player.passedChallenge === null ? (
-                      <StatusDot variant="inGame" />
-                    ) : player.passedChallenge === false ? (
-                      <StatusDot variant="fail" />
-                    ) : (
-                      <StatusDot variant="success" />
-                    )
-                  }
+                    <StatusDot variant={statusVariant} />
                   </div>
                 </div>
               );

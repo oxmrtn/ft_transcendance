@@ -55,7 +55,7 @@ export default async function RootLayout({
   const dict = await getDictionary(lang);
 
   return (
-    <html lang={lang}>
+    <html lang={lang} className="gradient-background">
       <body className={`${GeistSans.className} ${GeistMono.variable} ${bebas.variable} gradient-background`}>
         <AuthProvider>
           <LanguageProvider initialLang={lang} initialDictionary={dict}>

@@ -21,7 +21,7 @@ interface ChatModalProps {
 
 export function ChatModal({ target, triggerId }: ChatModalProps) {
     const { socket, messages, setUnreadMessagesCount, setIsChatOpen } = useSocket();
-    const { username } = useAuth();
+    const { username, isAuthenticated } = useAuth();
     const { closeModal } = useModal();
     const { dictionary } = useLanguage();
     const [message, setMessage] = useState("");
@@ -68,6 +68,14 @@ export function ChatModal({ target, triggerId }: ChatModalProps) {
     }, []);
 
     useEffect(() => {
+        if (!isAuthenticated) {
+            setIsChatOpen(false);
+            setUnreadMessagesCount(0);
+            closeModal();
+        }
+    }, [isAuthenticated, setIsChatOpen, setUnreadMessagesCount, closeModal]);
+
+    useEffect(() => {
         if (messages.length <= prevMessagesLengthRef.current) {
             prevMessagesLengthRef.current = messages.length;
             return;
@@ -79,24 +87,26 @@ export function ChatModal({ target, triggerId }: ChatModalProps) {
         }
 
         if (lastMessage.isPrivate) {
-            if (!lastMessage.isSender && activeTab !== 'private')
+            if (!lastMessage.isSender && activeTab === 'global')
                 setPrivateTabNotification(true);
         } else {
-            if (lastMessage.sender !== username && activeTab !== 'global')
+            if (lastMessage.sender !== username && activeTab === 'private')
                 setGlobalTabNotification(true);
         }
 
         prevMessagesLengthRef.current = messages.length;
-    }, [messages, activeTab]);
+    }, [messages, activeTab, username]);
 
     const handleTabChange = (v: string) => {
         const newTab = v as ChatTab;
         setActiveTab(newTab);
 
-        if (newTab === 'private') {
+        if (newTab === 'private')
             setPrivateTabNotification(false);
-        }
-        if (newTab === 'global') {
+        else if (newTab === 'global')
+            setGlobalTabNotification(false);
+        else if (newTab === 'all') {
+            setPrivateTabNotification(false);
             setGlobalTabNotification(false);
         }
     };

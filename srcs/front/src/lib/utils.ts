@@ -5,15 +5,7 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-function getBaseUrl() {
-  if (typeof window !== 'undefined') {
-    return '/api'; 
-  }
-  
-  return 'https://backend:3333'; 
-};
-
-export const API_URL = getBaseUrl();
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 export {
   cn

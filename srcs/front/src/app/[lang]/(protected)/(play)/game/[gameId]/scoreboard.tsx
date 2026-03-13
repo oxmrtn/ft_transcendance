@@ -6,6 +6,7 @@ import { useGame } from "../../../../../../contexts/GameContext";
 import { useLanguage } from "../../../../../../contexts/LanguageContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../../../components/ui/tabs";
 import { useSocket } from "../../../../../../contexts/SocketContext";
+import { useRouter } from "next/navigation";
 import Trace from "./trace";
 import { Loader2Icon, EllipsisVertical, User, MessageCircleMore } from "lucide-react";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
@@ -23,18 +24,28 @@ import ProfileModal from "../../../../../../components/ProfileModal";
 import { useAuth } from "../../../../../../contexts/AuthContext";
 
 export default function Scoreboard() {
-    const { result, gameId, hasLeftRoomRef, gamePlayers, gameState } = useGame();
-    const { dictionary } = useLanguage();
+    const { result, gameId, hasLeftRoomRef, gamePlayers, gameState, resetGame } = useGame();
+    const { dictionary, lang } = useLanguage();
     const { socket } = useSocket();
     const { openModal } = useModal();
     const { username: myUsername } = useAuth();
+    const router = useRouter();
 
     const shortenedGameId = `${gameId.slice(0, 4)}...${gameId.slice(-4)}`;
 
     const leaveRoom = () => {
+        hasLeftRoomRef.current = true;
+
+        if (gameState === "finished") {
+            if (socket && gameId)
+                socket.emit("leave-room");
+            resetGame();
+            router.push(`/${lang}/`);
+            return;
+        }
+
         if (!socket || !gameId)
             return;
-        hasLeftRoomRef.current = true;
         socket.emit("leave-room");
     };
 
@@ -76,16 +87,27 @@ export default function Scoreboard() {
                                 });
 
                                 for (const [index, player] of sortedPlayers.entries()) {
-                                    const status: { variant: StatusDotVariant; label: string } = player.passedChallenge === true
-                                        ? { variant: "success", label: dictionary.game.successGame }
-                                        : player.passedChallenge === null
-                                        ? { variant: "inGame", label: dictionary.game.inGame }
-                                        : { variant: "fail", label: dictionary.game.failedGame };
+                                    const rankPosition = index + 1;
+                                    const rankClassName = rankPosition === 1
+                                        ? "text-podium-gold drop-shadow-[0_0_8px_currentColor]"
+                                        : rankPosition === 2
+                                        ? "text-podium-silver drop-shadow-[0_0_8px_currentColor]"
+                                        : rankPosition === 3
+                                        ? "text-podium-bronze drop-shadow-[0_0_8px_currentColor]"
+                                        : "text-sub-text";
+                                    const status: { variant: StatusDotVariant; label: string } =
+                                        !player.online && player.passedChallenge === null
+                                            ? { variant: "ghost", label: dictionary.game.disconnectedGame }
+                                            : player.passedChallenge === true
+                                            ? { variant: "success", label: dictionary.game.successGame }
+                                            : player.passedChallenge === null
+                                            ? { variant: "inGame", label: dictionary.game.inGame }
+                                            : { variant: "fail", label: dictionary.game.failedGame };
                                     rows.push(
                                         <div key={player.username} className="flex items-center justify-between py-4 px-4 hover:bg-white/5 transition-colors duration-200">
                                             <div className="flex items-center gap-8">
-                                                <span className="text-sub-text font-mono">
-                                                    {index + 1}.
+                                                <span className={`font-mono ${rankClassName}`}>
+                                                    {rankPosition}.
                                                 </span>
                                                 <div className="flex items-center gap-2">
                                                     <ProfilePicture profilePictureUrl={player.profilePictureUrl} size={12} />

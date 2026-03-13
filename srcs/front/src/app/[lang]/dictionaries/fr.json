@@ -28,6 +28,7 @@
   },
   "header": {
     "friendsTab": "amis",
+    "leaderboardTab": "leaderboard",
     "playTab": "jouer",
     "historyTab": "historique",
     "settings": "Paramètres",
@@ -71,7 +72,13 @@
     "title": "jouer",
     "createRoom": "Créer une partie",
     "joinRoom": "Rejoindre",
-    "roomIdPlaceholder": "ID de la partie"
+    "roomIdPlaceholder": "ID de la partie",
+    "loadingRooms": "Chargement des rooms...",
+    "noWaitingRooms": "Aucune room en attente",
+    "roomIdLabel": "ID",
+    "creatorLabel": "Créateur",
+    "playersLabel": "Joueurs",
+    "unknownCreator": "Inconnu"
   },
   "game": {
     "roomTitle": "Room",
@@ -88,6 +95,7 @@
     "abandonGame": "Abandonner le battle",
     "inGame": "En jeu",
     "failedGame": "Echec",
+    "disconnectedGame": "Déconnecté",
     "successGame": "Succès",
     "youWon": "Vous avez réussi",
     "youFailed": "Vous avez échoué",
@@ -106,7 +114,38 @@
     "gameDisconnected": "Vous avez été déconnecté de la partie"
   },
   "history": {
-    "title": "historique"
+    "title": "historique",
+    "topLabel": "100 dernières parties",
+    "loading": "Chargement de l'historique...",
+    "empty": "Aucune partie dans l'historique",
+    "noSearchResult": "Aucune partie trouvée",
+    "gameIdLabel": "ID",
+    "challengeLabel": "Challenge",
+    "rankLabel": "Rang",
+    "playersLabel": "Joueurs",
+    "dateLabel": "Date",
+    "hourLabel": "Heure",
+    "detailsButton": "Détails",
+    "detailsTitle": "détails de la partie",
+    "backButton": "Retour",
+    "loadingDetails": "Chargement des détails...",
+    "noDetails": "Aucun détail disponible pour cette partie",
+    "statusLabel": "Statut",
+    "timeLabel": "Temps",
+    "startedAtLabel": "Commencée le",
+    "notFinished": "Non terminée",
+    "noRank": "-"
+  },
+  "leaderboard": {
+    "title": "leaderboard",
+    "topLabel": "Top {{count}}",
+    "searchPlaceholder": "Nom de joueur",
+    "levelLabel": "Lvl",
+    "xpLabel": "XP",
+    "you": "Vous",
+    "empty": "Aucun joueur classé",
+    "noSearchResult": "Aucun joueur trouvé",
+    "loading": "Chargement du leaderboard..."
   },
   "settings": {
     "title": "Paramètres",
@@ -114,6 +153,7 @@
     "noChangesToUpdate": "Aucune modification à enregistrer",
     "profileUpdated": "Profil mis à jour",
     "profilePicture": "Photo de profil",
+    "updateProfilePicture": "Mettre à jour la photo de profil",
     "profilePictureHint": "JPEG ou PNG, 10 Mo max.",
     "username": "Nom d'utilisateur",
     "email": "E-mail",
@@ -144,7 +184,10 @@
     "sendMessage": "Envoyer un message privé",
     "addFriendButton": "Ajouter en ami",
     "removeFriendButton": "Retirer des amis",
-    "requestAlreadySent": "Demande envoyée"
+    "requestAlreadySent": "Demande envoyée",
+    "level": "Niveau",
+    "wins": "Victoires",
+    "winRate": "Taux de victoire"
   },
   "common": {
     "errorOccurred": "Une erreur est survenue",
