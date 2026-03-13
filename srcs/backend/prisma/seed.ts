@@ -30,8 +30,8 @@ Your function must be declared as follows:
 int ft_strlen(char *str);`
   },
   {
-    title: "pyramyd",
-    subject: `Assignment name  : pyramyd
+    title: "pyramid",
+    subject: `Assignment name  : pyramid
 Allowed functions: write
 -------------------------------------------------------------------------------
 

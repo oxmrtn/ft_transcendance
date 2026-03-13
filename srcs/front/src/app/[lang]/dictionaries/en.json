@@ -28,6 +28,7 @@
   },
     "header": {
     "friendsTab": "friends",
+    "leaderboardTab": "leaderboard",
     "playTab": "play",
     "historyTab": "history",
     "settings": "Settings",
@@ -71,7 +72,13 @@
     "title": "play",
     "createRoom": "Create room",
     "joinRoom": "Join room",
-    "roomIdPlaceholder": "Room ID"
+    "roomIdPlaceholder": "Room ID",
+    "loadingRooms": "Loading rooms...",
+    "noWaitingRooms": "No waiting rooms",
+    "roomIdLabel": "ID",
+    "creatorLabel": "Creator",
+    "playersLabel": "Players",
+    "unknownCreator": "Unknown"
   },
   "game": {
     "roomTitle": "Room",
@@ -88,6 +95,7 @@
     "abandonGame": "Abandon battle",
     "inGame": "In game",
     "failedGame": "Failed",
+    "disconnectedGame": "Disconnected",
     "successGame": "Success",
     "youWon": "You succeeded",
     "youFailed": "You failed",
@@ -106,7 +114,38 @@
     "gameDisconnected": "You have been disconnected from the game"
   },
   "history": {
-    "title": "history"
+    "title": "history",
+    "topLabel": "Last 100 games",
+    "loading": "Loading history...",
+    "empty": "No games in history",
+    "noSearchResult": "No game found",
+    "gameIdLabel": "ID",
+    "challengeLabel": "Challenge",
+    "rankLabel": "Rank",
+    "playersLabel": "Players",
+    "dateLabel": "Date",
+    "hourLabel": "Hour",
+    "detailsButton": "Details",
+    "detailsTitle": "game details",
+    "backButton": "Back",
+    "loadingDetails": "Loading details...",
+    "noDetails": "No details available for this game",
+    "statusLabel": "Status",
+    "timeLabel": "Time",
+    "startedAtLabel": "Started at",
+    "notFinished": "Not finished",
+    "noRank": "-"
+  },
+  "leaderboard": {
+    "title": "leaderboard",
+    "topLabel": "Top {{count}}",
+    "searchPlaceholder": "Player name",
+    "levelLabel": "Lvl",
+    "xpLabel": "XP",
+    "you": "You",
+    "empty": "No ranked players yet",
+    "noSearchResult": "No player found",
+    "loading": "Loading leaderboard..."
   },
   "settings": {
     "title": "Settings",
@@ -114,6 +153,7 @@
     "noChangesToUpdate": "No changes to update",
     "profileUpdated": "Profile updated",
     "profilePicture": "Profile picture",
+    "updateProfilePicture": "Update profile picture",
     "profilePictureHint": "Must be JPEG or PNG and cannot exceed 5MB.",
     "username": "Username",
     "email": "Email",
@@ -144,7 +184,10 @@
     "sendMessage": "Send private message",
     "addFriendButton": "Add as friend",
     "removeFriendButton": "Remove friend",
-    "requestAlreadySent": "Request sent"
+    "requestAlreadySent": "Request sent",
+    "level": "Level",
+    "wins": "Wins",
+    "winRate": "Win rate"
   },
   "common": {
     "errorOccurred": "An error occurred",

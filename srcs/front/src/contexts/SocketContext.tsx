@@ -70,7 +70,7 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
         if (socket)
             return;
 
-        const newSocket = io("https://localhost:8443", {
+        const newSocket = io("/", {
             extraHeaders: { Authorization: `Bearer ${token}` },
             auth: { token: `Bearer ${token}` },
             autoConnect: true,

@@ -28,6 +28,7 @@
   },
   "header": {
     "friendsTab": "vänner",
+    "leaderboardTab": "leaderboard",
     "playTab": "spela",
     "historyTab": "historik",
     "settings": "Inställningar",
@@ -71,7 +72,13 @@
     "title": "spela",
     "createRoom": "Skapa rum",
     "joinRoom": "Gå med i rum",
-    "roomIdPlaceholder": "Rums-ID"
+    "roomIdPlaceholder": "Rums-ID",
+    "loadingRooms": "Laddar rum...",
+    "noWaitingRooms": "Inga väntande rum",
+    "roomIdLabel": "ID",
+    "creatorLabel": "Skapare",
+    "playersLabel": "Spelare",
+    "unknownCreator": "Okänd"
   },
   "game": {
     "roomTitle": "Rum",
@@ -88,6 +95,7 @@
     "abandonGame": "Avbryt battle",
     "inGame": "I spel",
     "failedGame": "Misslyckades",
+    "disconnectedGame": "Frånkopplad",
     "successGame": "Lyckades",
     "youWon": "Du lyckades",
     "youFailed": "Du misslyckades",
@@ -106,7 +114,38 @@
     "gameDisconnected": "Du har blivit utsparkad från spelet"
   },
   "history": {
-    "title": "historik"
+    "title": "historik",
+    "topLabel": "Senaste 100 matcher",
+    "loading": "Laddar historik...",
+    "empty": "Inga matcher i historiken",
+    "noSearchResult": "Ingen match hittades",
+    "gameIdLabel": "ID",
+    "challengeLabel": "Utmaning",
+    "rankLabel": "Rank",
+    "playersLabel": "Spelare",
+    "dateLabel": "Datum",
+    "hourLabel": "Timme",
+    "detailsButton": "Detaljer",
+    "detailsTitle": "matchdetaljer",
+    "backButton": "Tillbaka",
+    "loadingDetails": "Laddar detaljer...",
+    "noDetails": "Inga detaljer tillgängliga för den här matchen",
+    "statusLabel": "Status",
+    "timeLabel": "Tid",
+    "startedAtLabel": "Startad",
+    "notFinished": "Inte avslutad",
+    "noRank": "-"
+  },
+  "leaderboard": {
+    "title": "leaderboard",
+    "topLabel": "Topp {{count}}",
+    "searchPlaceholder": "Spelarnamn",
+    "levelLabel": "Lvl",
+    "xpLabel": "XP",
+    "you": "Du",
+    "empty": "Inga rankade spelare ännu",
+    "noSearchResult": "Ingen spelare hittades",
+    "loading": "Laddar leaderboard..."
   },
   "settings": {
     "title": "Inställningar",
@@ -114,6 +153,7 @@
     "noChangesToUpdate": "Inga ändringar att uppdatera",
     "profileUpdated": "Profilen har uppdaterats",
     "profilePicture": "Profilbild",
+    "updateProfilePicture": "Uppdatera profilbild",
     "profilePictureHint": "Måste vara JPEG eller PNG och får inte överstiga 10 MB.",
     "username": "Användarnamn",
     "email": "E-post",
@@ -144,7 +184,10 @@
     "sendMessage": "Skicka privat meddelande",
     "addFriendButton": "Lägg till som vän",
     "removeFriendButton": "Ta bort vän",
-    "requestAlreadySent": "Förfrågan skickad"
+    "requestAlreadySent": "Förfrågan skickad",
+    "level": "Nivå",
+    "wins": "Vinster",
+    "winRate": "Vinstprocent"
   },
   "common": {
     "errorOccurred": "Ett fel har inträffat",

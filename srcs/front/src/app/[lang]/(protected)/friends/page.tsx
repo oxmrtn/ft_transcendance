@@ -9,9 +9,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../components
 import { TextInput } from '../../../../components/ui/Input';
 import Button from '../../../../components/ui/Button';
 import FriendsListTab from './FriendsListTab';
+import Pagination from '../../../../components/ui/pagination';
 import { UserType } from './UserProfile';
 import { toast } from 'sonner';
 import { API_URL } from '../../../../lib/utils';
+
+const ITEMS_PER_PAGE = 7;
 
 export default function Page() {
   const { token, logout } = useAuth();
@@ -21,6 +24,8 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [friends, setFriends] = useState<UserType[]>([]);
   const [pending, setPending] = useState<UserType[]>([]);
+  const [friendsPage, setFriendsPage] = useState(1);
+  const [pendingPage, setPendingPage] = useState(1);
   const [searchFriend, setSearchFriend] = useState("");
 
   const fetchFriends = async () => {
@@ -55,6 +60,7 @@ export default function Page() {
       }));
 
       setFriends(cleanFriends);
+      setFriendsPage(1);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -94,6 +100,7 @@ export default function Page() {
       }));
 
       setPending(cleanPending);
+      setPendingPage(1);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -236,9 +243,26 @@ export default function Page() {
     }
   }, [socket]);
 
+  const paginatedFriends = friends.slice(
+    (friendsPage - 1) * ITEMS_PER_PAGE,
+    friendsPage * ITEMS_PER_PAGE
+  );
+
+  const paginatedPending = pending.slice(
+    (pendingPage - 1) * ITEMS_PER_PAGE,
+    pendingPage * ITEMS_PER_PAGE
+  );
+
+  const friendsTotalPages = Math.max(1, Math.ceil(friends.length / ITEMS_PER_PAGE) || 1);
+  const pendingTotalPages = Math.max(1, Math.ceil(pending.length / ITEMS_PER_PAGE) || 1);
+
   return (
-    <ContentWrapper title={dictionary.friends.title}>
-      <Tabs defaultValue="friends" className="h-full w-full flex flex-col">
+    <ContentWrapper
+      title={dictionary.friends.title}
+      autoHeight
+      minContentHeightClass="min-h-[30rem] md:min-h-[36rem] h-fit"
+    >
+      <Tabs defaultValue="friends" className="w-full flex-1 min-h-0 flex flex-col">
 
         <div className="flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10 gap-2 flex-wrap">
           <TabsList className="flex gap-2">
@@ -265,24 +289,42 @@ export default function Page() {
         <TabsContent value="friends" className="flex-1 min-h-0 flex flex-col">
           <FriendsListTab
             variant="friends"
-            users={friends}
+            users={paginatedFriends}
             isLoading={isLoading}
             error={error}
             emptyMessage={dictionary.friends.noFriends}
             onRemove={removeFriend}
           />
+          {!isLoading && (
+            <div className="flex items-center justify-center py-2 border-t border-white/10 bg-black/20">
+              <Pagination
+                currentPage={friendsPage}
+                totalPages={friendsTotalPages}
+                onPageChange={setFriendsPage}
+              />
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="pending" className="flex-1 min-h-0 flex flex-col">
           <FriendsListTab
             variant="pending"
-            users={pending}
+            users={paginatedPending}
             isLoading={isLoading}
             error={error}
             emptyMessage={dictionary.friends.noPending}
             onRemove={(username) => handlePendingRequest(username, false)}
             onAccept={(username) => handlePendingRequest(username, true)}
           />
+          {!isLoading && (
+            <div className="flex items-center justify-center py-2 border-t border-white/10 bg-black/20">
+              <Pagination
+                currentPage={pendingPage}
+                totalPages={pendingTotalPages}
+                onPageChange={setPendingPage}
+              />
+            </div>
+          )}
         </TabsContent>
 
       </Tabs>

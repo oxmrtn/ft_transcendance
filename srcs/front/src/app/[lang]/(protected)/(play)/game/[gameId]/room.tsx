@@ -9,7 +9,6 @@ import { Copy, Crown, EllipsisVertical, Loader2Icon, Shuffle, User, MessageCircl
 import { useSocket } from "../../../../../../contexts/SocketContext";
 import { useLanguage } from "../../../../../../contexts/LanguageContext";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
-import { GameSkeleton } from "../../../../../../components/ui/skeleton";
 import { useAuth } from "../../../../../../contexts/AuthContext";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../../../../../../components/ui/Select";
 import {
@@ -29,14 +28,6 @@ export default function Room() {
   const { dictionary } = useLanguage();
   const { openModal } = useModal();
   const [selectedChallenge, setSelectedChallenge] = useState<string | null | undefined>(undefined);
-
-  if (!gameId) {
-    return (
-      <ContentWrapper title={dictionary.game.roomTitle}>
-        <GameSkeleton />
-      </ContentWrapper>
-    );
-  }
 
   const shortenedGameId = `${gameId.slice(0, 4)}...${gameId.slice(-4)}`;
 

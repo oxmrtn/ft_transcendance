@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useModal } from '../contexts/ModalContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { X } from 'lucide-react';
-import { TextInput, FileInput } from './ui/Input';
+import { X, Upload } from 'lucide-react';
+import { TextInput } from './ui/Input';
 import { FormEvent } from 'react';
 import { API_URL } from '../lib/utils';
 import Button from './ui/Button';
@@ -23,6 +23,7 @@ export default function SettingsModal() {
   const [password, setPassword] = useState("");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(actualProfilePictureUrl || null);
+  const [fileInputId] = useState<string>("profile-picture-input");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -84,10 +85,15 @@ export default function SettingsModal() {
         toast.error(response.statusText || dictionary.common.errorOccurred);
 
       const data = await response.json();
+
+      const nextProfilePictureUrl = data.profilePictureUrl
+        ? `${data.profilePictureUrl}?t=${Date.now()}`
+        : null;
+
       setProfile({
         username: data.username,
         email: data.email,
-        profilePictureUrl: data.profilePictureUrl ?? null,
+        profilePictureUrl: nextProfilePictureUrl,
       });
 
       toast.success(dictionary.settings.profileUpdated);
@@ -120,16 +126,38 @@ export default function SettingsModal() {
       </div>
       <form onSubmit={handleSubmit} className="p-5 flex flex-col gap-5">
         <div className="flex items-center gap-4 border border-white/10 rounded-lg bg-black/30 px-4 py-3">
-          <FileInput
-            id="profile-picture-input"
-            previewUrl={previewUrl}
-            onChange={handleFileChange}
-          />
-          <div className="flex flex-col gap-0 flex-1">
+          <div className="flex items-center gap-4">
+            <div className="h-20 w-20 rounded-full overflow-hidden border border-white/10 bg-white/5 flex items-center justify-center">
+              {previewUrl ? (
+                <img src={previewUrl} className="w-full h-full object-cover" />
+              ) : (
+                <Upload className="w-6 h-6 text-sub-text" />
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 flex-1">
             <p className="text-sm font-medium text-sub-text">{dictionary.settings.profilePicture}</p>
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-md border border-white/10 bg-white/5 text-sm text-sub-text hover:bg-white/10 transition-colors duration-200 cursor-pointer"
+              onClick={() => {
+                const input = document.getElementById(fileInputId) as HTMLInputElement | null;
+                input?.click();
+              }}
+            >
+              <Upload className="w-4 h-4" />
+              <span>{dictionary.settings.updateProfilePicture}</span>
+            </button>
             <p className="text-sm text-muted-text">{dictionary.settings.profilePictureHint}</p>
           </div>
         </div>
+        <input
+          id={fileInputId}
+          type="file"
+          accept="image/png, image/jpeg"
+          className="hidden"
+          onChange={handleFileChange}
+        />
         <div className="border border-white/10 rounded-lg bg-black/20 px-4 py-4 flex flex-col gap-3">
           <div className="flex flex-col md:flex-row md:gap-3 gap-3">
             <div className="flex-1 flex flex-col">

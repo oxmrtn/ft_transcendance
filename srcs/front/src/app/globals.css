@@ -3,6 +3,9 @@
 :root {
     --primary: #d46e2e;
     --primary-30: rgba(212, 110, 46, .3);
+    --podium-gold: #f7c66a;
+    --podium-silver: #d7dde5;
+    --podium-bronze: #c98a66;
     --destructive: #ff0037;
     --green: #50FF8A;
     --modal-background: rgba(0, 0, 0, .5);
@@ -15,6 +18,9 @@
 @theme {
     --color-primary: var(--primary);
     --color-primary-30: var(--primary-30);
+    --color-podium-gold: var(--podium-gold);
+    --color-podium-silver: var(--podium-silver);
+    --color-podium-bronze: var(--podium-bronze);
     --color-destructive: var(--destructive);
     --color-green: var(--green);
     --color-sub-text: var(--sub-text);
@@ -40,11 +46,11 @@
     }
 
     body {
-        @apply flex text-white flex-col min-h-screen h-screen max-h-screen w-full overflow-hidden;
+        @apply flex text-white flex-col min-h-dvh w-full overflow-x-hidden;
     }
 
     main {
-        @apply flex-1 flex min-h-0 w-full items-center justify-center overflow-hidden p-4 md:py-8 md:px-16;
+        @apply flex-1 shrink-0 flex w-full items-center justify-center p-4 md:py-8 md:px-16;
     }
 
     .gradient-background {
@@ -57,6 +63,7 @@
         background-size: 200px 200px, 100% 100%, 100% 100%, 100% 100%;
         background-repeat: repeat, no-repeat, no-repeat, no-repeat;
         background-position: 0 0, 0 0, 0 0, 0 0;
+        background-attachment: fixed, fixed, fixed, fixed;
     }
 
     .grid-gradient {

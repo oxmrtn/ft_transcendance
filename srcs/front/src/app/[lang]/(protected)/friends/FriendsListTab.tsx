@@ -1,9 +1,9 @@
 "use client";
 
 import { Users } from "lucide-react";
-import { ScrollArea } from "../../../../components/ui/scroll-area";
 import { FriendsSkeleton } from "../../../../components/ui/skeleton";
 import UserProfile, { UserType } from "./UserProfile";
+import { useEffect, useState } from "react";
 
 type Variant = "friends" | "pending";
 
@@ -28,39 +28,47 @@ export default function FriendsListTab({
 }: Props) {
   const display = variant === "friends" ? "friendsList" : "pendingList";
   const skeletonIsFriends = variant === "friends";
+  const [showSkeleton, setShowSkeleton] = useState<boolean>(isLoading);
+
+  useEffect(() => {
+    if (isLoading) {
+      setShowSkeleton(true);
+      return;
+    }
+    const id = setTimeout(() => setShowSkeleton(false), 500);
+    return () => clearTimeout(id);
+  }, [isLoading]);
 
   return (
-    <ScrollArea className="flex-1 min-h-0 w-full overflow-hidden">
-      <div className="h-full">
-        {isLoading ? (
-          <FriendsSkeleton isFriends={skeletonIsFriends} />
-        ) : error ? (
-          <div className="h-full w-full flex items-center justify-center min-h-[200px]">
-            <p className="text-sm text-red-400">{error}</p>
-          </div>
-        ) : users.length === 0 ? (
-          <div className="h-full w-full flex items-center justify-center flex flex-col gap-2 min-h-[200px]">
-            <Users size={50} />
-            <p className="text-sub-text">{emptyMessage}</p>
-          </div>
-        ) : (
-          <div className="flex flex-col">
-            {users.map((user, index) => (
-              <UserProfile
-                user={user}
-                display={display}
-                key={user.username}
-                onRemove={() => onRemove(user.username)}
-                onAccept={
-                  variant === "pending"
-                    ? () => onAccept?.(user.username)
-                    : undefined
-                }
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </ScrollArea>
+    <div className="w-full flex-1 min-h-0 flex flex-col">
+      {showSkeleton ? (
+        <FriendsSkeleton isFriends={skeletonIsFriends} />
+      ) : error ? (
+        <div className="w-full flex-1 min-h-0 flex items-center justify-center">
+          <p className="text-sm text-red-400">{error}</p>
+        </div>
+      ) : users.length === 0 ? (
+        <div className="w-full flex-1 min-h-0 flex items-center justify-center flex-col gap-2">
+          <Users size={50} />
+          <p className="text-sub-text">{emptyMessage}</p>
+        </div>
+      ) : (
+        <div className="flex flex-col">
+          {users.map((user) => (
+            <UserProfile
+              user={user}
+              display={display}
+              key={user.username}
+              onRemove={() => onRemove(user.username)}
+              onAccept={
+                variant === "pending"
+                  ? () => onAccept?.(user.username)
+                  : undefined
+              }
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
