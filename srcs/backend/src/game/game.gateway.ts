@@ -48,10 +48,12 @@ class GameSession {
 	public selectedChallenge: Challenge;
 	public gameTime: Date;
 	public rankCounter: number = 1;
+	public createdAt: Date;
 
 	constructor(gameId: string, playerNumber: number) {
 		this.gameId = gameId;
 		this.playerNumber = playerNumber;
+		this.createdAt = new Date();
 	};
 };
 
@@ -66,6 +68,37 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	private gameSessions = new Map<string, GameSession>();
 	private clientToRoom = new Map<number, string>();
+
+	private async buildWaitingRooms() {
+		const waitingGames = Array.from(this.gameSessions.values())
+			.filter((game) => game.gameState === "waiting")
+			.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+		const creatorIds = waitingGames.map((game) => game.creatorId);
+		const creators = await this.prismaService.user.findMany({
+			where: { id: { in: creatorIds } },
+			select: { id: true, username: true }
+		});
+
+		return waitingGames.map((game) => ({
+			gameId: game.gameId,
+			creatorUsername: creators.find((creator) => creator.id === game.creatorId)?.username ?? null,
+			playerCount: game.players.size,
+		}));
+	}
+
+	public async getWaitingRooms(page: number = 1, limit: number = 100) {
+		const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
+		const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.min(Math.floor(limit), 100) : 100;
+		const rooms = await this.buildWaitingRooms();
+		const start = (safePage - 1) * safeLimit;
+		return rooms.slice(start, start + safeLimit);
+	}
+
+	private async broadcastWaitingRooms() {
+		const rooms = await this.getWaitingRooms(1, 100);
+		this.server.emit('waiting-rooms-update', { rooms });
+	}
 
 	private clearGame(gameId: string) {
 		for (const [userId, roomId] of this.clientToRoom.entries()) {
@@ -104,6 +137,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 			if (!currentGame.players.size) {
 				this.gameSessions.delete(gameId);
+				await this.broadcastWaitingRooms();
 				return;
 			}
 
@@ -111,6 +145,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				currentGame.creatorId = Array.from(currentGame.players.keys())[0];
 
 			this.notifyGameStatus(currentGame);
+			await this.broadcastWaitingRooms();
 			return;
 		}
 
@@ -165,6 +200,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const challenges = await this.challengeCache.getAll();
 		client.emit('game-info', { event: 'room-created', gameId: gameId, availableChallenges: challenges.map(c => c.title) });
 		this.notifyGameStatus(currentGame);
+		await this.broadcastWaitingRooms();
 	}
 
 	@SubscribeMessage('join-room')
@@ -207,6 +243,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const challenges = await this.challengeCache.getAll();
 		client.emit('game-info', { event: 'room-joined', gameId: gameId, availableChallenges: challenges.map(c => c.title) });
 		this.notifyGameStatus(currentGame);
+		await this.broadcastWaitingRooms();
+	}
+
+	@SubscribeMessage('get-waiting-rooms')
+	async getWaitingRoomsSocket(@ConnectedSocket() client: Socket) {
+		const rooms = await this.getWaitingRooms(1, 100);
+		client.emit('waiting-rooms-update', { rooms });
 	}
 
 	@SubscribeMessage('get-game')
@@ -278,9 +321,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		currentGame.players.delete(targetUser.id);
 		this.clientToRoom.delete(targetUser.id);
+		this.server.in(`user_${targetUser.id}`).socketsLeave(`game_${currentGame.gameId}`);
 
 		this.server.to(`user_${targetUser.id}`).emit('game-info', { event: 'room-kicked' });
 		this.notifyGameStatus(currentGame);
+		await this.broadcastWaitingRooms();
 	}
 
 	@SubscribeMessage('leave-room')
@@ -305,6 +350,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				currentGame.creatorId = Array.from(currentGame.players.keys())[0];
 			this.notifyGameStatus(currentGame);
 		}
+
+		await this.broadcastWaitingRooms();
 	}
 
 	@SubscribeMessage('leave-game')
@@ -407,6 +454,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		currentGame.gameTime = new Date();
 		currentGame.gameState = "playing";
 		this.notifyGameStatus(currentGame);
+		await this.broadcastWaitingRooms();
 	}
 
 	@SubscribeMessage('code-submit')

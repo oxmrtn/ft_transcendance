@@ -72,7 +72,13 @@
     "title": "spela",
     "createRoom": "Skapa rum",
     "joinRoom": "Gå med i rum",
-    "roomIdPlaceholder": "Rums-ID"
+    "roomIdPlaceholder": "Rums-ID",
+    "loadingRooms": "Laddar rum...",
+    "noWaitingRooms": "Inga väntande rum",
+    "roomIdLabel": "ID",
+    "creatorLabel": "Skapare",
+    "playersLabel": "Spelare",
+    "unknownCreator": "Okänd"
   },
   "game": {
     "roomTitle": "Rum",
@@ -108,7 +114,27 @@
     "gameDisconnected": "Du har blivit utsparkad från spelet"
   },
   "history": {
-    "title": "historik"
+    "title": "historik",
+    "topLabel": "Senaste 100 matcher",
+    "loading": "Laddar historik...",
+    "empty": "Inga matcher i historiken",
+    "noSearchResult": "Ingen match hittades",
+    "gameIdLabel": "ID",
+    "challengeLabel": "Utmaning",
+    "rankLabel": "Rank",
+    "playersLabel": "Spelare",
+    "dateLabel": "Datum",
+    "hourLabel": "Timme",
+    "detailsButton": "Detaljer",
+    "detailsTitle": "matchdetaljer",
+    "backButton": "Tillbaka",
+    "loadingDetails": "Laddar detaljer...",
+    "noDetails": "Inga detaljer tillgängliga för den här matchen",
+    "statusLabel": "Status",
+    "timeLabel": "Tid",
+    "startedAtLabel": "Startad",
+    "notFinished": "Inte avslutad",
+    "noRank": "-"
   },
   "leaderboard": {
     "title": "leaderboard",

@@ -192,6 +192,12 @@ function GameProvider({ children }: { children: ReactNode }) {
       }
 
       if (payload.event === "room-update") {
+        if (Array.isArray(payload.players) && !payload.players.some((p: GamePlayer) => p.username === myUsername)) {
+          hasLeftRoomRef.current = true;
+          resetGame();
+          router.push(`/${lang}/`);
+          return;
+        }
         setGame(payload);
         return;
       }

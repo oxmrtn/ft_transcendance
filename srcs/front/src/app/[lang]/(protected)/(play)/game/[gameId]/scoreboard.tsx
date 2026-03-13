@@ -87,6 +87,14 @@ export default function Scoreboard() {
                                 });
 
                                 for (const [index, player] of sortedPlayers.entries()) {
+                                    const rankPosition = index + 1;
+                                    const rankClassName = rankPosition === 1
+                                        ? "text-[#f7c66a] text-shadow-[0_0_8px_rgba(247,198,106,0.35)]"
+                                        : rankPosition === 2
+                                        ? "text-[#d7dde5] text-shadow-[0_0_8px_rgba(215,221,229,0.3)]"
+                                        : rankPosition === 3
+                                        ? "text-[#c98a66] text-shadow-[0_0_8px_rgba(201,138,102,0.3)]"
+                                        : "text-sub-text";
                                     const status: { variant: StatusDotVariant; label: string } =
                                         !player.online && player.passedChallenge === null
                                             ? { variant: "ghost", label: dictionary.game.disconnectedGame }
@@ -98,8 +106,8 @@ export default function Scoreboard() {
                                     rows.push(
                                         <div key={player.username} className="flex items-center justify-between py-4 px-4 hover:bg-white/5 transition-colors duration-200">
                                             <div className="flex items-center gap-8">
-                                                <span className="text-sub-text font-mono">
-                                                    {index + 1}.
+                                                <span className={`font-mono ${rankClassName}`}>
+                                                    {rankPosition}.
                                                 </span>
                                                 <div className="flex items-center gap-2">
                                                     <ProfilePicture profilePictureUrl={player.profilePictureUrl} size={12} />
