@@ -9,7 +9,7 @@ export class LeaderboardController {
 
     @UseGuards(AuthGuard('jwt'))
 	@Get()
-	async getLeaderboard(@Query('page') page: number = 1, @Query('limit') limit: number = 10)
+	async getLeaderboard(@Query('page') page: number = 1, @Query('limit') limit: number = 100)
     {
 		return this.leaderboardService.getLeaderboard(Number(page), Number(limit));
 	}

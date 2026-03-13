@@ -9,7 +9,7 @@ export class LeaderboardService {
 	async getLeaderboard(page: number, limit: number)
     {
 		const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
-		const requestedLimit = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : 10;
+		const requestedLimit = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : 100;
 		const pageSize = Math.min(requestedLimit, 100);
 
 		const users = await this.prisma.user.findMany({
