@@ -87,24 +87,26 @@ export function ChatModal({ target, triggerId }: ChatModalProps) {
         }
 
         if (lastMessage.isPrivate) {
-            if (!lastMessage.isSender && activeTab !== 'private')
+            if (!lastMessage.isSender && activeTab === 'global')
                 setPrivateTabNotification(true);
         } else {
-            if (lastMessage.sender !== username && activeTab !== 'global')
+            if (lastMessage.sender !== username && activeTab === 'private')
                 setGlobalTabNotification(true);
         }
 
         prevMessagesLengthRef.current = messages.length;
-    }, [messages, activeTab]);
+    }, [messages, activeTab, username]);
 
     const handleTabChange = (v: string) => {
         const newTab = v as ChatTab;
         setActiveTab(newTab);
 
-        if (newTab === 'private') {
+        if (newTab === 'private')
             setPrivateTabNotification(false);
-        }
-        if (newTab === 'global') {
+        else if (newTab === 'global')
+            setGlobalTabNotification(false);
+        else if (newTab === 'all') {
+            setPrivateTabNotification(false);
             setGlobalTabNotification(false);
         }
     };

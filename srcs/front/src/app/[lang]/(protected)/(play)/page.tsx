@@ -17,9 +17,7 @@ export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!gameId)
-      return;
-    if (gameState === "finished")
+    if (!gameId || gameState === "finished")
       return;
     router.replace(`/${lang}/game/${gameId}`);
   }, [gameId, gameState, router, lang]);

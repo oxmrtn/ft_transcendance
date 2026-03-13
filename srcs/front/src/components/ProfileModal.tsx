@@ -276,16 +276,13 @@ export default function ProfileModal({ username }: { username: string }) {
               </div>
               <div className="flex items-center">
                 {profile.friendStatus === "friend" && (
-                  <div className="min-w-[120px]">
-                    <Button
-                      variant="danger"
-                      fullWidth
-                      disabled={isFriendActionLoading}
-                      onClick={handleRemoveFriend}
-                    >
-                      {dictionary.profile.removeFriendButton}
-                    </Button>
-                  </div>
+                  <Button
+                    variant="danger"
+                    disabled={isFriendActionLoading}
+                    onClick={handleRemoveFriend}
+                  >
+                    {dictionary.profile.removeFriendButton}
+                  </Button>
                 )}
                 {profile.friendStatus === null && (
                   <div className="min-w-[120px]">

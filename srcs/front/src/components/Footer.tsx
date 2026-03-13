@@ -8,7 +8,7 @@ export default function Footer() {
   const { dictionary, lang } = useLanguage();
 
   return (
-    <footer className="flex flex-col items-center gap-4 bg-modal-bg backdrop-blur-xl w-full border-t border-white/10 shadow-[0_0_30px] shadow-black/70 px-8 py-4
+    <footer className="shrink-0 flex flex-col items-center gap-4 bg-modal-bg backdrop-blur-xl w-full border-t border-white/10 shadow-[0_0_30px] shadow-black/70 px-4 md:px-16 py-4
     md:flex-row md:justify-between md:gap-2">
       <LanguageSelector />
       <div className="flex gap-4">

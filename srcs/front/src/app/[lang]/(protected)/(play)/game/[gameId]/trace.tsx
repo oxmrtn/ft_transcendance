@@ -12,7 +12,7 @@ export default function Trace() {
     const { dictionary } = useLanguage();
 
     return (
-        <>
+        <div className="h-full w-full flex">
             {trace.length > 0 ? (
                 <ScrollArea className="h-full w-full min-h-0 overflow-auto p-4">
                     <div className="w-full flex flex-col gap-4">
@@ -37,11 +37,11 @@ export default function Trace() {
                     </div>
                 </ScrollArea>
             ) : (
-                <div className="h-full w-full flex items-center justify-center flex-col gap-2">
+                <div className="w-full flex-1 min-h-0 flex items-center justify-center flex-col gap-2">
                     <FileText size={50} />
                     <p className="text-sub-text">{dictionary.game.noTraceAvailable}</p>
                 </div>
             )}
-        </>
+        </div>
     );
 }

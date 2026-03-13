@@ -6,6 +6,7 @@ import { useGame } from "../../../../../../contexts/GameContext";
 import { useLanguage } from "../../../../../../contexts/LanguageContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../../../components/ui/tabs";
 import { useSocket } from "../../../../../../contexts/SocketContext";
+import { useRouter } from "next/navigation";
 import Trace from "./trace";
 import { Loader2Icon, EllipsisVertical, User, MessageCircleMore } from "lucide-react";
 import ProfilePicture from "../../../../../../components/ProfilePicture";
@@ -23,18 +24,28 @@ import ProfileModal from "../../../../../../components/ProfileModal";
 import { useAuth } from "../../../../../../contexts/AuthContext";
 
 export default function Scoreboard() {
-    const { result, gameId, hasLeftRoomRef, gamePlayers, gameState } = useGame();
-    const { dictionary } = useLanguage();
+    const { result, gameId, hasLeftRoomRef, gamePlayers, gameState, resetGame } = useGame();
+    const { dictionary, lang } = useLanguage();
     const { socket } = useSocket();
     const { openModal } = useModal();
     const { username: myUsername } = useAuth();
+    const router = useRouter();
 
     const shortenedGameId = `${gameId.slice(0, 4)}...${gameId.slice(-4)}`;
 
     const leaveRoom = () => {
+        hasLeftRoomRef.current = true;
+
+        if (gameState === "finished") {
+            if (socket && gameId)
+                socket.emit("leave-room");
+            resetGame();
+            router.push(`/${lang}/`);
+            return;
+        }
+
         if (!socket || !gameId)
             return;
-        hasLeftRoomRef.current = true;
         socket.emit("leave-room");
     };
 

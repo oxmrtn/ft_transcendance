@@ -6,16 +6,17 @@ export class LeaderboardService {
 
 	constructor(private prisma: PrismaService) {}
 
-	async getLeaderboard(page: number)
+	async getLeaderboard(page: number, limit: number)
     {
-
-		const pageSize = 10;
+		const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
+		const requestedLimit = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : 10;
+		const pageSize = Math.min(requestedLimit, 100);
 
 		const users = await this.prisma.user.findMany({
 			orderBy: {
 				xp: 'desc'
 			},
-			skip: (page - 1) * pageSize,
+			skip: (safePage - 1) * pageSize,
 			take: pageSize,
 			select: {
 				id: true,
