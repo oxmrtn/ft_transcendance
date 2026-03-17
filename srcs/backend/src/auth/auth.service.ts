@@ -40,23 +40,23 @@ export class AuthService
             const token = await this.generateToken(user.id, user.username);
             return { token };
         } catch (error)
-        {
-            if (error instanceof Prisma.PrismaClientKnownRequestError)
             {
-                if (error.code === 'P2002')
-                {
-                    const target = error.meta?.target as string[];
-                    if (target.includes('email')) {
-                        throw new ConflictException("Seems like you already have an account, login instead?");
-                    }
-                    if (target.includes('username')) {
-                        throw new ConflictException("This username is already taken, choose another one!");
-                }
-            }
-        }
-        throw new InternalServerErrorException("Unexpected error while creating account!");
+                if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                    if (error.code === 'P2002') {
+                        const message = error.message;
 
-        }
+                        if (message.includes('username')) {
+                            throw new ConflictException("This username is already taken, choose another one!");
+                        }
+
+                        if (message.includes('email')) {
+                            throw new ConflictException("Seems like you already have an account, login instead?");
+                        }
+                        throw new ConflictException("Duplicate field error");
+                    }
+                }
+                throw new InternalServerErrorException("Unexpected error while creating account!");
+            }
     }
 
     async login(email : string, password : string) : Promise<{token: string}>
