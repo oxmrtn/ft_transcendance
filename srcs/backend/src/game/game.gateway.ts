@@ -604,6 +604,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			return;
 
 		const playerIds = Array.from(game.players.keys());
+		const participants = game.dbGameId
+			? await this.prismaService.gameParticipant.findMany({
+				where: {
+					gameId: game.dbGameId,
+					userId: { in: playerIds },
+				},
+				select: {
+					userId: true,
+					rank: true,
+				},
+			})
+			: [];
+		const rankByUserId = new Map(participants.map((participant) => [participant.userId, participant.rank]));
 
 		const users = await this.prismaService.user.findMany({
 			where: { id: { in: playerIds } },
@@ -623,6 +636,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					profilePictureUrl: user.profilePictureUrl,
 					passedChallenge: info.passedChallenge,
 					online: info.online,
+					rank: rankByUserId.get(id) ?? null,
 				};
 			})
 			.filter((p) => p !== null);
