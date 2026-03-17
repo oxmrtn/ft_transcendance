@@ -89,9 +89,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const isAuthenticated = !!token;
-  const username = profile?.username;
-  const email = profile?.email;
-  const profilePictureUrl = profile?.profilePictureUrl;
+  const username = profile?.username ?? null;
+  const email = profile?.email ?? null;
+  const profilePictureUrl = profile?.profilePictureUrl ?? null;
 
   return (
     <AuthContext.Provider value={{ token, username, email, profilePictureUrl, isAuthenticated, isLoading, login, logout, setProfile }}>
