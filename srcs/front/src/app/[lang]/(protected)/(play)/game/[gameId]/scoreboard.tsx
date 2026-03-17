@@ -31,14 +31,27 @@ export default function Scoreboard() {
     const { username: myUsername } = useAuth();
     const router = useRouter();
 
+    const debugScoreboard = (message: string, details?: Record<string, unknown>) => {
+        console.log(`[GAME-DEBUG][Scoreboard][${new Date().toISOString()}] ${message}`, details ?? {});
+    };
+
     const shortenedGameId = `${gameId.slice(0, 4)}...${gameId.slice(-4)}`;
 
     const leaveRoom = () => {
+        debugScoreboard("leaveRoom:clicked", {
+            gameId,
+            gameState,
+            hasLeftRoomBefore: hasLeftRoomRef.current,
+            socketId: socket?.id,
+        });
         hasLeftRoomRef.current = true;
 
         if (gameState === "finished") {
-            if (socket && gameId)
+            if (socket && gameId) {
+                debugScoreboard("socket:emit:leave-room:finished", { gameId });
                 socket.emit("leave-room");
+            }
+            debugScoreboard("leaveRoom:finished:reset-and-redirect", { lang });
             resetGame();
             router.push(`/${lang}/`);
             return;
@@ -46,6 +59,7 @@ export default function Scoreboard() {
 
         if (!socket || !gameId)
             return;
+        debugScoreboard("socket:emit:leave-room", { gameId });
         socket.emit("leave-room");
     };
 
@@ -76,6 +90,16 @@ export default function Scoreboard() {
                             {(() => {
                                 const rows = [];
                                 const sortedPlayers = [...gamePlayers].sort((a, b) => {
+                                    const hasDbRankA = typeof a.rank === "number";
+                                    const hasDbRankB = typeof b.rank === "number";
+
+                                    if (hasDbRankA && hasDbRankB)
+                                        return (a.rank as number) - (b.rank as number);
+                                    if (hasDbRankA)
+                                        return -1;
+                                    if (hasDbRankB)
+                                        return 1;
+
                                     const rank = (p: typeof a) => {
                                         if (p.passedChallenge)
                                             return 0;
@@ -87,8 +111,14 @@ export default function Scoreboard() {
                                 });
 
                                 for (const [index, player] of sortedPlayers.entries()) {
-                                    const rankPosition = index + 1;
-                                    const rankClassName = rankPosition === 1
+                                    const isUnrankedInProgress = player.passedChallenge === null && player.rank === null;
+                                    const rankPosition = typeof player.rank === "number" ? player.rank : index + 1;
+                                    const rankDisplay = isUnrankedInProgress
+                                        ? "?"
+                                        : `${rankPosition}.`;
+                                    const rankClassName = isUnrankedInProgress
+                                        ? "text-sub-text"
+                                        : rankPosition === 1
                                         ? "text-podium-gold drop-shadow-[0_0_8px_currentColor]"
                                         : rankPosition === 2
                                         ? "text-podium-silver drop-shadow-[0_0_8px_currentColor]"
@@ -107,7 +137,7 @@ export default function Scoreboard() {
                                         <div key={player.username} className="flex items-center justify-between py-4 px-4 hover:bg-white/5 transition-colors duration-200">
                                             <div className="flex items-center gap-8">
                                                 <span className={`font-mono ${rankClassName}`}>
-                                                    {rankPosition}.
+                                                    {rankDisplay}
                                                 </span>
                                                 <div className="flex items-center gap-2">
                                                     <ProfilePicture profilePictureUrl={player.profilePictureUrl} size={12} />

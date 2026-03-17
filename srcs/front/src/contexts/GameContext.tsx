@@ -19,6 +19,7 @@ export interface GamePlayer {
   profilePictureUrl: string | null;
   passedChallenge: boolean | null;
   online: boolean;
+  rank: number | null;
 }
 
 export type GameState = "waiting" | "playing" | "finished";
@@ -110,7 +111,7 @@ function GameProvider({ children }: { children: ReactNode }) {
             .find((p: GamePlayer) => p.username === gp.username);
           if (inPayload)
             return inPayload;
-          return { ...gp, passedChallenge: false };
+          return { ...gp, passedChallenge: false, rank: gp.rank ?? null };
         })
       );
     }
