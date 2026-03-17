@@ -166,9 +166,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (inGameIds.length === 0 && currentGame.gameState === "playing") {
 			currentGame.gameState = "finished";
 			this.clearGame(currentGame.gameId);
-			setTimeout(() => {
-				this.gameSessions.delete(currentGame.gameId);
-			}, 60000);
+			this.gameSessions.delete(currentGame.gameId);
 		}
 
 		this.notifyGameStatus(currentGame);
@@ -577,9 +575,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					}
 				})
 				this.clearGame(currentGame.gameId);
-				setTimeout(() => {
-					this.gameSessions.delete(currentGame.gameId);
-				}, 60000);
+				this.gameSessions.delete(currentGame.gameId);
 			}
 		}
 		client.emit('game-info', { event: 'code-result', result: codeResult.result, trace: codeResult.trace, remainingTries: playerInfo.remainingTries });
