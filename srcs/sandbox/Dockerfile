@@ -1,6 +1,6 @@
 FROM alpine
 
-RUN apk add build-base
+RUN apk add build-base coreutils
 
 WORKDIR /app
 
