@@ -31,27 +31,14 @@ export default function Scoreboard() {
     const { username: myUsername } = useAuth();
     const router = useRouter();
 
-    const debugScoreboard = (message: string, details?: Record<string, unknown>) => {
-        console.log(`[GAME-DEBUG][Scoreboard][${new Date().toISOString()}] ${message}`, details ?? {});
-    };
-
     const shortenedGameId = `${gameId.slice(0, 4)}...${gameId.slice(-4)}`;
 
     const leaveRoom = () => {
-        debugScoreboard("leaveRoom:clicked", {
-            gameId,
-            gameState,
-            hasLeftRoomBefore: hasLeftRoomRef.current,
-            socketId: socket?.id,
-        });
         hasLeftRoomRef.current = true;
 
         if (gameState === "finished") {
-            if (socket && gameId) {
-                debugScoreboard("socket:emit:leave-room:finished", { gameId });
+            if (socket && gameId)
                 socket.emit("leave-room");
-            }
-            debugScoreboard("leaveRoom:finished:reset-and-redirect", { lang });
             resetGame();
             router.push(`/${lang}/`);
             return;
@@ -59,7 +46,6 @@ export default function Scoreboard() {
 
         if (!socket || !gameId)
             return;
-        debugScoreboard("socket:emit:leave-room", { gameId });
         socket.emit("leave-room");
     };
 
