@@ -53,14 +53,15 @@
 
 | Feature                          | Team Member(s) | Description                                      |
 |----------------------------------|----------------|--------------------------------------------------|
-| Containerization & Deployment   | jpiech         | Dockerized application for consistency           |
+| Containerization & Deployment    | jpiech         | Dockerized application for consistency           |
 | JWT Authentication               | jpiech         | Secure user authentication                       |
 | Frontend (Next.js SPA)           | ebengtss       | Entire frontend application                      |
-| Database Schema & ORM            | mtrullar       | PostgreSQL + Prisma implementation                |
+| Database Schema & ORM            | mtrullar       | PostgreSQL + Prisma implementation               |
 | Social System                    | qsomarri       | Friends, chat, lobbies, profile management       |
-| Gamification System              | mtrullar       | XP, achievements, leaderboard                    |
+| Game statistics                  | mtrullar       | XP, achievements, leaderboard, history           |
 | WebSocket Game Logic             | qsomarri       | Real-time multiplayer interactions               |
 | Sandbox Implementation           | jpiech         | Secure code execution via Docker-in-Docker       |
+| Code submission logic            | mtrullar       | Execute code in sandbox from backend server      |
 
 ---
 
@@ -86,16 +87,12 @@
 | Module                          | Type   | Points | Team Member(s) |
 |---------------------------------|--------|--------|----------------|
 | User Management & Authentication| Major  | 2      | jpiech, mtrullar, qsomarri |
+| Game statistics and match history | Minor | 1      | mtrullar, ebengtss|
 
 ### Accessibility
 | Module                          | Type   | Points | Team Member(s) |
 |---------------------------------|--------|--------|----------------|
 | Multi-language Support          | Minor  | 1      | ebengtss       |
-
-### Gamification
-| Module                          | Type   | Points | Team Member(s) |
-|---------------------------------|--------|--------|----------------|
-| Gamification System             | Minor  | 1      | mtrullar       |
 
 ### Module of Choice
  | Module                          | Type   | Points | Team Member(s) |
@@ -128,7 +125,7 @@ This module required extensive research and development time to:
 ## Individual Contributions
 - **jpiech:** Containerization, SSL, authentication, rate limiting, sandbox, profile backend
 - **ebengtss:** Frontend (Next.js), Nginx reverse proxy, internationalization
-- **mtrullar:** Database schema, ORM, authentication backend, gamification
+- **mtrullar:** Database schema, ORM, authentication backend, game statistics, submission logic
 - **qsomarri:** Social system, WebSocket game logic, challenges, test scripts
 
 ---
