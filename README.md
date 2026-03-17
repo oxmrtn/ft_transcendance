@@ -23,7 +23,7 @@
 |------------|------------------------|----------------------------------------------------|
 | qsomarri   | Project Manager, Developer | Task coordination, social system, WebSocket game logic |
 | jpiech     | Technical Lead, Developer  | Containerization, authentication, sandbox, backend |
-| ebengtss   | Product Owner, Developer  | Frontend (Next.js), Nginx, internationalization    |
+| ebengtss   | Product Owner, Developer  | Frontend (Next.js), Nginx reverse proxy    |
 | mtrullar   | Product Owner, Developer  | Database schema, ORM, gamification, auth backend  |
 
 ---
@@ -36,7 +36,7 @@
 ---
 
 ## Technical Stack
-- **Frontend:** Next.js (Single Page Application)
+- **Frontend:** Next.js
 - **Backend:** NestJS (modular architecture)
 - **Database:** PostgreSQL (reliable, relational)
 - **ORM:** Prisma (type-safe database access, auto-migrations)
@@ -124,7 +124,7 @@ This module required extensive research and development time to:
 
 ## Individual Contributions
 - **jpiech:** Containerization, SSL, authentication, rate limiting, sandbox, profile backend
-- **ebengtss:** Frontend (Next.js), Nginx reverse proxy, internationalization
+- **ebengtss:** Frontend (Next.js), Nginx reverse proxy
 - **mtrullar:** Database schema, ORM, authentication backend, game statistics, submission logic
 - **qsomarri:** Social system, WebSocket game logic, challenges, test scripts
 
