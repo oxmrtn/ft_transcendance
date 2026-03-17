@@ -87,6 +87,10 @@ export default function Page() {
     return players.filter((player) => player.username.toLowerCase().includes(query));
   }, [players, searchPlayer]);
 
+  const rankByPlayerId = useMemo(() => {
+    return new Map(players.map((player, index) => [player.id, index + 1]));
+  }, [players]);
+
   const totalPages = useMemo(
     () => Math.max(1, Math.ceil(filteredPlayers.length / ITEMS_PER_PAGE) || 1),
     [filteredPlayers.length]
@@ -137,7 +141,7 @@ export default function Page() {
           ) : (
             <div className="flex flex-col">
               {paginatedPlayers.map((player, index) => {
-                const rank = (page - 1) * ITEMS_PER_PAGE + index + 1;
+                const rank = rankByPlayerId.get(player.id) ?? (page - 1) * ITEMS_PER_PAGE + index + 1;
                 const isMe = myUsername === player.username;
                 const level = Math.floor(player.xp / 100);
                 const rankClassName = rank === 1
