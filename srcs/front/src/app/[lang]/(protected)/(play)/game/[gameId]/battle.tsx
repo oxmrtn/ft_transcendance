@@ -72,7 +72,7 @@ export default function Battle() {
   return (
     <ContentWrapper title={`${dictionary.game.gameTitle} - ${shortenedGameId}`}>
       <Tabs
-        defaultValue="code"
+        defaultValue="subject"
         className="h-full w-full flex flex-col"
         value={activeTab}
         onValueChange={(v) => {
