@@ -21,7 +21,7 @@ export default function Battle() {
   const { dictionary } = useLanguage();
   const [code, setCode] = useState("");
   const [timeoutSeconds, setTimeoutSeconds] = useState(0);
-  const [activeTab, setActiveTab] = useState<BattleTab>("code");
+  const [activeTab, setActiveTab] = useState<BattleTab>("subject");
   const [traceNotification, setTraceNotification] = useState(false);
   const prevLengthRef = useRef(trace.length);
 
@@ -84,11 +84,11 @@ export default function Battle() {
       >
         <div className="flex-wrap gap-2 flex items-center justify-between px-4 py-2 bg-black/20 border-b border-px border-white/10">
           <TabsList className="flex gap-2">
-              <TabsTrigger value="code">
-                {dictionary.game.codeTab}
-              </TabsTrigger>
               <TabsTrigger value="subject">
                 {dictionary.game.subjectTab}
+              </TabsTrigger>
+              <TabsTrigger value="code">
+                {dictionary.game.codeTab}
               </TabsTrigger>
               <TabsTrigger className={cn("!relative", traceNotification ?  "animate-pulse bg-primary/20" : "")} value="trace">
                 {dictionary.game.traceTab}
@@ -105,6 +105,18 @@ export default function Battle() {
         </div>
 
         <div className="flex-1 min-h-0 flex">
+          <TabsContent value="subject" className="flex flex-1 min-h-0 w-full p-4">
+            <div className="flex-1 flex flex-col border border-px border-white/10 rounded-md overflow-hidden">
+              <div className="w-full flex flex-col gap-2 bg-black/50 py-4 px-6 border-b border-px border-white/10">
+                <p className="text-sm text-white font-medium font-mono">{selectedChallenge.title}</p>
+              </div>
+              <ScrollArea className="flex-1 min-h-0 w-full overflow-hidden bg-white/5">
+                <div className="py-3 px-4 text-sm text-sub-text font-medium font-mono whitespace-pre-wrap">
+                  {selectedChallenge.subject}
+                </div>
+              </ScrollArea>
+            </div>
+          </TabsContent>
           <TabsContent value="code" className="flex-1 w-full p-4">
             <Editor
               height="100%"
@@ -118,18 +130,6 @@ export default function Battle() {
                 minimap: { enabled: false }
               }}
             />
-          </TabsContent>
-          <TabsContent value="subject" className="flex flex-1 min-h-0 w-full p-4">
-            <div className="flex-1 flex flex-col border border-px border-white/10 rounded-md overflow-hidden">
-              <div className="w-full flex flex-col gap-2 bg-black/50 py-4 px-6 border-b border-px border-white/10">
-                <p className="text-sm text-white font-medium font-mono">{selectedChallenge.title}</p>
-              </div>
-              <ScrollArea className="flex-1 min-h-0 w-full overflow-hidden bg-white/5">
-                <div className="py-3 px-4 text-sm text-sub-text font-medium font-mono whitespace-pre-wrap">
-                  {selectedChallenge.subject}
-                </div>
-              </ScrollArea>
-            </div>
           </TabsContent>
           <TabsContent value="trace" className="flex-1 min-h-0 h-full w-full overflow-hidden">
             <Trace />
