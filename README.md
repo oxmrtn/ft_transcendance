@@ -45,7 +45,7 @@
 ---
 
 ## Database Schema
-*(Visual representation to be added by the team)*
+<img width="1528" height="933" alt="DB_scheme" src="https://github.com/user-attachments/assets/b28957c2-b22d-460e-baa0-e9f919cb3e5b" />
 
 ---
 
@@ -149,9 +149,6 @@ This module required extensive research and development time to:
 8. As the room creator, select a coding challenge and start the game.
 9. Players must solve the challenge in fewer than 3 attempts to win!
 
----
-## Database map
-<img width="1528" height="933" alt="DB_scheme" src="https://github.com/user-attachments/assets/b28957c2-b22d-460e-baa0-e9f919cb3e5b" />
 
 ---
 
