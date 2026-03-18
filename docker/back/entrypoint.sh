@@ -12,12 +12,22 @@ else
   echo "Dependencies already installed"
 fi
 
-echo "Migrating database: $@"
-npx prisma migrate dev --name init
+if [ "$NODE_ENV" = "production" ]; then
+  echo "Applying production migrations..."
+  npx prisma migrate deploy
 
-echo "Seeding database..."
-npx prisma db seed
+  echo "Building application..."
+  npm run build
 
+  echo "Starting application in production..."
+  exec npm run start
+else
+  echo "Migrating database..."
+  npx prisma migrate dev --name init
 
-echo "Starting application: $@"
-exec "$@"
+  echo "Seeding database..."
+  npx prisma db seed
+
+  echo "Starting application in development..."
+  exec npm run dev
+fi
