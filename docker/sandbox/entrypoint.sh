@@ -13,7 +13,11 @@ echo "Installing nest modules..."
 
 if [ ! -d "node_modules" ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then
   echo "Installing dependencies..."
-  npm install
+  if [ "$NODE_ENV" = "production" ]; then
+    npm install --include=dev
+  else
+    npm install
+  fi
 else
   echo "Dependencies already installed"
 fi
@@ -22,6 +26,11 @@ echo "Building template tester image: $@"
 docker build -t testerdocker .
 
 if [ "$NODE_ENV" = "production" ]; then
+  if [ ! -x "node_modules/.bin/nest" ]; then
+    echo "Nest CLI not found, installing build dependencies..."
+    npm install --include=dev
+  fi
+
   echo "Building sandbox application..."
   npm run build
 
