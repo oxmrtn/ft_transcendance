@@ -140,7 +140,7 @@ This module required extensive research and development time to:
 2. Place the provided `.env` file in the `/docker` directory at the root of the project.
 3. Open a terminal and navigate to the project root.
 4. Run the command `make` to build and start the containers.
-5. Once the containers are running, open your web browser and go to [https://localhost:8443](https://localhost:8443).
+5. Once the containers are running, open your web browser and go to [https://localhost:8443].
 6. Register for an account.
 7. Create a game room and share the **Room ID** with other players who wish to join.
 8. As the room creator, select a coding challenge and start the game.
