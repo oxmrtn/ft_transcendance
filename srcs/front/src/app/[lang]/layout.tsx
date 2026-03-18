@@ -54,8 +54,8 @@ export default async function RootLayout({
   const dict = await getDictionary(lang);
 
   return (
-    <html lang={lang} className="gradient-background" data-scroll-behavior="smooth">
-      <body className={`${bebas.variable} gradient-background`}>
+    <html lang={lang} data-scroll-behavior="smooth">
+      <body className={`${bebas.variable} app-gradient-background`}>
         <AuthProvider>
           <LanguageProvider initialLang={lang} initialDictionary={dict}>
             <SocketProvider>
