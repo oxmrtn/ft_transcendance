@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 echo building tester image...
 
@@ -20,5 +21,13 @@ fi
 echo "Building template tester image: $@"
 docker build -t testerdocker .
 
-echo "Starting application: $@"
-exec "$@"
+if [ "$NODE_ENV" = "production" ]; then
+  echo "Building sandbox application..."
+  npm run build
+
+  echo "Starting sandbox in production..."
+  exec npm run start
+else
+  echo "Starting sandbox in development..."
+  exec npm run dev
+fi

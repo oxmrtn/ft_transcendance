@@ -10,5 +10,13 @@ else
   echo "Dependencies already installed"
 fi
 
-echo "Starting application: $@"
-exec "$@"
+if [ "$NODE_ENV" = "production" ]; then
+  echo "Building application..."
+  npm run build
+
+  echo "Starting application in production..."
+  exec npm run start
+else
+  echo "Starting application in development..."
+  exec npm run dev
+fi
