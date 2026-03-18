@@ -28,7 +28,7 @@
   },
   "header": {
     "friendsTab": "vänner",
-    "leaderboardTab": "leaderboard",
+    "leaderboardTab": "topplista",
     "playTab": "spela",
     "historyTab": "historik",
     "settings": "Inställningar",
@@ -39,8 +39,8 @@
     "languageEnglish": "Engelska",
     "languageFrench": "Franska",
     "languageSwedish": "Svenska",
-    "privacyPolicy": "Privacy policy",
-    "termsOfService": "Terms of service"
+    "privacyPolicy": "Integritetspolicy",
+    "termsOfService": "Användarvillkor"
   },
   "privacy": {
     "title": "Integritetspolicy"
@@ -65,8 +65,8 @@
     "accepted": "har accepterats",
     "rejected": "har avvisats",
     "error": "Fel",
-    "online": "Online",
-    "offline": "Offline"
+    "online": "Ansluten",
+    "offline": "Frånkopplad"
   },
   "play": {
     "title": "spela",
@@ -103,7 +103,7 @@
     "noTraceAvailable": "Ingen trace tillgänglig",
     "subjectTab": "Uppgift",
     "codeTab": "Kod",
-    "traceTab": "Trace",
+    "traceTab": "Spår",
     "scoreboardTab": "Resultattavla",
     "submitCode": "Skicka kod",
     "waitingForResult": "Väntar på resultat...",
@@ -121,7 +121,7 @@
     "noSearchResult": "Ingen match hittades",
     "gameIdLabel": "ID",
     "challengeLabel": "Utmaning",
-    "rankLabel": "Rank",
+    "rankLabel": "Rang",
     "playersLabel": "Spelare",
     "dateLabel": "Datum",
     "hourLabel": "Timme",
@@ -137,15 +137,15 @@
     "noRank": "-"
   },
   "leaderboard": {
-    "title": "leaderboard",
+    "title": "topplista",
     "topLabel": "Topp {{count}}",
     "searchPlaceholder": "Spelarnamn",
-    "levelLabel": "Lvl",
+    "levelLabel": "Nivå",
     "xpLabel": "XP",
     "you": "Du",
     "empty": "Inga rankade spelare ännu",
     "noSearchResult": "Ingen spelare hittades",
-    "loading": "Laddar leaderboard..."
+    "loading": "Laddar topplistan..."
   },
   "settings": {
     "title": "Inställningar",

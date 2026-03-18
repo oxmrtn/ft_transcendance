@@ -28,7 +28,7 @@
   },
   "header": {
     "friendsTab": "amis",
-    "leaderboardTab": "leaderboard",
+    "leaderboardTab": "classement",
     "playTab": "jouer",
     "historyTab": "historique",
     "settings": "Paramètres",
@@ -81,9 +81,9 @@
     "unknownCreator": "Inconnu"
   },
   "game": {
-    "roomTitle": "Room",
-    "gameTitle": "Game",
-    "scoreboardTitle": "Scoreboard",
+    "roomTitle": "salon",
+    "gameTitle": "partie",
+    "scoreboardTitle": "classement",
     "roomIdLabel": "ID de la room",
     "gameIdCopied": "ID de la room copié dans le presse-papiers",
     "leaveRoom": "Quitter la room",
@@ -104,7 +104,7 @@
     "subjectTab": "Sujet",
     "codeTab": "Code",
     "traceTab": "Trace",
-    "scoreboardTab": "Scoreboard",
+    "scoreboardTab": "classement",
     "submitCode": "Soumettre le code",
     "waitingForResult": "En attente du résultat...",
     "retryInSeconds": "Réessayer dans {{seconds}}s",
@@ -120,7 +120,7 @@
     "empty": "Aucune partie dans l'historique",
     "noSearchResult": "Aucune partie trouvée",
     "gameIdLabel": "ID",
-    "challengeLabel": "Challenge",
+    "challengeLabel": "Défi",
     "rankLabel": "Rang",
     "playersLabel": "Joueurs",
     "dateLabel": "Date",
@@ -137,15 +137,15 @@
     "noRank": "-"
   },
   "leaderboard": {
-    "title": "leaderboard",
+    "title": "classement",
     "topLabel": "Top {{count}}",
     "searchPlaceholder": "Nom de joueur",
-    "levelLabel": "Lvl",
+    "levelLabel": "Niv.",
     "xpLabel": "XP",
     "you": "Vous",
     "empty": "Aucun joueur classé",
     "noSearchResult": "Aucun joueur trouvé",
-    "loading": "Chargement du leaderboard..."
+    "loading": "Chargement du classement..."
   },
   "settings": {
     "title": "Paramètres",

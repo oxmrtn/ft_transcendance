@@ -25,6 +25,9 @@ if [ "$NODE_ENV" = "production" ]; then
   echo "Applying production migrations..."
   npx prisma migrate deploy
 
+  echo "Seeding database..."
+  npx prisma db seed
+
   echo "Building application..."
   npm run build
 
