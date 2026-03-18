@@ -2,7 +2,6 @@ DOCKER_COMPOSE = docker compose -f docker/docker-compose.yml
 
 .PHONY: all build up down ps logs clean re \
 	build-dev up-dev re-dev \
-	build-prod up-prod re-prod \
 	back-install front-install front-re
 
 all: up
@@ -43,11 +42,3 @@ up-dev:
 	NODE_ENV=development COMPOSE_PARALLEL_LIMIT=1 $(DOCKER_COMPOSE) up -d
 
 re-dev: down up-dev
-
-build-prod:
-	$(MAKE) build
-
-up-prod:
-	$(MAKE) up
-
-re-prod: down up-prod
