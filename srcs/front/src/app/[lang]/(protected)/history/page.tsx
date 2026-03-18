@@ -9,6 +9,7 @@ import { TextInput } from "../../../../components/ui/Input";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { useLanguage } from "../../../../contexts/LanguageContext";
 import { API_URL } from "../../../../lib/utils";
+import { HistorySkeleton } from "../../../../components/ui/skeleton";
 
 const ITEMS_PER_PAGE = 7;
 const HISTORY_LIMIT = 100;
@@ -149,9 +150,7 @@ export default function Page() {
 
         <div className="flex-1 min-h-0 flex flex-col">
           {isLoading ? (
-            <div className="w-full flex-1 min-h-0 flex items-center justify-center">
-              <p className="text-sub-text">{dictionary.history.loading}</p>
-            </div>
+            <HistorySkeleton items={ITEMS_PER_PAGE} />
           ) : error ? (
             <div className="w-full flex-1 min-h-0 flex items-center justify-center">
               <p className="text-sm text-red-400">{error}</p>

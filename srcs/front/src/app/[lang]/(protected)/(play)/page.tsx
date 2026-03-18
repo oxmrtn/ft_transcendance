@@ -13,6 +13,7 @@ import { API_URL } from "../../../../lib/utils";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { toast } from "sonner";
 import { SquareTerminal } from "lucide-react";
+import { WaitingRoomsSkeleton } from "../../../../components/ui/skeleton";
 
 const ITEMS_PER_PAGE = 7;
 const WAITING_ROOMS_LIMIT = 100;
@@ -155,9 +156,7 @@ export default function Page() {
 
         <div className="flex-1 min-h-0 flex flex-col">
           {isLoadingRooms ? (
-            <div className="w-full flex-1 min-h-0 flex items-center justify-center">
-              <p className="text-sub-text">{dictionary.play.loadingRooms}</p>
-            </div>
+            <WaitingRoomsSkeleton items={ITEMS_PER_PAGE} />
           ) : roomsError ? (
             <div className="w-full flex-1 min-h-0 flex items-center justify-center">
               <p className="text-sm text-red-400">{roomsError}</p>
