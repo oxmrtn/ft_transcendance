@@ -13,6 +13,7 @@ import { EllipsisVertical, MessageCircleMore, Trophy, User } from "lucide-react"
 import { toast } from "sonner";
 import ProfileModal from "../../../../components/ProfileModal";
 import { ChatModal } from "../../../../components/Chat";
+import { LeaderboardSkeleton } from "../../../../components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -126,9 +127,7 @@ export default function Page() {
 
         <div className="flex-1 min-h-0 flex flex-col">
           {isLoading ? (
-            <div className="w-full flex-1 min-h-0 flex items-center justify-center">
-              <p className="text-sub-text">{dictionary.leaderboard.loading}</p>
-            </div>
+            <LeaderboardSkeleton items={ITEMS_PER_PAGE} />
           ) : error ? (
             <div className="w-full flex-1 min-h-0 flex items-center justify-center">
               <p className="text-sm text-red-400">{error}</p>
@@ -151,6 +150,8 @@ export default function Page() {
                   : rank === 3
                   ? "text-podium-bronze drop-shadow-[0_0_8px_currentColor]"
                   : "text-sub-text";
+                const xpInLevel = player.xp % 100;
+                const xpProgress = Math.max(0, Math.min(100, xpInLevel));
 
                 return (
                   <div
@@ -194,9 +195,17 @@ export default function Page() {
                         <span className="text-sm text-muted-text">{dictionary.leaderboard.levelLabel}</span>
                         <span className="font-mono text-white">{level}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-text">{dictionary.leaderboard.xpLabel}</span>
-                      <span className="font-mono text-white">{player.xp}</span>
+                      <div className="flex flex-col items-end gap-1 min-w-32">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-text">{dictionary.leaderboard.xpLabel}</span>
+                          <span className="font-mono text-white">{player.xp}</span>
+                        </div>
+                        <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                          <div
+                            className="h-full bg-primary rounded-full transition-all duration-300"
+                            style={{ width: `${xpProgress}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
