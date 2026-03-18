@@ -18,9 +18,9 @@ export async function sendDataToSandbox( file_name: string) : Promise <SandBoxRe
             body: JSON.stringify(payload),
         });
 
-        if (!response.ok) {
+        if (!response.ok)
             throw new Error(`Error from sandbox: ${response.statusText}`);
-        }
+
         return await response.json() as SandBoxResponse;
     } catch (error: any) {
         throw error;

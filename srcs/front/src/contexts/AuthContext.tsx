@@ -60,9 +60,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       });
 
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error("Failed to fetch profile");
-      }
 
       const data = await response.json();
       setProfile({

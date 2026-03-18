@@ -53,9 +53,8 @@ export default function ProfileModal({ username }: { username: string }) {
       }
 
       const data = await response.json();
-
       if (!response.ok)
-        toast.error(data.message || dictionary.common.errorOccurred);
+        throw new Error(data.message || dictionary.common.errorOccurred);
 
       setProfile(data);
     } catch (err: any) {
@@ -113,9 +112,8 @@ export default function ProfileModal({ username }: { username: string }) {
       }
 
       const data = await response.json();
-
       if (!response.ok)
-        toast.error(data.message || dictionary.common.errorOccurred, { id: toastId });
+        throw new Error(data.message || dictionary.common.errorOccurred);
 
       setProfile(prev => prev ? { ...prev, friendStatus: "pending" } : prev);
 
@@ -153,9 +151,8 @@ export default function ProfileModal({ username }: { username: string }) {
       }
 
       const data = await response.json();
-
       if (!response.ok)
-        toast.error(data.message || dictionary.common.errorOccurred, { id: toastId });
+        throw new Error(data.message || dictionary.common.errorOccurred);
 
       setProfile(prev => prev ? { ...prev, friendStatus: null } : prev);
 

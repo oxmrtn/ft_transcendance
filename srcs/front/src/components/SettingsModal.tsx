@@ -81,10 +81,9 @@ export default function SettingsModal() {
         return;
       }
 
-      if (!response.ok)
-        toast.error(response.statusText || dictionary.common.errorOccurred);
-
       const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.message || dictionary.common.errorOccurred);
 
       const nextProfilePictureUrl = data.profilePictureUrl
         ? `${data.profilePictureUrl}?t=${Date.now()}`

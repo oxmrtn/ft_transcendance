@@ -117,14 +117,14 @@ export default function Battle() {
               </ScrollArea>
             </div>
           </TabsContent>
-          <TabsContent value="code" className="flex-1 w-full p-4">
+          <TabsContent forceMount value="code" className="flex-1 w-full p-4">
             <Editor
               height="100%"
               width="100%"
               theme="vs-dark"
               defaultLanguage="c"
               value={code}
-              onChange={setCode}
+              onChange={(value) => setCode(value ?? "")}
               className="border border-px border-white/10 rounded-lg overflow-hidden"
               options={{
                 minimap: { enabled: false }
