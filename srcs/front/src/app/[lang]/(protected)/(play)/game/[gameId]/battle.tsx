@@ -117,7 +117,7 @@ export default function Battle() {
               </ScrollArea>
             </div>
           </TabsContent>
-          <TabsContent forceMount value="code" className="flex-1 w-full p-4">
+          <TabsContent value="code" className="flex-1 w-full p-4">
             <Editor
               height="100%"
               width="100%"

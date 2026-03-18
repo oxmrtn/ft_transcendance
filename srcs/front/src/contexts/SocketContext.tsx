@@ -32,6 +32,7 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
     const { isAuthenticated, token, logout } = useAuth();
     const { dictionary } = useLanguage();
     const [socket, setSocket] = useState<Socket | null>(null);
+    const socketRef = useRef<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -39,35 +40,24 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
     const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
     const unreadMessagesCountRef = useRef(unreadMessagesCount);
 
-    useEffect(() => {
-        if (isAuthenticated)
-            connectSocket(token);
-        else
-            disconnectSocket();
-        return () => {
-            disconnectSocket();
-        };
-    }, [isAuthenticated, token]);
+    const disconnectSocket = useCallback((targetSocket?: Socket | null) => {
+        const socketToDisconnect = targetSocket ?? socketRef.current;
+        if (!socketToDisconnect)
+            return;
 
-    useEffect(() => {
-        isChatOpenRef.current = isChatOpen;
-    }, [isChatOpen]);
+        socketToDisconnect.removeAllListeners();
+        if (socketToDisconnect.connected || socketToDisconnect.active)
+            socketToDisconnect.disconnect();
 
-    useEffect(() => {
-        unreadMessagesCountRef.current = unreadMessagesCount;
-    }, [unreadMessagesCount]);
+        if (socketRef.current === socketToDisconnect)
+            socketRef.current = null;
 
-    const handleNewMessage = (newMessage: Message) => {
-        if (!isChatOpenRef.current)
-            setUnreadMessagesCount(unreadMessagesCountRef.current + 1);
-        setMessages((prevMessages) => {
-            const updatedMessages = [...prevMessages, newMessage];
-            return updatedMessages.slice(-100);
-        });
-    };
+        setSocket((prev) => (prev === socketToDisconnect ? null : prev));
+        setIsConnected(false);
+    }, []);
 
-    const connectSocket = (token: string) => {
-        if (socket)
+    const connectSocket = useCallback((token: string) => {
+        if (socketRef.current)
             return;
 
         const newSocket = io("/", {
@@ -101,16 +91,37 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
             }
         });
 
+        socketRef.current = newSocket;
         setSocket(newSocket);
-    }
+    }, [dictionary.common.sessionExpired, logout]);
 
-    const disconnectSocket = () => {
-        if (socket) {
-            socket.disconnect();
-            setSocket(null);
-            setIsConnected(false);
-        }
-    }
+    useEffect(() => {
+        if (isAuthenticated)
+            connectSocket(token);
+        else
+            disconnectSocket();
+
+        return () => {
+            disconnectSocket();
+        };
+    }, [isAuthenticated, token, connectSocket, disconnectSocket]);
+
+    useEffect(() => {
+        isChatOpenRef.current = isChatOpen;
+    }, [isChatOpen]);
+
+    useEffect(() => {
+        unreadMessagesCountRef.current = unreadMessagesCount;
+    }, [unreadMessagesCount]);
+
+    const handleNewMessage = (newMessage: Message) => {
+        if (!isChatOpenRef.current)
+            setUnreadMessagesCount(unreadMessagesCountRef.current + 1);
+        setMessages((prevMessages) => {
+            const updatedMessages = [...prevMessages, newMessage];
+            return updatedMessages.slice(-100);
+        });
+    };
 
     return (
         <SocketContext.Provider value={{ socket, isConnected, unreadMessagesCount, messages, connectSocket, disconnectSocket, setUnreadMessagesCount, setIsChatOpen }}>
