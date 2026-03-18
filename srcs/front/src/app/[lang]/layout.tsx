@@ -4,8 +4,6 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { Locale } from './dictionaries';
 import { hasLocale, getDictionary } from './dictionaries';
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
 import { Bebas_Neue } from 'next/font/google';
 import { AuthProvider } from '../../contexts/AuthContext';
 import { LanguageProvider } from '../../contexts/LanguageContext';
@@ -20,6 +18,7 @@ const bebas = Bebas_Neue({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-bebas',
+  preload: false,
 });
 
 export async function getMetadata({
@@ -55,8 +54,8 @@ export default async function RootLayout({
   const dict = await getDictionary(lang);
 
   return (
-    <html lang={lang} className="gradient-background">
-      <body className={`${GeistSans.className} ${GeistMono.variable} ${bebas.variable} gradient-background`}>
+    <html lang={lang} className="gradient-background" data-scroll-behavior="smooth">
+      <body className={`${bebas.variable} gradient-background`}>
         <AuthProvider>
           <LanguageProvider initialLang={lang} initialDictionary={dict}>
             <SocketProvider>

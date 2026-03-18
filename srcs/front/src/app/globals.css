@@ -33,7 +33,6 @@
     --grid-gradient-grid-opacity: 0.3;
 
     --font-bebas: var(--font-bebas);
-    --mono: var(--font-geist-mono);
 }
 
 @layer components {
