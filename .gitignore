@@ -9,6 +9,7 @@ srcs/sandbox/tester/results/*
 
 srcs/front/.next
 srcs/front/node_modules
+srcs/front/next-env.d.ts
 
 srcs/sandbox/node_modules
 srcs/sandbox/dist
