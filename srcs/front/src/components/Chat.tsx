@@ -31,21 +31,6 @@ export function ChatModal({ target, triggerId }: ChatModalProps) {
     const messagesAreaRef = useRef<HTMLDivElement>(null);
     const prevMessagesLengthRef = useRef(messages.length);
 
-    const scrollToBottom = () => {
-        const endEl = messagesAreaRef.current;
-        if (!endEl)
-            return;
-
-        const viewport = endEl.closest("[data-radix-scroll-area-viewport]") as HTMLElement | null;
-        if (!viewport)
-            return;
-
-        viewport.scrollTo({
-            top: viewport.scrollHeight,
-            behavior: "auto"
-        });
-    };
-
     const filteredMessages = activeTab === 'all'
         ? messages
         : activeTab === 'global'
@@ -74,8 +59,8 @@ export function ChatModal({ target, triggerId }: ChatModalProps) {
     }, [target, triggerId]);
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages.length, activeTab]);
+        messagesAreaRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages, activeTab]);
 
     useEffect(() => {
         setIsChatOpen(true);
