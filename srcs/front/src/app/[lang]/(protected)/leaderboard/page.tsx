@@ -37,6 +37,7 @@ export default function Page() {
   const { openModal } = useModal();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [showSkeleton, setShowSkeleton] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [players, setPlayers] = useState<LeaderboardPlayer[]>([]);
@@ -80,6 +81,15 @@ export default function Page() {
 
     fetchLeaderboard();
   }, [token, logout, dictionary.common.errorOccurred, dictionary.common.sessionExpired]);
+
+  useEffect(() => {
+    if (isLoading) {
+      setShowSkeleton(true);
+      return;
+    }
+    const id = setTimeout(() => setShowSkeleton(false), 500);
+    return () => clearTimeout(id);
+  }, [isLoading]);
 
   const filteredPlayers = useMemo(() => {
     const query = searchPlayer.trim().toLowerCase();
@@ -126,7 +136,7 @@ export default function Page() {
         </div>
 
         <div className="flex-1 min-h-0 flex flex-col">
-          {isLoading ? (
+          {showSkeleton ? (
             <LeaderboardSkeleton items={ITEMS_PER_PAGE} />
           ) : error ? (
             <div className="w-full flex-1 min-h-0 flex items-center justify-center">
@@ -215,7 +225,7 @@ export default function Page() {
           )}
         </div>
 
-        {!isLoading && (
+        {!showSkeleton && (
           <div className="flex items-center justify-center py-2 border-t border-white/10 bg-black/20">
             <Pagination
               currentPage={page}
