@@ -14,9 +14,7 @@ import { WsJwtGuard } from "src/auth/wsjwt/wsjwt.guard";
 import { codeSubmitDto } from "src/dto/code-submit.dto";
 import { gameIdDto } from "src/dto/game-id.dto";
 import { KickPlayerDto } from "src/dto/kick-player.dto";
-import { connected } from "node:process";
 import { PrismaService } from "prisma/prisma.service";
-import { waitForDebugger } from "node:inspector";
 import { StartGameDto } from "src/dto/start-game.dto";
 import { submitCode } from "src/submission/submitCode";
 import { ChallengeCache, Challenge } from '../challenges/challenge.cache';
@@ -577,7 +575,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					}
 				})
 				this.clearGame(currentGame.gameId);
-				console.log("hello 5");
 				this.gameSessions.delete(currentGame.gameId);
 			}
 		}

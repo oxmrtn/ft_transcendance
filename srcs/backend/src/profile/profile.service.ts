@@ -4,7 +4,6 @@ import * as fs from 'fs';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuthService } from 'src/auth/auth.service';
 import * as bcrypt from 'bcrypt'
-import { buffer } from 'stream/consumers';
 
 @Injectable()
 export class ProfileService {

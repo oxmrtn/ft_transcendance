@@ -1,7 +1,5 @@
-import { Controller, 
-		Get, Post, Delete, Patch,
-		Query, Req, Param,
-		UseGuards
+import { Controller, Get, Post, Delete,
+		Patch, Req, Param, UseGuards
 	} from '@nestjs/common';
 import { SocialService } from './social.service';
 import { AuthGuard } from '@nestjs/passport';
