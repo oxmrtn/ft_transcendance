@@ -59,7 +59,16 @@ export function ChatModal({ target, triggerId }: ChatModalProps) {
     }, [target, triggerId]);
 
     useEffect(() => {
-        messagesAreaRef.current?.scrollIntoView({ behavior: "smooth" });
+        const anchor = messagesAreaRef.current;
+        const viewport = anchor?.closest('[data-slot="scroll-area-viewport"]') as HTMLDivElement | null;
+        if (!viewport)
+            return;
+
+        const frame = requestAnimationFrame(() => {
+            viewport.scrollTop = viewport.scrollHeight;
+        });
+
+        return () => cancelAnimationFrame(frame);
     }, [messages, activeTab]);
 
     useEffect(() => {

@@ -35,12 +35,22 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
 
   const login = (token: string) => {
-    const decodedToken = jwtDecode<DecodedToken>(token);
-    if (decodedToken.exp * 1000 > Date.now()) {
+    if (!token || token === 'undefined') {
+      logout();
+      return;
+    }
+
+    try {
+      const decodedToken = jwtDecode<DecodedToken>(token);
+      if (!decodedToken.exp || decodedToken.exp * 1000 <= Date.now()) {
+        logout();
+        return;
+      }
+
       localStorage.setItem('jwt', token);
       setToken(token);
       fetchProfile(token);
-    } else {
+    } catch {
       logout();
     }
   }
@@ -77,10 +87,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const storedToken = localStorage.getItem('jwt');
-      if (storedToken) {
+      if (storedToken && storedToken !== 'null' && storedToken !== 'undefined') {
         login(storedToken);
       }
-    } catch (error) {
+    } catch {
       logout();
     } finally {
       setIsLoading(false);

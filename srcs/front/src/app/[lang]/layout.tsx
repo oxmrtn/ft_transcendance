@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { Locale } from './dictionaries';
 import { hasLocale, getDictionary } from './dictionaries';
-import { Bebas_Neue } from 'next/font/google';
+import { Bebas_Neue, Inter } from 'next/font/google';
 import { AuthProvider } from '../../contexts/AuthContext';
 import { LanguageProvider } from '../../contexts/LanguageContext';
 import { ModalProvider } from '../../contexts/ModalContext';
@@ -13,6 +13,12 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Toaster from '../../components/ui/Toaster';
 import Chat from '../../components/Chat';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  preload: false,
+});
 
 const bebas = Bebas_Neue({
   weight: '400',
@@ -54,8 +60,8 @@ export default async function RootLayout({
   const dict = await getDictionary(lang);
 
   return (
-    <html lang={lang} className="gradient-background" data-scroll-behavior="smooth">
-      <body className={`${bebas.variable} gradient-background`}>
+    <html lang={lang} className="gradient-background">
+      <body className={`${inter.className} ${bebas.variable} gradient-background`}>
         <AuthProvider>
           <LanguageProvider initialLang={lang} initialDictionary={dict}>
             <SocketProvider>
