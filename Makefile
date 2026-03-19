@@ -1,14 +1,16 @@
 DOCKER_COMPOSE = docker compose -f docker/docker-compose.yml
 
-.PHONY: all build up down ps logs clean re front-install front-re
+.PHONY: all build up down ps logs clean re \
+	build-dev up-dev re-dev \
+	back-install front-install front-re
 
 all: up
 
 build:
-	COMPOSE_PARALLEL_LIMIT=1 $(DOCKER_COMPOSE) build
+	NODE_ENV=production COMPOSE_PARALLEL_LIMIT=1 $(DOCKER_COMPOSE) build
 
 up:
-	COMPOSE_PARALLEL_LIMIT=1 $(DOCKER_COMPOSE) up -d
+	NODE_ENV=production COMPOSE_PARALLEL_LIMIT=1 $(DOCKER_COMPOSE) up -d
 
 down:
 	$(DOCKER_COMPOSE) down --remove-orphans
@@ -32,3 +34,11 @@ front-re:
 	$(DOCKER_COMPOSE) restart front
 
 re: down up
+
+build-dev:
+	NODE_ENV=development COMPOSE_PARALLEL_LIMIT=1 $(DOCKER_COMPOSE) build
+
+up-dev:
+	NODE_ENV=development COMPOSE_PARALLEL_LIMIT=1 $(DOCKER_COMPOSE) up -d
+
+re-dev: down up-dev

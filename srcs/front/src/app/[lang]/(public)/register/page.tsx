@@ -36,9 +36,8 @@ export default function RegisterForm() {
         });
 
       const data = await response.json();
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(data.message || dictionary.common.errorOccurred);
-      }
 
       if (data.token) {
         login(data.token);

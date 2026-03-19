@@ -49,9 +49,8 @@ export default function Page() {
       }
 
       const data = await response.json();
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(data.message || dictionary.common.errorOccurred);
-      }
 
       const cleanFriends: UserType[] = data.map((user: any) => ({
         username: user.username,
@@ -89,9 +88,8 @@ export default function Page() {
       }
 
       const data = await response.json();
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(data.message || dictionary.common.errorOccurred);
-      }
 
       const cleanPending: UserType[] = data.map((user: any) => ({
         username: user.username,
@@ -127,18 +125,15 @@ export default function Page() {
       }
 
       const data = await response.json();
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(data.message || dictionary.common.errorOccurred);
-      }
 
       toast.success(`${dictionary.friends.requestSent} ${friendUsername}`, {
         id: toastId,
       });
 
     } catch (err: any) {
-      toast.error(`${dictionary.friends.error} : ${err.message}`, {
-        id: toastId,
-      });
+      toast.error(`${dictionary.friends.error} : ${err.message}`, { id: toastId });
     }
   }
 
@@ -163,9 +158,8 @@ export default function Page() {
       }
 
       const data = await response.json();
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(data.message || dictionary.common.errorOccurred);
-      }
 
       setFriends(prevFriends => prevFriends.filter(friend => friend.username !== friendUsername));
 
@@ -174,9 +168,7 @@ export default function Page() {
       });
 
     } catch (err: any) {
-      toast.error(`${dictionary.friends.error} : ${err.message}`, {
-        id: toastId,
-      });
+      toast.error(`${dictionary.friends.error} : ${err.message}`, { id: toastId });
     } finally {
       setLoading(false);
     }
@@ -203,9 +195,8 @@ export default function Page() {
       }
 
       const data = await response.json();
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(data.message || dictionary.common.errorOccurred);
-      }
 
       setPending(prevPending => prevPending.filter(pending => pending.username !== pendingUsername));
 
@@ -214,9 +205,7 @@ export default function Page() {
       });
 
     } catch (err: any) {
-      toast.error(`${dictionary.friends.error} : ${err.message}`, {
-        id: toastId,
-      });
+      toast.error(`${dictionary.friends.error} : ${err.message}`, { id: toastId });
     } finally {
       setLoading(false);
     }

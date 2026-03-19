@@ -9,7 +9,13 @@ function getLocale(request) {
     const negotiatorHeaders = {}
     request.headers.forEach((value, key) => (negotiatorHeaders[key] = value))
  
-    let languages = new Negotiator({ headers: negotiatorHeaders }).languages()
+    const languages = new Negotiator({ headers: negotiatorHeaders })
+      .languages()
+      .filter((language) => language && language !== '*')
+
+    if (languages.length === 0)
+      return defaultLocale
+
     return match(languages, locales, defaultLocale)
 }
  

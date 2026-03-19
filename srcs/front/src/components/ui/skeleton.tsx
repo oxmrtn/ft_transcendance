@@ -103,8 +103,80 @@ function ProfileSkeleton() {
   )
 }
 
+function LeaderboardSkeleton({ items = 7 }: { items?: number }) {
+  return (
+    <div className="w-full flex-1 min-h-0 flex flex-col">
+      {Array.from({ length: items }).map((_, index) => (
+        <div key={index} className="w-full flex items-center justify-between py-3 px-4">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-5 w-10" />
+            <Skeleton className="h-12 w-12 rounded-full" />
+            <div className="flex flex-col gap-2">
+              <Skeleton className="h-4 w-32" />
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-4 w-24" />
+            <div className="w-32 flex flex-col gap-2">
+              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3 w-20" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function HistorySkeleton({ items = 7 }: { items?: number }) {
+  return (
+    <div className="w-full flex-1 min-h-0 flex flex-col">
+      {Array.from({ length: items }).map((_, index) => (
+        <div key={index} className="w-full py-3 px-4">
+          <div className="flex items-start justify-between gap-0">
+            <div className="flex flex-col gap-2 min-w-0 w-[46%] pr-4">
+              <Skeleton className="h-4 w-36" />
+              <Skeleton className="h-4 w-52" />
+            </div>
+
+            <div className="flex flex-col gap-2 w-[22%] text-left">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+
+            <div className="flex flex-col gap-2 ml-auto w-fit text-left">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function WaitingRoomsSkeleton({ items = 7 }: { items?: number }) {
+  return (
+    <div className="w-full flex-1 min-h-0 flex flex-col">
+      {Array.from({ length: items }).map((_, index) => (
+        <div key={index} className="w-full flex items-center justify-between py-3 px-4">
+          <div className="flex items-center gap-8">
+            <Skeleton className="h-4 w-36" />
+            <Skeleton className="h-4 w-40" />
+            <Skeleton className="h-4 w-16" />
+          </div>
+          <Skeleton className="h-9 w-28" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export {
   FriendsSkeleton,
   GameSkeleton,
-  ProfileSkeleton
+  ProfileSkeleton,
+  LeaderboardSkeleton,
+  HistorySkeleton,
+  WaitingRoomsSkeleton
 }

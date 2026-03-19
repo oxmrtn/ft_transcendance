@@ -186,6 +186,8 @@ function GameProvider({ children }: { children: ReactNode }) {
       if (payload.event === "resume-game") {
         if (Array.isArray(payload.availableChallenges))
           setAvailableChallenges(payload.availableChallenges);
+        if (Array.isArray(payload.traces))
+          setTrace(payload.traces);
         hasLeftRoomRef.current = false;
         router.push(`/${lang}/game/${payload.gameId}`);
         setisLoading(false);

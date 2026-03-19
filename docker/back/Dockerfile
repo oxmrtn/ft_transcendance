@@ -15,8 +15,6 @@ COPY ./srcs/backend/tsconfig*.json ./
 COPY ./srcs/backend/nest-cli.json ./
 EXPOSE 3333
 
-CMD ["npm", "run", "start:dev"]
-
 COPY docker/back/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
