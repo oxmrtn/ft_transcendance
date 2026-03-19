@@ -137,7 +137,7 @@ This module required extensive research and development time to:
 
 ### Setup and Execution
 1. Clone the project repository to your local machine.
-2. Place the provided `.env` file in the `/docker` directory at the root of the project.
+2. Place the provided `.env` file and `secrets` folder in the `/docker` directory at the root of the project.
 3. Open a terminal and navigate to the project root.
 4. Run the command `make` to build and start the containers.
 5. Once the containers are running, open your web browser and go to [https://localhost:8443].
