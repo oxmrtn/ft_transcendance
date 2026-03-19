@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Patch, Req, UseGuards, Get , Param} from '@nestjs/common';
+import { Body, Controller, Patch, Req, UseGuards, Get } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { AuthGuard } from '@nestjs/passport';
 

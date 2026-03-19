@@ -8,7 +8,7 @@ export class TokenStrat extends PassportStrategy(Strategy) {
     constructor(private configservice : ConfigService){
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            ignoreExpiration: false, // ça ça pourrait se passer à true pour dev, et pas avoir à se relog pour avoir un nouveau token toutes les 15 min
+            ignoreExpiration: false,
             secretOrKey: configservice.get<string>('JWT_SECRET'), 
         });
     }
