@@ -132,7 +132,6 @@ export default function Battle() {
           <TabsContent value="code" className="flex-1 min-h-0 w-full p-4">
             {isEditorMounted ? (
               <Editor
-                id="monaco-editor-code"
                 height="100%"
                 width="100%"
                 theme="vs-dark"
