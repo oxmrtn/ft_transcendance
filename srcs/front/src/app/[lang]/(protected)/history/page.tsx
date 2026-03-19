@@ -9,6 +9,7 @@ import { TextInput } from "../../../../components/ui/Input";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { useLanguage } from "../../../../contexts/LanguageContext";
 import { API_URL } from "../../../../lib/utils";
+import { HistorySkeleton } from "../../../../components/ui/skeleton";
 
 const ITEMS_PER_PAGE = 7;
 const HISTORY_LIMIT = 100;
@@ -26,6 +27,7 @@ export default function Page() {
   const { dictionary, lang } = useLanguage();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [showSkeleton, setShowSkeleton] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [games, setGames] = useState<HistoryGame[]>([]);
   const [page, setPage] = useState(1);
@@ -69,6 +71,15 @@ export default function Page() {
 
     fetchHistory();
   }, [token, logout, dictionary.common.errorOccurred, dictionary.common.sessionExpired]);
+
+  useEffect(() => {
+    if (isLoading) {
+      setShowSkeleton(true);
+      return;
+    }
+    const id = setTimeout(() => setShowSkeleton(false), 500);
+    return () => clearTimeout(id);
+  }, [isLoading]);
 
   const filteredGames = useMemo(() => {
     const query = searchGameId.trim();
@@ -148,10 +159,8 @@ export default function Page() {
         </div>
 
         <div className="flex-1 min-h-0 flex flex-col">
-          {isLoading ? (
-            <div className="w-full flex-1 min-h-0 flex items-center justify-center">
-              <p className="text-sub-text">{dictionary.history.loading}</p>
-            </div>
+          {showSkeleton ? (
+            <HistorySkeleton items={ITEMS_PER_PAGE} />
           ) : error ? (
             <div className="w-full flex-1 min-h-0 flex items-center justify-center">
               <p className="text-sm text-red-400">{error}</p>
@@ -202,7 +211,7 @@ export default function Page() {
           )}
         </div>
 
-        {!isLoading && (
+        {!showSkeleton && (
           <div className="flex items-center justify-center py-2 border-t border-white/10 bg-black/20">
             <Pagination
               currentPage={page}

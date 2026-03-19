@@ -7,7 +7,6 @@ export default function EnPrivacy() {
                 <ul className="list-disc pl-6 space-y-1">
                     <li><strong>Account Data:</strong> Your username and, if applicable, your email address.</li>
                     <li><strong>Game Data:</strong> The computer code you submit during matches, your scores, and your match history.</li>
-                    <li><strong>Technical Data:</strong> Your IP address and basic browser information, for security and abuse prevention purposes.</li>
                 </ul>
             </div>
 
@@ -28,7 +27,7 @@ export default function EnPrivacy() {
 
             <div>
                 <h3 className="text-lg font-bold text-white mb-2">5. Your Rights (GDPR)</h3>
-                <p>In accordance with the General Data Protection Regulation (GDPR), you have the right to access, rectify, and delete your data. To exercise these rights, you can contact us directly at: <strong>[Ton Email de Contact]</strong> or delete your account from the settings.</p>
+                <p>In accordance with the General Data Protection Regulation (GDPR), you have the right to access, rectify, and delete your data.</p>
             </div>
         </div>
     );

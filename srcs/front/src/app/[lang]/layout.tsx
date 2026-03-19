@@ -4,9 +4,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { Locale } from './dictionaries';
 import { hasLocale, getDictionary } from './dictionaries';
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
-import { Bebas_Neue } from 'next/font/google';
+import { Bebas_Neue, Inter } from 'next/font/google';
 import { AuthProvider } from '../../contexts/AuthContext';
 import { LanguageProvider } from '../../contexts/LanguageContext';
 import { ModalProvider } from '../../contexts/ModalContext';
@@ -16,10 +14,17 @@ import Footer from '../../components/Footer';
 import Toaster from '../../components/ui/Toaster';
 import Chat from '../../components/Chat';
 
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  preload: false,
+});
+
 const bebas = Bebas_Neue({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-bebas',
+  preload: false,
 });
 
 export async function getMetadata({
@@ -56,7 +61,7 @@ export default async function RootLayout({
 
   return (
     <html lang={lang} className="gradient-background">
-      <body className={`${GeistSans.className} ${GeistMono.variable} ${bebas.variable} gradient-background`}>
+      <body className={`${inter.className} ${bebas.variable} gradient-background`}>
         <AuthProvider>
           <LanguageProvider initialLang={lang} initialDictionary={dict}>
             <SocketProvider>

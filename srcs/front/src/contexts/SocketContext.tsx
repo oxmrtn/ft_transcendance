@@ -29,7 +29,7 @@ interface SocketContextType {
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
 function SocketProvider({ children }: { children: React.ReactNode }) {
-    const { isAuthenticated, token, logout } = useAuth();
+    const { isAuthenticated, token, logout, username } = useAuth();
     const { dictionary } = useLanguage();
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
@@ -40,14 +40,17 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
     const unreadMessagesCountRef = useRef(unreadMessagesCount);
 
     useEffect(() => {
-        if (isAuthenticated)
+        if (isAuthenticated && token && username)
             connectSocket(token);
         else
             disconnectSocket();
+    }, [isAuthenticated, token, username]);
+
+    useEffect(() => {
         return () => {
             disconnectSocket();
         };
-    }, [isAuthenticated, token]);
+    }, [socket]);
 
     useEffect(() => {
         isChatOpenRef.current = isChatOpen;

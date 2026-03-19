@@ -7,7 +7,6 @@ export default function FrPrivacy() {
                 <ul className="list-disc pl-6 space-y-1">
                     <li><strong>Données de compte :</strong> Votre pseudonyme et, le cas échéant, votre adresse e-mail.</li>
                     <li><strong>Données de jeu :</strong> Le code informatique que vous soumettez lors des parties, vos scores et votre historique de matchs.</li>
-                    <li><strong>Données techniques :</strong> Votre adresse IP et des informations basiques sur votre navigateur, à des fins de sécurité et de prévention des abus.</li>
                 </ul>
             </div>
 
@@ -28,7 +27,7 @@ export default function FrPrivacy() {
 
             <div>
                 <h3 className="text-lg font-bold text-white mb-2">5. Vos droits (RGPD)</h3>
-                <p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Pour exercer ces droits, vous pouvez nous contacter directement à l'adresse suivante : <strong>[Ton Email de Contact]</strong> ou supprimer votre compte depuis les paramètres.</p>
+                <p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification et de suppression de vos données.</p>
             </div>
         </div>
     );

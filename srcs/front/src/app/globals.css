@@ -33,7 +33,8 @@
     --grid-gradient-grid-opacity: 0.3;
 
     --font-bebas: var(--font-bebas);
-    --mono: var(--font-geist-mono);
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+    --default-mono-font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 @layer components {
@@ -42,7 +43,7 @@
     }
 
     html {
-        @apply w-full h-full scroll-smooth;
+        @apply w-full h-full;
     }
 
     body {

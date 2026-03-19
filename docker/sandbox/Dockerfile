@@ -10,5 +10,3 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["entrypoint.sh"]
 
-CMD ["npm", "run", "start:dev"]
-

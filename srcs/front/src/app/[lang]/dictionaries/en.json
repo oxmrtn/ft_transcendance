@@ -18,7 +18,7 @@
   "register": {
     "dividerText": "Register",
     "avatarUploadTitle": "Add a profile picture",
-    "avatarUploadText": "The image must be in JPEG or PNG format and must not exceed 10 MB.",
+    "avatarUploadText": "The image must be in JPEG or PNG format and must not exceed 5 MB.",
     "usernamePlaceholder": "Username",
     "emailPlaceholder": "E-mail",
     "passwordPlaceholder": "Password",

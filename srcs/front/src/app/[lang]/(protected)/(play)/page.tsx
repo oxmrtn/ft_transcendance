@@ -13,6 +13,7 @@ import { API_URL } from "../../../../lib/utils";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { toast } from "sonner";
 import { SquareTerminal } from "lucide-react";
+import { WaitingRoomsSkeleton } from "../../../../components/ui/skeleton";
 
 const ITEMS_PER_PAGE = 7;
 const WAITING_ROOMS_LIMIT = 100;
@@ -28,6 +29,7 @@ export default function Page() {
   const [rooms, setRooms] = useState<WaitingRoom[]>([]);
   const [roomsPage, setRoomsPage] = useState(1);
   const [isLoadingRooms, setIsLoadingRooms] = useState(false);
+  const [showSkeleton, setShowSkeleton] = useState(false);
   const [roomsError, setRoomsError] = useState<string | null>(null);
   const { socket } = useSocket();
   const { dictionary, lang } = useLanguage();
@@ -93,6 +95,15 @@ export default function Page() {
   }, [token, logout, dictionary.common.errorOccurred, dictionary.common.sessionExpired]);
 
   useEffect(() => {
+    if (isLoadingRooms) {
+      setShowSkeleton(true);
+      return;
+    }
+    const id = setTimeout(() => setShowSkeleton(false), 500);
+    return () => clearTimeout(id);
+  }, [isLoadingRooms]);
+
+  useEffect(() => {
     if (!socket)
       return;
 
@@ -154,10 +165,8 @@ export default function Page() {
         </div>
 
         <div className="flex-1 min-h-0 flex flex-col">
-          {isLoadingRooms ? (
-            <div className="w-full flex-1 min-h-0 flex items-center justify-center">
-              <p className="text-sub-text">{dictionary.play.loadingRooms}</p>
-            </div>
+          {showSkeleton ? (
+            <WaitingRoomsSkeleton items={ITEMS_PER_PAGE} />
           ) : roomsError ? (
             <div className="w-full flex-1 min-h-0 flex items-center justify-center">
               <p className="text-sm text-red-400">{roomsError}</p>
@@ -194,7 +203,7 @@ export default function Page() {
           )}
         </div>
 
-        {!isLoadingRooms && (
+        {!showSkeleton && (
           <div className="flex items-center justify-center py-2 border-t border-white/10 bg-black/20">
             <Pagination
               currentPage={roomsPage}

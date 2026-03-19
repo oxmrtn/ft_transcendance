@@ -22,6 +22,7 @@ export default function Battle() {
   const [code, setCode] = useState("");
   const [timeoutSeconds, setTimeoutSeconds] = useState(0);
   const [activeTab, setActiveTab] = useState<BattleTab>("subject");
+  const [isEditorMounted, setIsEditorMounted] = useState(false);
   const [traceNotification, setTraceNotification] = useState(false);
   const prevLengthRef = useRef(trace.length);
 
@@ -68,6 +69,17 @@ export default function Battle() {
       setTraceNotification(true);
     prevLengthRef.current = trace.length;
   }, [trace.length]);
+
+  useEffect(() => {
+    if (activeTab !== "code")
+      return;
+
+    const frame = requestAnimationFrame(() => {
+      setIsEditorMounted(true);
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [activeTab]);
 
   return (
     <ContentWrapper title={`${dictionary.game.gameTitle} - ${shortenedGameId}`}>
@@ -117,19 +129,25 @@ export default function Battle() {
               </ScrollArea>
             </div>
           </TabsContent>
-          <TabsContent value="code" className="flex-1 w-full p-4">
-            <Editor
-              height="100%"
-              width="100%"
-              theme="vs-dark"
-              defaultLanguage="c"
-              value={code}
-              onChange={setCode}
-              className="border border-px border-white/10 rounded-lg overflow-hidden"
-              options={{
-                minimap: { enabled: false }
-              }}
-            />
+          <TabsContent value="code" className="flex-1 min-h-0 w-full p-4">
+            {isEditorMounted ? (
+              <Editor
+                id="monaco-editor-code"
+                height="100%"
+                width="100%"
+                theme="vs-dark"
+                defaultLanguage="c"
+                value={code}
+                onChange={(value) => setCode(value ?? "")}
+                className="border border-px border-white/10 rounded-lg overflow-hidden"
+                options={{
+                  minimap: { enabled: false },
+                  fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Courier New, monospace"
+                }}
+              />
+            ) : (
+              <div className="h-full w-full rounded-lg border border-px border-white/10 bg-white/20 animate-pulse" />
+            )}
           </TabsContent>
           <TabsContent value="trace" className="flex-1 min-h-0 h-full w-full overflow-hidden">
             <Trace />
