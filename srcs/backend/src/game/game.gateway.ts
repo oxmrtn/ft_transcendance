@@ -650,11 +650,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		});
 	}
 
-	private async closeGame( gameId: string, currentGame: any)
+	private async closeGame( gameId: string, currentGame: GameSession)
 	{
 		const inGameIds = this.getInGamePlayerIds(currentGame);
 
-		if (!currentGame.player.size() || (inGameIds.length === 0 && currentGame.gameState === "playing"))
+		if (!currentGame.players.size || (inGameIds.length === 0 && currentGame.gameState === "playing"))
 		{
 			currentGame.gameState = "finished";
 			this.notifyGameStatus(currentGame);
