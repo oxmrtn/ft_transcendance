@@ -202,7 +202,7 @@ export function ChatModal({ target, triggerId }: ChatModalProps) {
                 handleSendMessage(message);
             }}>
                 <div className="flex border-t bg-white/10 backdrop-blur-xl border-white/10">
-                    <input type="text" className="text-sm w-full py-1 px-2 border-none outline-none" placeholder={dictionary.chat.messagePlaceholder} value={message} onChange={(e) => setMessage(e.target.value)} />
+                    <input id="message-input" type="text" className="text-sm w-full py-1 px-2 border-none outline-none" placeholder={dictionary.chat.messagePlaceholder} value={message} onChange={(e) => setMessage(e.target.value)} />
                     <button type="submit" className="py-1 px-2">
                         <Send className="size-4 text-white hover:text-white/50 cursor-pointer transition-colors duration-200" />
                     </button>

@@ -18,7 +18,7 @@
   "register": {
     "dividerText": "S'inscrire",
     "avatarUploadTitle": "Ajouter une image de profil",
-    "avatarUploadText": "L'image doit être au format JPEG ou PNG et ne doit pas dépasser 10 Mo.",
+    "avatarUploadText": "L'image doit être au format JPEG ou PNG et ne doit pas dépasser 5 Mo.",
     "usernamePlaceholder": "Nom d'utilisateur",
     "emailPlaceholder": "E-mail",
     "passwordPlaceholder": "Mot de passe",

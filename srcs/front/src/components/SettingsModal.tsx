@@ -11,7 +11,7 @@ import { API_URL } from '../lib/utils';
 import Button from './ui/Button';
 import { toast } from 'sonner';
 
-const MAX_SIZE_BYTES = 10 * 1024 * 1024;
+const MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
 export default function SettingsModal() {
   const { username: actualUsername, email: actualEmail, profilePictureUrl: actualProfilePictureUrl, token, setProfile, logout } = useAuth();
