@@ -14,9 +14,7 @@ import { WsJwtGuard } from "src/auth/wsjwt/wsjwt.guard";
 import { codeSubmitDto } from "src/dto/code-submit.dto";
 import { gameIdDto } from "src/dto/game-id.dto";
 import { KickPlayerDto } from "src/dto/kick-player.dto";
-import { connected } from "node:process";
 import { PrismaService } from "prisma/prisma.service";
-import { waitForDebugger } from "node:inspector";
 import { StartGameDto } from "src/dto/start-game.dto";
 import { submitCode } from "src/submission/submitCode";
 import { ChallengeCache, Challenge } from '../challenges/challenge.cache';
@@ -150,25 +148,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			await this.broadcastWaitingRooms();
 			return;
 		}
-
-		if (!currentGame.players.size) {
-			this.gameSessions.delete(gameId);
-			if (currentGame.dbGameId) {
-				await this.prismaService.game.update({
-					where: { id: currentGame.dbGameId },
-					data: {
-						status: "FINISHED",
-						finishedAt: new Date()
-					}
-				});
-			}
-		}
-
+		
 		const inGameIds = this.getInGamePlayerIds(currentGame);
-		if (inGameIds.length === 0 && currentGame.gameState === "playing") {
-			currentGame.gameState = "finished";
-			this.clearGame(currentGame.gameId);
-			this.gameSessions.delete(currentGame.gameId);
+		if (!currentGame.players.size || (inGameIds.length === 0 && currentGame.gameState === "playing")) {
+			setTimeout(() => {
+				this.closeGame(gameId, currentGame);
+			}, 60000);
+			return;
 		}
 
 		this.notifyGameStatus(currentGame);
@@ -662,5 +648,28 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			selectedChallenge: game.selectedChallenge,
 			availableChallenges: challenges.map(c => c.title),
 		});
+	}
+
+	private async closeGame( gameId: string, currentGame: GameSession)
+	{
+		const inGameIds = this.getInGamePlayerIds(currentGame);
+
+		if (!currentGame.players.size || (inGameIds.length === 0 && currentGame.gameState === "playing"))
+		{
+			currentGame.gameState = "finished";
+			this.notifyGameStatus(currentGame);
+			this.clearGame(currentGame.gameId);
+			this.gameSessions.delete(currentGame.gameId);
+			this.gameSessions.delete(gameId);
+			if (currentGame.dbGameId) {
+				await this.prismaService.game.update({
+					where: { id: currentGame.dbGameId },
+					data: {
+						status: "finished",
+						finishedAt: new Date()
+					}
+				});
+			}
+		}
 	}
 }
