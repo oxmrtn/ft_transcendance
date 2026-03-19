@@ -153,7 +153,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (!currentGame.players.size || (inGameIds.length === 0 && currentGame.gameState === "playing")) {
 			setTimeout(() => {
 				this.closeGame(gameId, currentGame);
-				}, 60000);
+			}, 60000);
 			return;
 		}
 
