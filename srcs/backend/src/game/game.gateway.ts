@@ -148,18 +148,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			await this.broadcastWaitingRooms();
 			return;
 		}
-
-		if (!currentGame.players.size) {
+		
+		const inGameIds = this.getInGamePlayerIds(currentGame);
+		if (!currentGame.players.size || (inGameIds.length === 0 && currentGame.gameState === "playing")) {
 			setTimeout(() => {
 				this.closeGame(gameId, currentGame);
 				}, 60000);
-		}
-
-		const inGameIds = this.getInGamePlayerIds(currentGame);
-		if (inGameIds.length === 0 && currentGame.gameState === "playing") {
-			setTimeout(() => {
-				this.closeGame2(currentGame);
-				}, 60000);
+			return;
 		}
 
 		this.notifyGameStatus(currentGame);
@@ -657,28 +652,24 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	private async closeGame( gameId: string, currentGame: any)
 	{
-		if (!currentGame.player.size())
-		{
-			this.gameSessions.delete(gameId);
-				if (currentGame.dbGameId) {
-					await this.prismaService.game.update({
-						where: { id: currentGame.dbGameId },
-						data: {
-							status: "FINISHED",
-							finishedAt: new Date()
-						}
-					});
-				}
-		}
-	}
-
-	private async closeGame2(currentGame: any)
-	{
 		const inGameIds = this.getInGamePlayerIds(currentGame);
-		if (inGameIds.length === 0 && currentGame.gameState === "playing") {
+
+		if (!currentGame.player.size() || (inGameIds.length === 0 && currentGame.gameState === "playing"))
+		{
 			currentGame.gameState = "finished";
+			this.notifyGameStatus(currentGame);
 			this.clearGame(currentGame.gameId);
 			this.gameSessions.delete(currentGame.gameId);
+			this.gameSessions.delete(gameId);
+			if (currentGame.dbGameId) {
+				await this.prismaService.game.update({
+					where: { id: currentGame.dbGameId },
+					data: {
+						status: "finished",
+						finishedAt: new Date()
+					}
+				});
+			}
 		}
 	}
 }
