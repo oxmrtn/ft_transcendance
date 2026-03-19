@@ -43,6 +43,7 @@ class GameSession {
 	public gameId: string;
 	public dbGameId: number;
 	public players: Map<number, PlayerInfos>;
+	public playerTraces: Map<number, CodeResult[]>;
 	public gameState: GameState;
 	public creatorId: number;
 	public selectedChallenge: Challenge;
@@ -54,6 +55,7 @@ class GameSession {
 		this.gameId = gameId;
 		this.playerNumber = playerNumber;
 		this.createdAt = new Date();
+		this.playerTraces = new Map();
 	};
 };
 
@@ -235,6 +237,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			currentGame.players.set(user.userId, info);
 		}
 
+		if (!currentGame.playerTraces.has(user.userId))
+			currentGame.playerTraces.set(user.userId, []);
+
 		this.clientToRoom.set(user.userId, gameId);
 		client.join(`game_${gameId}`);
 
@@ -275,7 +280,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		client.emit('game-info', {
 			event: 'resume-game',
 			gameId: currentGame.gameId,
-			availableChallenges: challenges.map(c => c.title)
+			availableChallenges: challenges.map(c => c.title),
+			traces: currentGame.playerTraces.get(userId) ?? []
 		});
 		this.notifyGameStatus(currentGame);
 	}
@@ -438,6 +444,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		currentGame.selectedChallenge = challenge;
 		currentGame.players.forEach((_, playerId) => {
 			currentGame.players.set(playerId, { passedChallenge: null, remainingTries: BASE_REMAINING_TRIES, lastSubmitTime: null, online: true });
+			currentGame.playerTraces.set(playerId, []);
 		});
 		for (const playerId of currentGame.players.keys()) {
 			await this.prismaService.gameParticipant.create({
@@ -509,6 +516,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		playerInfo.remainingTries--;
 
 		const codeResult = await submitCode(currentGame.selectedChallenge.title, userId, payload.code);
+		const previousTraces = currentGame.playerTraces.get(userId) ?? [];
+		currentGame.playerTraces.set(userId, [...previousTraces, { trace: codeResult.trace, result: codeResult.result }]);
 
 		if (playerInfo.remainingTries <= 0 && !codeResult.result)
 			playerInfo.passedChallenge = false;
