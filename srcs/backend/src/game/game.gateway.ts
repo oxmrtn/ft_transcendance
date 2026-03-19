@@ -152,23 +152,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 
 		if (!currentGame.players.size) {
-			this.gameSessions.delete(gameId);
-			if (currentGame.dbGameId) {
-				await this.prismaService.game.update({
-					where: { id: currentGame.dbGameId },
-					data: {
-						status: "FINISHED",
-						finishedAt: new Date()
-					}
-				});
-			}
+			setTimeout(() => {
+				this.closeGame(gameId, currentGame);
+				}, 60000);
 		}
 
 		const inGameIds = this.getInGamePlayerIds(currentGame);
 		if (inGameIds.length === 0 && currentGame.gameState === "playing") {
-			currentGame.gameState = "finished";
-			this.clearGame(currentGame.gameId);
-			this.gameSessions.delete(currentGame.gameId);
+			setTimeout(() => {
+				this.closeGame2(currentGame);
+				}, 60000);
 		}
 
 		this.notifyGameStatus(currentGame);
@@ -584,6 +577,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					}
 				})
 				this.clearGame(currentGame.gameId);
+				console.log("hello 5");
 				this.gameSessions.delete(currentGame.gameId);
 			}
 		}
@@ -662,5 +656,32 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			selectedChallenge: game.selectedChallenge,
 			availableChallenges: challenges.map(c => c.title),
 		});
+	}
+
+	private async closeGame( gameId: string, currentGame: any)
+	{
+		if (!currentGame.player.size())
+		{
+			this.gameSessions.delete(gameId);
+				if (currentGame.dbGameId) {
+					await this.prismaService.game.update({
+						where: { id: currentGame.dbGameId },
+						data: {
+							status: "FINISHED",
+							finishedAt: new Date()
+						}
+					});
+				}
+		}
+	}
+
+	private async closeGame2(currentGame: any)
+	{
+		const inGameIds = this.getInGamePlayerIds(currentGame);
+		if (inGameIds.length === 0 && currentGame.gameState === "playing") {
+			currentGame.gameState = "finished";
+			this.clearGame(currentGame.gameId);
+			this.gameSessions.delete(currentGame.gameId);
+		}
 	}
 }
