@@ -154,14 +154,14 @@
     "profileUpdated": "Profilen har uppdaterats",
     "profilePicture": "Profilbild",
     "updateProfilePicture": "Uppdatera profilbild",
-    "profilePictureHint": "Måste vara JPEG eller PNG och får inte överstiga 10 MB.",
+    "profilePictureHint": "Måste vara JPEG eller PNG och får inte överstiga 5 MB.",
     "username": "Användarnamn",
     "email": "E-post",
     "password": "Lösenord",
     "newPasswordPlaceholder": "Nytt lösenord",
     "loading": "Laddar...",
     "update": "Uppdatera",
-    "pictureSizeError": "Bilden måste vara mindre än 5MB.",
+    "pictureSizeError": "Bilden måste vara mindre än 5 MB.",
     "pictureFormatError": "Bilden måste vara i JPEG eller PNG-format."
   },
   "chat": {
