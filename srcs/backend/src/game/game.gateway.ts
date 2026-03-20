@@ -526,7 +526,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				where: { id: userId },
 				data: {
 					xp: {
-						increment: 50 / currentGame.rankCounter - 1
+						increment: 50 / (currentGame.rankCounter - 1)
 					},
 					win: {
 						increment: win
