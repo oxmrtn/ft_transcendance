@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:20@sha256:abc255963bb4311b1f81bf45f2382df39a4041d2a975b1807d05809f1bc21bbe
 
 RUN apt-get update && apt-get install -y \
     bash \
